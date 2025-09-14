@@ -1,14 +1,20 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.database import SessionLocal
+from app.models.job import Job
 
 router = APIRouter()
 
-# Mock data for testing (will be replaced with database integration later)
-fake_jobs = [
-    {"id": 1, "title": "Python Developer", "company": "Tech Corp", "work_modality": "Remote"},
-    {"id": 2, "title": "FastAPI Developer", "company": "API Solutions", "work_modality": "Hybrid"},
-]
+# Dependency to get DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 # GET Endpoint
 @router.get("/jobs")
-def read_jobs():
-    return fake_jobs
+def read_jobs(db: Session = Depends(get_db)):
+    jobs = db.query(Job).all()
+    return jobs

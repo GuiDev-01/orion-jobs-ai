@@ -1,11 +1,11 @@
-# 🚀 CareerCopilot
+# 🚀 OrionJobs AI
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Latest-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-> AI-powered job hunting automation that finds, filters, and recommends perfect career opportunities.
+> Navigate your career journey with AI-powered precision.
 
 Transform your job search from hours of manual browsing to intelligent, automated career guidance through legal API integrations and smart filtering.
 
@@ -39,10 +39,10 @@ Transform your job search from hours of manual browsing to intelligent, automate
 - Tailwind CSS
 
 **Integrations**
-- Indeed API (Publisher Program)
+- RemoteOK API (Remote jobs focus)
 - Adzuna API (Global job search)
 - JSearch API (RapidAPI - Multi-source aggregator)
-- RemoteOK API (Remote jobs focus)
+- Indeed API (Publisher Program)
 - TheJobsAPI (Open source)
 - RSS Feeds (Company career pages)
 - Telegram/Discord APIs
@@ -63,8 +63,8 @@ Transform your job search from hours of manual browsing to intelligent, automate
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/GuiDev-01/career-copilot.git
-cd career-copilot
+git clone https://github.com/GuiDev-01/orionjobs-ai.git
+cd orionjobs-ai
 ```
 
 2. **Create virtual environment**
@@ -98,7 +98,7 @@ python run.py
 ## 📁 Project Structure
 
 ```
-career-copilot/
+orionjobs-ai/
 ├── app/
 │   ├── models/          # SQLAlchemy models & Pydantic schemas
 │   ├── routers/         # FastAPI routes
@@ -133,7 +133,7 @@ curl -X GET "http://localhost:8000/jobs"
 
 ## 🤖 Legal Job Data Collection
 
-CareerCopilot prioritizes legal and sustainable data collection through:
+OrionJobs AI prioritizes legal and sustainable data collection through:
 
 ### ✅ Active APIs (2025)
 - **RemoteOK API**: Free remote job listings without authentication
@@ -153,7 +153,6 @@ CareerCopilot prioritizes legal and sustainable data collection through:
 - Follow terms of service
 - No aggressive scraping practices
 - Focus on publicly available postings
-
 
 ## 🎯 Roadmap
 
@@ -197,7 +196,7 @@ CareerCopilot prioritizes legal and sustainable data collection through:
 
 ## 🤝 Contributing
 
-CareerCopilot aims to democratize job hunting with AI. Whether you're a developer, designer, or passionate about career technology - your contribution matters!
+OrionJobs AI aims to democratize job hunting with AI. Whether you're a developer, designer, or passionate about career technology - your contribution matters!
 
 ### Ways to Contribute
 - 🐛 **Report bugs** and suggest features
@@ -234,8 +233,8 @@ git push origin feature/amazing-feature
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/GuiDev-01/career-copilot/issues) for bug reports and feature requests
-- **Discussions**: [GitHub Discussions](https://github.com/GuiDev-01/career-copilot/discussions) for general questions
+- **Issues**: [GitHub Issues](https://github.com/GuiDev-01/orionjobs-ai/issues) for bug reports and feature requests
+- **Discussions**: [GitHub Discussions](https://github.com/GuiDev-01/orionjobs-ai/discussions) for general questions
 - **Email**: guilhermesantosdev01@gmail.com
 - **Documentation**: Check `/examples` for detailed API guides
 
@@ -245,7 +244,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🌟 Join the Movement
 
-CareerCopilot aims to democratize career opportunities through technology. Whether you're a job seeker, developer, or career enthusiast, your contribution can help thousands of professionals find their dream jobs.
+OrionJobs AI aims to democratize career opportunities through technology. Whether you're a job seeker, developer, or career enthusiast, your contribution can help thousands of professionals find their dream jobs.
 
 **Star ⭐ this repository if you believe in the mission!**
 
@@ -260,4 +259,4 @@ CareerCopilot aims to democratize career opportunities through technology. Wheth
 
 **Made with ❤️ for the developer community**
 
-*Transform your career journey with intelligent automation*
+*Navigate your career journey with AI-powered precision*

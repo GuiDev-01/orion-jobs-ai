@@ -39,10 +39,12 @@ Transform your job search from hours of manual browsing to intelligent, automate
 - Tailwind CSS
 
 **Integrations**
-- Indeed API
-- LinkedIn API (official)
-- GitHub Jobs API
-- RemoteOK API
+- Indeed API (Publisher Program)
+- Adzuna API (Global job search)
+- JSearch API (RapidAPI - Multi-source aggregator)
+- RemoteOK API (Remote jobs focus)
+- TheJobsAPI (Open source)
+- RSS Feeds (Company career pages)
 - Telegram/Discord APIs
 
 **AI/ML**
@@ -133,11 +135,12 @@ curl -X GET "http://localhost:8000/jobs"
 
 CareerCopilot prioritizes legal and sustainable data collection through:
 
-### ✅ Official APIs
-- **Indeed Publisher API**: Structured job data access
-- **LinkedIn API**: Professional network integration
-- **GitHub Jobs API**: Developer-focused positions
-- **RemoteOK API**: Remote work opportunities
+### ✅ Active APIs (2025)
+- **RemoteOK API**: Free remote job listings without authentication
+- **Adzuna API**: Global job search with free tier (50 calls/month)
+- **JSearch API**: Multi-source aggregator via RapidAPI
+- **Indeed Publisher API**: Official access (application required)
+- **TheJobsAPI**: Open source job board API
 
 ### ✅ RSS Feeds
 - Company career page feeds
@@ -149,6 +152,8 @@ CareerCopilot prioritizes legal and sustainable data collection through:
 - Implement proper rate limiting
 - Follow terms of service
 - No aggressive scraping practices
+- Focus on publicly available postings
+
 
 ## 🎯 Roadmap
 
@@ -165,8 +170,10 @@ CareerCopilot prioritizes legal and sustainable data collection through:
 - [ ] API rate limiting
 
 ### Phase 3: Data Collection 🔄
-- [ ] Legal API integrations (Indeed, LinkedIn, etc.)
+- [ ] RemoteOK API integration (priority 1)
 - [ ] RSS feed processors
+- [ ] Adzuna API integration
+- [ ] JSearch API (RapidAPI) integration
 - [ ] Data cleaning and normalization
 - [ ] Automated job discovery
 

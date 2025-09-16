@@ -3,11 +3,12 @@
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Latest-blue)
-![License](https://img.shields.io/badge/License-MIT-yellow)
+![Azure](https://img.shields.io/badge/Azure-Cloud-blue)
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
 
 > Navigate your career journey with AI-powered precision.
 
-Transform your job search from hours of manual browsing to intelligent, automated career guidance through legal API integrations and smart filtering.
+Transform your job search from hours of manual browsing to intelligent, automated career guidance through legal API integrations and smart filtering, deployed on Microsoft Azure cloud infrastructure.
 
 ## ✨ Features
 
@@ -16,7 +17,8 @@ Transform your job search from hours of manual browsing to intelligent, automate
 - **REST API**: Complete CRUD operations with FastAPI
 - **Data Validation**: Pydantic schemas for request/response validation
 - **API Documentation**: Automatic Swagger/OpenAPI documentation
-- **Professional Architecture**: Scalable backend with dependency injection
+- **Cloud Deployment**: Azure Virtual Machines with managed PostgreSQL
+- **Containerization**: Docker for consistent deployments
 
 ### 🚧 In Development
 - **Multi-Platform Integration**: Legal API connections to major job boards
@@ -32,39 +34,41 @@ Transform your job search from hours of manual browsing to intelligent, automate
 - PostgreSQL (Database)
 - SQLAlchemy 2.0 (ORM)
 - Pydantic v2 (Data validation)
+- Docker (Containerization)
+
+**Cloud Infrastructure (Azure)**
+- Azure Virtual Machines (Compute)
+- Azure Database for PostgreSQL (Managed database)
+- Azure Monitor (Logging and monitoring)
+- GitHub Actions (CI/CD)
 
 **Planned Frontend**
 - React/Next.js
 - TypeScript
 - Tailwind CSS
 
-**Integrations**
+**Data Sources**
 - RemoteOK API (Remote jobs focus)
 - Adzuna API (Global job search)
 - JSearch API (RapidAPI - Multi-source aggregator)
 - Indeed API (Publisher Program)
 - TheJobsAPI (Open source)
 - RSS Feeds (Company career pages)
-- Telegram/Discord APIs
-
-**AI/ML**
-- Scikit-learn
-- Transformers (Hugging Face)
-- OpenAI API (optional)
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Python 3.11+
-- PostgreSQL
+- Docker
 - Git
+- Azure account (optional for local development)
 
-### Installation
+### Local Development
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/GuiDev-01/orionjobs-ai.git
-cd orionjobs-ai
+git clone https://github.com/GuiDev-01/orion-jobs-ai.git
+cd orion-jobs-ai
 ```
 
 2. **Create virtual environment**
@@ -90,15 +94,49 @@ copy .env.example .env
 python run.py
 ```
 
-6. **Access the API**
-- API: http://localhost:8000
-- Documentation: http://localhost:8000/docs
-- Alternative docs: http://localhost:8000/redoc
+### Cloud Deployment (Azure)
+
+1. **Build Docker image**
+```bash
+docker build -t orionjobs-ai .
+```
+
+2. **Deploy to Azure VM**
+```bash
+# Automated via GitHub Actions
+git push origin main
+```
+
+## ☁️ Azure Architecture
+
+```
+┌── GitHub Actions (CI/CD) ──┐
+│   ├─ Automated testing     │
+│   ├─ Docker build          │
+│   └─ Azure deployment      │
+└─────────────────────────────┘
+            │
+            ▼
+┌── Azure VM (B1s) ──────────┐
+│   ├─ Ubuntu 22.04         │
+│   ├─ Docker runtime       │
+│   ├─ FastAPI application  │
+│   └─ Public endpoint      │
+└─────────────────────────────┘
+            │
+            ▼
+┌── Azure Database PostgreSQL ┐
+│   ├─ Managed service       │
+│   ├─ Automated backups     │
+│   ├─ 99.9% SLA            │
+│   └─ Private connection    │
+└─────────────────────────────┘
+```
 
 ## 📁 Project Structure
 
 ```
-orionjobs-ai/
+orion-jobs-ai/
 ├── app/
 │   ├── models/          # SQLAlchemy models & Pydantic schemas
 │   ├── routers/         # FastAPI routes
@@ -106,53 +144,14 @@ orionjobs-ai/
 │   ├── database.py      # Database connection
 │   └── main.py          # FastAPI application
 ├── examples/            # API usage examples
+├── .github/
+│   └── workflows/       # GitHub Actions CI/CD
+├── Dockerfile           # Container configuration
+├── docker-compose.yml   # Local development
 ├── .env.example         # Environment variables template
-├── .env                 # Environment variables (local)
-├── run.py              # Application runner
+├── requirements.txt     # Python dependencies
 └── README.md
 ```
-
-## 📚 API Examples
-
-Check out the `examples/` directory for complete API usage examples, including:
-- Creating and managing job entries
-- Filtering and searching jobs
-- Updating job information
-- API testing with curl and Postman
-
-### Quick API Test
-```bash
-# Create a job
-curl -X POST "http://localhost:8000/jobs" \
-  -H "Content-Type: application/json" \
-  -d '{"title": "Python Developer", "company": "TechCorp", "work_modality": "remote"}'
-
-# Get all jobs
-curl -X GET "http://localhost:8000/jobs"
-```
-
-## 🤖 Legal Job Data Collection
-
-OrionJobs AI prioritizes legal and sustainable data collection through:
-
-### ✅ Active APIs (2025)
-- **RemoteOK API**: Free remote job listings without authentication
-- **Adzuna API**: Global job search with free tier (50 calls/month)
-- **JSearch API**: Multi-source aggregator via RapidAPI
-- **Indeed Publisher API**: Official access (application required)
-- **TheJobsAPI**: Open source job board API
-
-### ✅ RSS Feeds
-- Company career page feeds
-- Job board RSS endpoints
-- Industry-specific feeds
-
-### ✅ Ethical Guidelines
-- Respect robots.txt files
-- Implement proper rate limiting
-- Follow terms of service
-- No aggressive scraping practices
-- Focus on publicly available postings
 
 ## 🎯 Roadmap
 
@@ -194,6 +193,56 @@ OrionJobs AI prioritizes legal and sustainable data collection through:
 - [ ] Skill gap analysis
 - [ ] Natural language processing for job descriptions
 
+### Phase 7: Cloud Deployment (MVP on Azure) ☁️
+- [ ] Azure Database for PostgreSQL: Managed database setup
+- [ ] Docker Containerization: Application packaging for cloud deployment
+- [ ] Azure VM Deployment: Linux virtual machine configuration
+- [ ] CI/CD Pipeline: GitHub Actions integration with Azure
+- [ ] Azure Monitor: Basic logging and monitoring setup
+- [ ] Cost Optimization: Resource management for student budget
+
+## 💰 Cost Management
+
+**Azure for Students Benefits:**
+- $100 in free Azure credits
+- Access to 25+ free services
+- No credit card required
+
+**Estimated Monthly Costs:**
+- Azure VM B1s: ~$7-10/month
+- PostgreSQL Basic: ~$5-8/month
+- Storage and networking: ~$2-3/month
+- **Total: ~$15-20/month** (well within credit limits)
+
+**Cost Optimization Tips:**
+- Deallocate VM when not in use
+- Use Basic tier for development
+- Monitor usage with Azure Cost Management
+- Leverage free tier services when possible
+
+## 🤖 Legal Job Data Collection
+
+OrionJobs AI prioritizes legal and sustainable data collection through:
+
+### ✅ Active APIs (2025)
+- **RemoteOK API**: Free remote job listings without authentication
+- **Adzuna API**: Global job search with free tier (50 calls/month)
+- **JSearch API**: Multi-source aggregator via RapidAPI
+- **Indeed Publisher API**: Official access (application required)
+- **TheJobsAPI**: Open source job board API
+
+### ✅ RSS Feeds
+- Company career page feeds
+- Job board RSS endpoints
+- Industry-specific feeds
+
+### ✅ Ethical Guidelines
+- Respect robots.txt files
+- Implement proper rate limiting
+- Follow terms of service
+- No aggressive scraping practices
+- Focus on publicly available postings
+
 ## 🤝 Contributing
 
 OrionJobs AI aims to democratize job hunting with AI. Whether you're a developer, designer, or passionate about career technology - your contribution matters!
@@ -206,23 +255,6 @@ OrionJobs AI aims to democratize job hunting with AI. Whether you're a developer
 - 🧪 **Add tests** and improve code coverage
 - 🌍 **Translate** the application
 
-### How to Contribute
-
-1. **Fork the repository**
-2. **Create a feature branch**
-```bash
-git checkout -b feature/amazing-feature
-```
-3. **Commit your changes**
-```bash
-git commit -m 'feat: add amazing feature'
-```
-4. **Push to the branch**
-```bash
-git push origin feature/amazing-feature
-```
-5. **Open a Pull Request**
-
 ### Development Guidelines
 - Follow PEP 8 for Python code style
 - Write descriptive commit messages
@@ -233,8 +265,8 @@ git push origin feature/amazing-feature
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/GuiDev-01/orionjobs-ai/issues) for bug reports and feature requests
-- **Discussions**: [GitHub Discussions](https://github.com/GuiDev-01/orionjobs-ai/discussions) for general questions
+- **Issues**: [GitHub Issues](https://github.com/GuiDev-01/orion-jobs-ai/issues) for bug reports and feature requests
+- **Discussions**: [GitHub Discussions](https://github.com/GuiDev-01/orion-jobs-ai/discussions) for general questions
 - **Email**: guilhermesantosdev01@gmail.com
 - **Documentation**: Check `/examples` for detailed API guides
 
@@ -252,6 +284,7 @@ OrionJobs AI aims to democratize career opportunities through technology. Whethe
 
 - FastAPI community for excellent documentation
 - SQLAlchemy team for robust ORM capabilities
+- Microsoft Azure for educational credits
 - Job board APIs for legal data access
 - Open source community for inspiration and tools
 

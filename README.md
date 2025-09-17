@@ -164,8 +164,8 @@ orion-jobs-ai/
 - [x] Complete REST endpoints (GET, POST, PUT, DELETE)
 - [x] Data validation schemas (Pydantic)
 - [x] Request/Response models
-- [ ] Advanced error handling
-- [ ] API rate limiting
+- [x] Advanced error handling
+- [x] API rate limiting
 
 ### Phase 3: Data Collection 🔄
 - [ ] RemoteOK API integration (priority 1)

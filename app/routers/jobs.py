@@ -5,7 +5,10 @@ from app.models.job import Job
 from fastapi import HTTPException
 from app.routers.job import JobResponse, JobCreate, JobUpdate, MessageResponse
 from typing import List
+from app.exceptions import JobNotFoundError
+import logging
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # Dependency to get DB session
@@ -36,7 +39,7 @@ def create_job(job: JobCreate, db: Session = Depends(get_db)):
 def get_job(job_id: int, db: Session = Depends(get_db)):
     job = db.query(Job).filter(Job.id == job_id).first()
     if job is None:
-        raise HTTPException(status_code=404, detail="Job not found") 
+        raise JobNotFoundError(job_id) 
     return job 
 
 #PUT Endpoint
@@ -44,7 +47,7 @@ def get_job(job_id: int, db: Session = Depends(get_db)):
 def update_job(job_id: int, job_update: JobUpdate, db: Session = Depends(get_db)):
     job = db.query(Job).filter(Job.id== job_id).first()
     if job is None:
-        raise HTTPException(status_code=404, detail="Job not found")
+        raise JobNotFoundError(job_id)
     
     update_data = job_update.model_dump(exclude_unset=True)
     for key, value in update_data.items():
@@ -57,7 +60,7 @@ def update_job(job_id: int, job_update: JobUpdate, db: Session = Depends(get_db)
 def delete_job(job_id: int, db: Session = Depends(get_db)):
     job = db.query(Job).filter(Job.id == job_id).first()
     if job is None:
-        raise HTTPException(status_code=404, detail="Job not found")
+        raise JobNotFoundError(job_id)
     
     db.delete(job)
     db.commit()

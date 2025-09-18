@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.job import Job
 from fastapi import HTTPException
-from app.routers.job import JobResponse, JobCreate, JobUpdate, MessageResponse
+from app.routers.job_router import JobResponse, JobCreate, JobUpdate, MessageResponse
 from typing import List
 from app.exceptions import JobNotFoundError
 import logging

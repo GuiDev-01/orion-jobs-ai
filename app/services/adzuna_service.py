@@ -4,6 +4,8 @@ import logging
 from typing import List, Dict 
 from dotenv import load_dotenv
 import hashlib
+
+# Load environment variables from .env file
 load_dotenv()
 
 # Configure logging
@@ -72,9 +74,11 @@ def normalize_adzuna_jobs(raw_jobs: List[Dict]) -> List[Dict]:
     logger.info("Normalizing Adzuna jobs...")
     normalized_jobs = []
     for job in raw_jobs:
+        # Generate unique ID using hash of original ID
         original_id = str(job.get("id", ""))
+        # Create hash and take only a portion to ensure valid integer
         hash_object = hashlib.md5(original_id.encode())
-        unique_id = int(hash_object.hexdigest()[:8], 16) % 2147483647
+        unique_id = int(hash_object.hexdigest()[:8], 16) % 2147483647 # Limit to INTEGER max
         
         
         normalized_jobs.append({
@@ -95,11 +99,11 @@ if __name__ == "__main__":
     from app.database import SessionLocal
     from app.services.remoteok_service import save_jobs_to_db
     
-    # Buscar dados da Adzuna
+    # Fetch data from Adzuna API
     raw_jobs = fetch_adzuna_jobs(country="gb", query="developer", results_per_page=5)
     normalized_jobs = normalize_adzuna_jobs(raw_jobs)
     
-    # Exibir dados normalizados
+    # Display normalized data
     print("=== NORMALIZED JOBS ===")
     for i, job in enumerate(normalized_jobs, 1):
         print(f"\n--- Job {i} ---")
@@ -112,7 +116,7 @@ if __name__ == "__main__":
         print(f"Created: {job['created_at']}")
         print("-" * 50)
     
-    # Salvar no banco de dados
+    # Save to database
     print("\n=== SAVING TO DATABASE ===")
     db = SessionLocal()
     try:

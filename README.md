@@ -170,7 +170,7 @@ orion-jobs-ai/
 ### Phase 3: Data Collection 🔄
 - [x] RemoteOK API integration (priority 1)
 - [ ] RSS feed processors
-- [ ] Adzuna API integration
+- [x] Adzuna API integration
 - [ ] JSearch API (RapidAPI) integration
 - [ ] Data cleaning and normalization
 - [ ] Automated job discovery

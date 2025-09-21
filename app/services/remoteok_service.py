@@ -12,26 +12,28 @@ logger = logging.getLogger(__name__)
 REMOTEOK_API_URL = "https://remoteok.io/api"
 
 def fetch_remote_jobs() -> List[Dict]:
+    """
+    Fetches job data from RemoteOK API.
+    
+    Returns:
+        List[Dict]: List of job dictionaries from RemoteOK API
+    """
     logger.info("Fetching jobs from RemoteOK API")
     try:
-        # Configure retries
-        session = requests.Session()
-        retries = Retry(
-            total=5, #Maximum number of retries
-            backoff_factor=1, #Time between retries (exponential)
-            status_forcelist=[500,502,503,504] # HTTP status codes to retry
-        )
-        session.mount("https://", HTTPAdapter(max_retries=retries))
-        response = requests.get(REMOTEOK_API_URL)
-        response.raise_for_status() # Raise exception for HTTP errors
-        jobs = response.json() # Get the JSON content
-        
-        # Filter only valid job entries (those with an 'id' field)
-        filtered_jobs = [job for job in jobs if "id" in job]
-        logger.info(f"Fetched {len(filtered_jobs)} jobs from RemoteOK API")
-        return filtered_jobs
+        headers = {
+            "User-Agent": "Mozilla/5.0"  # Some APIs require a user agent
+        }
+        response = requests.get(REMOTEOK_API_URL, headers=headers)
+        response.raise_for_status()
+        jobs = response.json()
+        # First item is usually the API documentation
+        jobs = jobs[1:] if len(jobs) > 0 else []
+        return jobs
     except requests.exceptions.RequestException as e:
-        logger.error(f"Error fetching data from RemoteOk API {e}")
+        logger.error(f"Error fetching jobs from RemoteOK API: {e}")
+        return []
+    except Exception as e:
+        logger.error(f"Unexpected error fetching jobs from RemoteOK API: {e}")
         return []
     
 def normalize_remote_jobs(raw_jobs: List[Dict]):

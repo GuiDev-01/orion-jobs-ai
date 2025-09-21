@@ -53,10 +53,6 @@ def fetch_adzuna_jobs(
         if permanent:
             params["permanent"] = "1"
         
-        # Log URL and Params
-        logger.info(f"URL: {url}")
-        logger.info(f"Params: {params}")
-        
         response = requests.get(url, params=params)
         response.raise_for_status()
         jobs = response.json().get("results", [])
@@ -64,6 +60,18 @@ def fetch_adzuna_jobs(
         return jobs
     except requests.exceptions.RequestException as e:
         logger.error(f"Error fetching jobs from Adzuna API: {e}")
+        return []
+    except Exception as e: 
+        logger.error(f"Unexpected error fetching jobs from Adzuna API: {e}")
+        return []
+    except requests.exceptions.HTTPError as http_err:
+        logger.error(f"HTTP error occurred: {http_err}")
+        return []
+    except requests.exceptions.ConnectionError as conn_err:
+        logger.error(f"Connection error occurred: {conn_err}")
+        return []
+    except requests.exceptions.Timeout as timeout_err:
+        logger.error(f"Request timeout: {timeout_err}")
         return []
 
 def normalize_adzuna_jobs(raw_jobs: List[Dict]) -> List[Dict]:

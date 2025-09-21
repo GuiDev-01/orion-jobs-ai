@@ -3,7 +3,7 @@ from apscheduler.triggers.cron import CronTrigger
 import logging
 from app.database import SessionLocal
 from app.services.remoteok_service import fetch_remote_jobs, normalize_remote_jobs, save_jobs_to_db
-
+from app.services.adzuna_service import fetch_adzuna_jobs, normalize_adzuna_jobs
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -19,9 +19,16 @@ def collect_remote_jobs():
         db = SessionLocal()
         
         # Collect and process jobs
-        raw_jobs = fetch_remote_jobs()
-        normalized_jobs = normalize_remote_jobs(raw_jobs)
+        logger.info("Collecting RemoteOK jobs...")
+        raw_remote_jobs = fetch_remote_jobs()
+        normalized_jobs = normalize_remote_jobs(raw_remote_jobs)
         save_jobs_to_db(normalized_jobs, db)
+        
+        # Adzuna jobs
+        logger.info("Collecting Adzuna jobs...")
+        raw_adzuna_jobs = fetch_adzuna_jobs(country="gb", query="developer", results_per_page= 20)
+        normalized_adzuna_jobs = normalize_adzuna_jobs(raw_adzuna_jobs)
+        save_jobs_to_db(normalized_adzuna_jobs, db)
         
         logger.info("Scheduled job collection completed successfully")
     except Exception as e:

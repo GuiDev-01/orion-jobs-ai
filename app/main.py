@@ -7,7 +7,7 @@ from app.exceptions import(
     database_exception_handler,
     JobNotFoundError
 )
-from app.routers import jobs
+from app.routers import jobs_router
 from app.middleware import rate_limit_middleware
 
 app = FastAPI(
@@ -30,7 +30,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-app.include_router(jobs.router, tags=["jobs"])
+app.include_router(jobs_router.router, tags=["jobs"])
 
 @app.get("/")
 async def root():

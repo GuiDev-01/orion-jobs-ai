@@ -99,7 +99,7 @@ def normalize_adzuna_jobs(raw_jobs: List[Dict]) -> List[Dict]:
             "title": job.get("title"),
             "company": job.get("company", {}).get("display_name"),
             "work_modality": "Remote",
-            "tags": [],
+            "tags": ",".join([]),
             "location": job.get("location", {}).get("display_name") or "Unknown",
             "description": (job.get("description")[:200].strip() + "...") if job.get("description") else "No description available",
             "url": (job.get("redirect_url") or "No URL available").split("?")[0],

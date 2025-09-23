@@ -45,7 +45,7 @@ def normalize_remote_jobs(raw_jobs: List[Dict]):
             "title": job.get("position"),
             "company": job.get("company"),
             "work_modality": job.get("work_modality") if job.get("work_modality") else "Remote",
-            "tags": job.get("tags", []), # List of tags (skills, etc.)
+            "tags": ",".join(job.get("tags", [])), # List of tags (skills, etc.)
             "url": job.get("url"),
             "created_at": job.get("date") # Date the job was posted
         })

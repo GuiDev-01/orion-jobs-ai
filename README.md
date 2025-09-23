@@ -13,10 +13,17 @@ Transform your job search from hours of manual browsing to intelligent, automate
 ## ✨ Features
 
 ### ✅ Current Features
-- **Database Management**: PostgreSQL with SQLAlchemy 2.0
+- **Multi-Source Job Aggregation**: Integrates RemoteOK and Adzuna APIs
+- **Smart Caching System**: Optimizes API calls with intelligent response caching
+- **Real-time Data Processing**: Normalizes job data from different sources
+- **Automated Scheduling**: Daily job collection with APScheduler
+- **Database Management**: PostgreSQL with SQLAlchemy 2.0 and Alembic migrations
 - **REST API**: Complete CRUD operations with FastAPI
 - **Data Validation**: Pydantic schemas for request/response validation
 - **API Documentation**: Automatic Swagger/OpenAPI documentation
+- **Comprehensive Testing**: Pytest suite with mocking and integration tests
+- **Error Handling**: Robust exception management and logging
+- **Rate Limiting**: Built-in protection against API abuse
 - **Cloud Deployment**: Azure Virtual Machines with managed PostgreSQL
 - **Containerization**: Docker for consistent deployments
 
@@ -33,9 +40,11 @@ Transform your job search from hours of manual browsing to intelligent, automate
 - FastAPI (Python web framework)
 - PostgreSQL (Database)
 - SQLAlchemy 2.0 (ORM)
+- Alembic (Database migrations)
 - Pydantic v2 (Data validation)
 - Docker (Containerization)
 - APScheduler (Task automation)
+- Pytest (Testing framework)
 
 **Cloud Infrastructure (Azure)**
 - Azure Virtual Machines (Compute)
@@ -50,7 +59,7 @@ Transform your job search from hours of manual browsing to intelligent, automate
 
 **Data Sources**
 - RemoteOK API (Remote jobs focus)
-- Adzuna API (Global job search)
+- Adzuna API (Global job search with caching)
 - JSearch API (RapidAPI - Multi-source aggregator)
 - Indeed API (Publisher Program)
 - TheJobsAPI (Open source)
@@ -60,6 +69,7 @@ Transform your job search from hours of manual browsing to intelligent, automate
 
 ### Prerequisites
 - Python 3.11+
+- PostgreSQL
 - Docker
 - Git
 - Azure account (optional for local development)
@@ -81,16 +91,31 @@ python -m venv .venv
 
 3. **Install dependencies**
 ```bash
-pip install fastapi sqlalchemy psycopg2-binary python-dotenv uvicorn
+pip install -r requirements.txt
 ```
 
 4. **Set up environment variables**
 ```bash
 copy .env.example .env
-# Edit .env with your database credentials
+# Edit .env with your database credentials and API keys
 ```
 
-5. **Run the application**
+5. **Run database migrations**
+```bash
+alembic upgrade head
+```
+
+6. **Run tests**
+```bash
+pytest
+```
+
+7. **Run integration tests**
+```bash
+python run.py test
+```
+
+8. **Start the application**
 ```bash
 python run.py
 ```
@@ -140,13 +165,19 @@ git push origin main
 orion-jobs-ai/
 ├── app/
 │   ├── models/          # SQLAlchemy models & Pydantic schemas
+│   ├── services/        # API integrations & business logic
 │   ├── routers/         # FastAPI routes
+│   ├── tests/           # Comprehensive test suite
 │   ├── config.py        # Configuration
 │   ├── database.py      # Database connection
 │   └── main.py          # FastAPI application
+├── alembic/             # Database migrations
+│   └── versions/        # Migration scripts
 ├── examples/            # API usage examples
 ├── .github/
 │   └── workflows/       # GitHub Actions CI/CD
+├── job_schedule.py      # Automated job collection
+├── run.py              # Application entry point
 ├── Dockerfile           # Container configuration
 ├── docker-compose.yml   # Local development
 ├── .env.example         # Environment variables template
@@ -168,10 +199,13 @@ orion-jobs-ai/
 - [x] Advanced error handling ✅
 - [x] API rate limiting ✅
 
-### Phase 3: Data Collection 🔄
+### Phase 3: Data Collection ✅
 - [x] RemoteOK API integration (priority 1) ✅
 - [x] Adzuna API integration ✅
-- [x] Automated job scheduler API ✅
+- [x] Smart caching system for API responses ✅
+- [x] Automated job scheduler ✅
+- [x] Database migrations with Alembic ✅
+- [x] Comprehensive testing suite ✅
 - [ ] RSS feed processors
 - [ ] JSearch API (RapidAPI) integration
 - [ ] Data cleaning and normalization
@@ -228,7 +262,7 @@ OrionJobs AI prioritizes legal and sustainable data collection through:
 
 ### ✅ Active APIs (2025)
 - **RemoteOK API**: Free remote job listings without authentication
-- **Adzuna API**: Global job search with free tier (50 calls/month)
+- **Adzuna API**: Global job search with free tier (50 calls/month) + intelligent caching
 - **JSearch API**: Multi-source aggregator via RapidAPI
 - **Indeed Publisher API**: Official access (application required)
 - **TheJobsAPI**: Open source job board API
@@ -244,6 +278,26 @@ OrionJobs AI prioritizes legal and sustainable data collection through:
 - Follow terms of service
 - No aggressive scraping practices
 - Focus on publicly available postings
+- Smart caching to minimize API calls
+
+## 🧪 Testing
+
+**Run the complete test suite:**
+```bash
+pytest
+```
+
+**Run integration tests:**
+```bash
+python run.py test
+```
+
+**Test coverage includes:**
+- Unit tests for all services
+- API integration tests with mocking
+- Database model validation
+- Error handling scenarios
+- Cache system functionality
 
 ## 🤝 Contributing
 

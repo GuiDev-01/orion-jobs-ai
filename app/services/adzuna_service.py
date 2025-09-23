@@ -4,6 +4,8 @@ import logging
 from typing import List, Dict 
 from dotenv import load_dotenv
 import hashlib
+from app.services.cache_service import get_cached_response, save_response_to_cache
+from app.database import SessionLocal
 
 # Load environment variables from .env file
 load_dotenv()
@@ -26,21 +28,31 @@ def fetch_adzuna_jobs(
     location: str = None,
     sort_by: str = None,
     full_time: bool = None,
-    permanent: bool = None
+    permanent: bool = None, 
+    **kwargs
 ) -> List[Dict]:
+    # Manage database session
+    db = SessionLocal()
     """
     Fetches job data from Adzuna API.
     """
-    logger.info(f"Fetching jobs from Adzuna API for query '{query}' in country '{country}'...")
+
     try:
+        cached_response = get_cached_response(query, country, db)
+        if cached_response:
+            logger.info(f"Using cached response for query '{query}' in country '{country}' (loaded from database)")
+            return cached_response.response
+                
         url = f"{ADZUNA_API_URL}/{country}/search/1"
         params = {
             "app_id": ADZUNA_APP_ID,
             "app_key": ADZUNA_APP_KEY,
             "results_per_page": results_per_page,
-            "what": query
+            "what": query,
+            **kwargs
         }
-        
+
+        logger.info(f"Requesting Adzuna API with params: {params}")
         # Add optional parameters
         if salary_min:
             params["salary_min"] = salary_min
@@ -56,24 +68,14 @@ def fetch_adzuna_jobs(
         response = requests.get(url, params=params)
         response.raise_for_status()
         jobs = response.json().get("results", [])
-        logger.info(f"Fetched {len(jobs)} jobs from Adzuna API.")
-        return jobs
+        
+        save_response_to_cache(query, country, jobs, db)
+        logger.info(f"Saved response to cache for query '{query}' in country '{country}'")
+        return jobs 
+    
     except requests.exceptions.RequestException as e:
-        logger.error(f"Error fetching jobs from Adzuna API: {e}")
+        logger.error(f"Request error occured: {e}")
         return []
-    except Exception as e: 
-        logger.error(f"Unexpected error fetching jobs from Adzuna API: {e}")
-        return []
-    except requests.exceptions.HTTPError as http_err:
-        logger.error(f"HTTP error occurred: {http_err}")
-        return []
-    except requests.exceptions.ConnectionError as conn_err:
-        logger.error(f"Connection error occurred: {conn_err}")
-        return []
-    except requests.exceptions.Timeout as timeout_err:
-        logger.error(f"Request timeout: {timeout_err}")
-        return []
-
 def normalize_adzuna_jobs(raw_jobs: List[Dict]) -> List[Dict]:
     """
     Normalizes job data fetched from Adzuna API.
@@ -82,11 +84,14 @@ def normalize_adzuna_jobs(raw_jobs: List[Dict]) -> List[Dict]:
     logger.info("Normalizing Adzuna jobs...")
     normalized_jobs = []
     for job in raw_jobs:
+        if not job.get("title") or not job.get("company", {}).get("display_name"):
+            logger.warning(f"Skipping job ID {job.get('id')} due to missing required fields: {job}")
+            continue
         # Generate unique ID using hash of original ID
         original_id = str(job.get("id", ""))
-        # Create hash and take only a portion to ensure valid integer
+        # Create hash and convert it to an integer within the range of 32-bit signed integer
         hash_object = hashlib.md5(original_id.encode())
-        unique_id = int(hash_object.hexdigest()[:8], 16) % 2147483647 # Limit to INTEGER max
+        unique_id = int(hash_object.hexdigest()[:8], 16) % 2147483647
         
         
         normalized_jobs.append({
@@ -97,7 +102,7 @@ def normalize_adzuna_jobs(raw_jobs: List[Dict]) -> List[Dict]:
             "tags": [],
             "location": job.get("location", {}).get("display_name") or "Unknown",
             "description": (job.get("description")[:200].strip() + "...") if job.get("description") else "No description available",
-            "url": job.get("redirect_url").split("?")[0] if job.get("redirect_url") else "No URL available",
+            "url": (job.get("redirect_url") or "No URL available").split("?")[0],
             "created_at": job.get("created")
         })
     logger.info(f"Normalized {len(normalized_jobs)} Adzuna jobs.")
@@ -134,3 +139,4 @@ if __name__ == "__main__":
         print(f"❌ Error saving data: {e}")
     finally:
         db.close()
+        logger.info("Database session closed")

@@ -7,9 +7,9 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 from app.models import Job
-print("Creating table...")
-print (f"Registered tables: {list(Base.metadata.tables.keys())}") #Debug
-Base.metadata.create_all(bind=engine)
-print("Table created!")
+# print("Creating table...")
+# print (f"Registered tables: {list(Base.metadata.tables.keys())}") #Debug
+# Base.metadata.create_all(bind=engine)
+# print("Table created!")
 
 

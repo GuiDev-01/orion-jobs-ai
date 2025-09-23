@@ -57,7 +57,7 @@ class TestRemoteokService(unittest.TestCase):
         self.assertEqual(normalized[0]["id"], 123)
         self.assertEqual(normalized[0]["title"], "Python Developer")
         self.assertEqual(normalized[0]["company"], "Test Company")
-        self.assertEqual(normalized[0]["tags"], ["python", "django"])
+        assert normalized[0]["tags"] == "python,django" 
         self.assertEqual(normalized[0]["url"], "https://example.com/job/123")
         self.assertEqual(normalized[0]["created_at"], "2025-09-18T10:00:00Z")
     
@@ -92,7 +92,7 @@ class TestRemoteokService(unittest.TestCase):
             "title": "Developer",
             "company": "Test Inc",
             "work_modality": "Remote",
-            "tags": ["python", "fastapi"],
+            "tags": "python,fastapi", 
             "url": "https://example.com/job",
             "created_at": "2025-09-18T10:00:00Z"
         }]

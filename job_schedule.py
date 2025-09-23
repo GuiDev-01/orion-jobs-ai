@@ -4,6 +4,7 @@ import logging
 from app.database import SessionLocal
 from app.services.remoteok_service import fetch_remote_jobs, normalize_remote_jobs, save_jobs_to_db
 from app.services.adzuna_service import fetch_adzuna_jobs, normalize_adzuna_jobs
+
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)

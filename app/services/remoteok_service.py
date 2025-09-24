@@ -116,7 +116,7 @@ def save_jobs_to_db(jobs: List[Dict], db: Session) -> None:
             title=job.get("title") or "",
             company=job.get("company") or "",
             work_modality=job.get("work_modality") or "",
-            tags=tags_val,
+            tags=tags_val if tags_val is not None else [],  # Use empty array if None (Postgres array column requires non-null)
             url=job.get("url") or "",
             created_at=created_dt if created_dt is not None else datetime.utcnow()
         )

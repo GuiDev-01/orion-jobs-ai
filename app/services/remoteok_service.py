@@ -2,6 +2,7 @@ from typing import List, Dict
 import requests
 from sqlalchemy.orm import Session
 from app.models.job import Job
+from datetime import datetime
 import logging
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -45,7 +46,7 @@ def normalize_remote_jobs(raw_jobs: List[Dict]):
             "title": job.get("position"),
             "company": job.get("company"),
             "work_modality": job.get("work_modality") if job.get("work_modality") else "Remote",
-            "tags": ",".join(job.get("tags", [])), # List of tags (skills, etc.)
+            "tags": job.get("tags", []) if isinstance(job.get("tags", []), (list, tuple)) else ([t.strip() for t in str(job.get("tags")).split(",") if t.strip()]),
             "url": job.get("url"),
             "created_at": job.get("date") # Date the job was posted
         })
@@ -62,18 +63,64 @@ def save_jobs_to_db(jobs: List[Dict], db: Session) -> None:
     """
     for job in jobs:
         # Check if the job already exists in the database by ID
-        existing_job = db.query(Job).filter(Job.id == job["id"]).first()
-        if not existing_job:
-            # Create a new record
-            new_job = Job(
-                id=job["id"],
-                title=job["title"],
-                company=job["company"],
-                work_modality=job["work_modality"],
-                tags=job["tags"],
-                url=job["url"],
-                created_at=job["created_at"]
-            )
+        try:
+            existing_job = db.query(Job).filter(Job.id == job["id"]).first()
+        except Exception:
+            # If the session is in a bad state, try to rollback and continue
+            try:
+                db.rollback()
+            except Exception:
+                pass
+            existing_job = None
+
+        if existing_job:
+            continue
+
+        # Create a new record
+        created = job.get("created_at")
+        # If created_at is a string, try to parse to datetime
+        if isinstance(created, str):
+            try:
+                created_dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
+            except Exception:
+                # fallback: leave as None
+                created_dt = None
+        elif isinstance(created, (datetime,)):
+            created_dt = created
+        else:
+            created_dt = None
+
+        # Normalize tags: accept list or CSV -> produce Python list or None
+        raw_tags = job.get("tags")
+        tags_val = None
+        if raw_tags:
+            if isinstance(raw_tags, (list, tuple)):
+                cleaned = [str(t).strip() for t in raw_tags if str(t).strip()]
+                tags_val = cleaned if cleaned else None
+            else:
+                s = str(raw_tags).strip()
+                cleaned = [t.strip() for t in s.split(",") if t.strip()]
+                tags_val = cleaned if cleaned else None
+
+        new_job = Job(
+            id=job["id"],
+            title=job.get("title") or "",
+            company=job.get("company") or "",
+            work_modality=job.get("work_modality") or "",
+            tags=tags_val,
+            url=job.get("url") or "",
+            created_at=created_dt if created_dt is not None else datetime.utcnow()
+        )
+
+        # Insert job with per-job commit to avoid whole-batch failure
+        try:
             db.add(new_job)
-    db.commit()
-    logger.info("Jobs saved successfully")
+            db.commit()
+        except Exception as e:
+            logger.exception(f"Failed to insert job id={job.get('id')}: {e}")
+            try:
+                db.rollback()
+            except Exception:
+                pass
+
+    logger.info("Jobs saved (attempted) to database")

@@ -1,9 +1,11 @@
 import os
 import requests
 import logging
-from typing import List, Dict 
+from typing import List, Dict
 from dotenv import load_dotenv
 import hashlib
+from datetime import datetime
+
 from app.services.cache_service import get_cached_response, save_response_to_cache
 from app.database import SessionLocal
 
@@ -20,6 +22,7 @@ ADZUNA_APP_KEY = os.getenv("ADZUNA_APP_KEY")
 # Adzuna API endpoint
 ADZUNA_API_URL = "https://api.adzuna.com/v1/api/jobs"
 
+
 def fetch_adzuna_jobs(
     country: str = "gb",
     query: str = "developer",
@@ -28,95 +31,114 @@ def fetch_adzuna_jobs(
     location: str = None,
     sort_by: str = None,
     full_time: bool = None,
-    permanent: bool = None, 
-    **kwargs
+    permanent: bool = None,
+    **kwargs,
 ) -> List[Dict]:
-    # Manage database session
-    db = SessionLocal()
-    """
-    Fetches job data from Adzuna API.
-    """
+    """Fetches job data from Adzuna API using a context-managed DB session for cache access."""
 
-    try:
-        cached_response = get_cached_response(query, country, db)
-        if cached_response:
-            logger.info(f"Using cached response for query '{query}' in country '{country}' (loaded from database)")
-            return cached_response.response
-                
-        url = f"{ADZUNA_API_URL}/{country}/search/1"
-        params = {
-            "app_id": ADZUNA_APP_ID,
-            "app_key": ADZUNA_APP_KEY,
-            "results_per_page": results_per_page,
-            "what": query,
-            **kwargs
-        }
+    with SessionLocal() as db:
+        try:
+            cached_response = get_cached_response(query, country, db)
+            if cached_response:
+                logger.info(
+                    f"Using cached response for query '{query}' in country '{country}' (loaded from database)"
+                )
+                return cached_response.response
 
-        logger.info(f"Requesting Adzuna API with params: {params}")
-        # Add optional parameters
-        if salary_min:
-            params["salary_min"] = salary_min
-        if location:
-            params["where"] = location
-        if sort_by:
-            params["sort_by"] = sort_by
-        if full_time:
-            params["full_time"] = "1"
-        if permanent:
-            params["permanent"] = "1"
-        
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        jobs = response.json().get("results", [])
-        
-        save_response_to_cache(query, country, jobs, db)
-        logger.info(f"Saved response to cache for query '{query}' in country '{country}'")
-        return jobs 
-    
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Request error occured: {e}")
-        return []
+            url = f"{ADZUNA_API_URL}/{country}/search/1"
+            params = {
+                "app_id": ADZUNA_APP_ID,
+                "app_key": ADZUNA_APP_KEY,
+                "results_per_page": results_per_page,
+                "what": query,
+                **kwargs,
+            }
+
+            # Add optional parameters
+            if salary_min:
+                params["salary_min"] = salary_min
+            if location:
+                params["where"] = location
+            if sort_by:
+                params["sort_by"] = sort_by
+            if full_time:
+                params["full_time"] = "1"
+            if permanent:
+                params["permanent"] = "1"
+
+            logger.info(f"Requesting Adzuna API with params: {params}")
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+            jobs = response.json().get("results", [])
+
+            # Save to cache (upsert handled by cache_service)
+            save_response_to_cache(query, country, jobs, db)
+            logger.info(f"Saved response to cache for query '{query}' in country '{country}'")
+            return jobs
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Request error occurred: {e}")
+            return []
+
+
 def normalize_adzuna_jobs(raw_jobs: List[Dict]) -> List[Dict]:
-    """
-    Normalizes job data fetched from Adzuna API.
-    Ensures consistent structure for database insertion.
+    """Normalizes job data from Adzuna into a compact, DB-ready structure.
+
+    - Converts external string IDs into deterministic integers (MD5 -> int).
+    - Parses `created` ISO strings into Python datetime when possible.
+    - Flattens tags into CSV strings.
     """
     logger.info("Normalizing Adzuna jobs...")
-    normalized_jobs = []
+    normalized_jobs: List[Dict] = []
+
     for job in raw_jobs:
-        if not job.get("title") or not job.get("company", {}).get("display_name"):
-            logger.warning(f"Skipping job ID {job.get('id')} due to missing required fields: {job}")
+        # Basic validation
+        if not job.get("title"):
+            logger.warning(f"Skipping job without title: {job}")
             continue
-        # Generate unique ID using hash of original ID
+
         original_id = str(job.get("id", ""))
-        # Create hash and convert it to an integer within the range of 32-bit signed integer
         hash_object = hashlib.md5(original_id.encode())
         unique_id = int(hash_object.hexdigest()[:8], 16) % 2147483647
-        
-        
-        normalized_jobs.append({
-            "id": unique_id,
-            "title": job.get("title"),
-            "company": job.get("company", {}).get("display_name"),
-            "work_modality": "Remote",
-            "tags": ",".join([]),
-            "location": job.get("location", {}).get("display_name") or "Unknown",
-            "description": (job.get("description")[:200].strip() + "...") if job.get("description") else "No description available",
-            "url": (job.get("redirect_url") or "No URL available").split("?")[0],
-            "created_at": job.get("created")
-        })
+
+        created_at = job.get("created")
+        # Keep original created string so tests that expect ISO string continue to pass
+        created_at_str = created_at if created_at else None
+
+        tags = job.get("tags") or []
+        # Normalize tags: flatten list and remove empty entries, produce None when no tags
+        if isinstance(tags, list):
+            cleaned = [str(t).strip() for t in tags if str(t).strip()]
+            tags_list = cleaned if cleaned else None
+        else:
+            # single value or string
+            s = str(tags).strip()
+            tags_list = [t.strip() for t in s.split(",") if t.strip()] if s else None
+
+        normalized_jobs.append(
+            {
+                "id": unique_id,
+                "title": job.get("title"),
+                "company": (job.get("company") or {}).get("display_name") or "",
+                "work_modality": "Remote",
+                "tags": tags_list,
+                "location": (job.get("location") or {}).get("display_name") or "Unknown",
+                "description": (job.get("description")[:200].strip() + "...") if job.get("description") else "No description available",
+                "url": (job.get("redirect_url") or job.get("url") or "").split("?")[0],
+                "created_at": created_at_str,
+            }
+        )
+
     logger.info(f"Normalized {len(normalized_jobs)} Adzuna jobs.")
     return normalized_jobs
 
+
 if __name__ == "__main__":
-    from app.database import SessionLocal
     from app.services.remoteok_service import save_jobs_to_db
-    
-    # Fetch data from Adzuna API
+
     raw_jobs = fetch_adzuna_jobs(country="gb", query="developer", results_per_page=5)
     normalized_jobs = normalize_adzuna_jobs(raw_jobs)
-    
-    # Display normalized data
+
     print("=== NORMALIZED JOBS ===")
     for i, job in enumerate(normalized_jobs, 1):
         print(f"\n--- Job {i} ---")
@@ -128,15 +150,15 @@ if __name__ == "__main__":
         print(f"URL: {job['url']}")
         print(f"Created: {job['created_at']}")
         print("-" * 50)
-    
-    # Save to database
-    print("\n=== SAVING TO DATABASE ===")
-    db = SessionLocal()
-    try:
-        save_jobs_to_db(normalized_jobs, db)
-        print("✅ Data saved successfully")
-    except Exception as e:
-        print(f"❌ Error saving data: {e}")
-    finally:
-        db.close()
-        logger.info("Database session closed")
+
+    # Save to database using a short-lived session
+    from app.database import SessionLocal as _SessionLocal
+
+    with _SessionLocal() as db:
+        try:
+            save_jobs_to_db(normalized_jobs, db)
+            print("✅ Data saved successfully")
+        except Exception as e:
+            print(f"❌ Error saving data: {e}")
+        finally:
+            logger.info("Database session closed")

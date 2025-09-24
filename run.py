@@ -174,5 +174,6 @@ if __name__ == "__main__":
             print("\n⚠️ Some tests failed, but starting server anyway...")
         
         # Start server
-        uvicorn.run("app:main.app", host="0.0.0.0", port=8000, reload=True)
+    # Correct ASGI module path: module:app_object
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
             

@@ -222,3 +222,8 @@ Thumbs.db
 
 # Logs
 *.log 
+
+# Temporary scripts
+*_collection.py
+quick_*.py
+check_*.py

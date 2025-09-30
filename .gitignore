@@ -227,3 +227,11 @@ Thumbs.db
 *_collection.py
 quick_*.py
 check_*.py
+
+# Docker
+.docker/
+docker-volumes/
+
+# Local development env files
+.env.development.local
+.env.production.local

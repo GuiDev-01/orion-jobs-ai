@@ -5,6 +5,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Latest-blue)
 ![Azure](https://img.shields.io/badge/Azure-Cloud-blue)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
+![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen)
 
 > Navigate your career journey with AI-powered precision.
 
@@ -12,353 +13,374 @@ Transform your job search from hours of manual browsing to intelligent, automate
 
 ## 📊 Current Status (September 2025)
 
-🎯 **Phase 3 COMPLETED** - Data Collection System Fully Operational
-- **1,396+ Jobs** collected from multiple sources
-- **3 API Integrations** working in production (RemoteOK, Adzuna, JSearch)
-- **17 Tests** passing with comprehensive coverage
-- **REST API** running on 127.0.0.1:8000
-- **PostgreSQL Database** with robust schema and migrations
-- **Smart Deduplication** preventing duplicate entries
-- **Rate Limiting** protecting API quotas
+🎯 **Phase 4 COMPLETED** - Cloud-Ready Production System
+- **✅ Security Hardened**: Critical vulnerability patched in API logging
+- **✅ Docker Containerized**: Full containerization with PostgreSQL
+- **✅ Azure Ready**: Complete deployment infrastructure configured
+- **✅ CI/CD Pipeline**: GitHub Actions automation implemented
+- **✅ Production Database**: 1,396+ jobs collected and stored
+- **✅ Health Monitoring**: Comprehensive health checks implemented
+- **✅ Documentation**: Complete deployment guides and examples
 
 ## ✨ Features
 
-### ✅ Current Features
-- **Multi-Source Job Aggregation**: Integrates RemoteOK, Adzuna, and JSearch APIs
-- **Production Database**: 1,396+ jobs collected and stored in PostgreSQL
-- **Smart Caching System**: Optimizes API calls with intelligent response caching
-- **Real-time Data Processing**: Normalizes job data from different sources
-- **Automated Scheduling**: Daily job collection with APScheduler
-- **Database Management**: PostgreSQL with SQLAlchemy 2.0 and Alembic migrations
-- **REST API**: Complete CRUD operations with FastAPI (127.0.0.1:8000)
-- **Data Validation**: Pydantic schemas for request/response validation
-- **API Documentation**: Automatic Swagger/OpenAPI documentation
-- **Comprehensive Testing**: Pytest suite with mocking and integration tests (17 tests passing)
-- **Error Handling**: Robust exception management and logging
-- **Rate Limiting**: Built-in protection against API abuse with quota management
-- **Deduplication System**: Intelligent job filtering using deterministic IDs
-- **Per-job Commits**: Resilient database operations with rollback protection
+### ✅ Current Features (Production Ready)
+- **🔒 Security Hardened**: API credentials protection and secure logging
+- **🐳 Docker Containerization**: Complete containerization with PostgreSQL
+- **☁️ Azure Cloud Ready**: Full deployment infrastructure on Microsoft Azure
+- **🔄 CI/CD Pipeline**: Automated deployment via GitHub Actions
+- **📊 Health Monitoring**: Comprehensive health checks and monitoring
+- **🗄️ Production Database**: 1,396+ jobs collected and stored in PostgreSQL
+- **🔌 Multi-Source Integration**: RemoteOK, Adzuna, and JSearch APIs
+- **🧠 Smart Caching System**: Optimized API calls with intelligent response caching
+- **⏰ Automated Scheduling**: Daily job collection with APScheduler
+- **🔍 Advanced Filtering**: Location, work modality, and skill-based filters
+- **📋 REST API**: Complete CRUD operations with FastAPI
+- **✅ Comprehensive Testing**: 17 tests passing with full coverage
+- **⚡ Rate Limiting**: Built-in protection against API abuse
+- **🔗 Smart Deduplication**: Intelligent job filtering using deterministic IDs
 
 ### 🚧 In Development
-- **Multi-Platform Integration**: Legal API connections to major job boards
-- **Smart Filtering**: Location, work modality, and skill-based filters
-- **Daily Summaries**: Automated job digest via Telegram/Discord
-- **Web Dashboard**: Modern React interface for job management
-- **AI Recommendations**: Machine learning-powered career consulting
+- **🤖 AI Recommendations**: Machine learning-powered career consulting
+- **📱 Web Dashboard**: Modern React interface for job management
+- **📧 Daily Summaries**: Automated job digest via Telegram/Discord
+- **📈 Analytics**: Advanced reporting and insights dashboard
 
 ## 🛠️ Tech Stack
 
-**Backend**
+**Backend (Production Ready)**
 - FastAPI (Python web framework)
 - PostgreSQL (Database)
 - SQLAlchemy 2.0 (ORM)
 - Alembic (Database migrations)
 - Pydantic v2 (Data validation)
-- Docker (Containerization)
 - APScheduler (Task automation)
 - Pytest (Testing framework)
 
 **Cloud Infrastructure (Azure)**
-- Azure Virtual Machines (Compute)
+- 🐳 Docker (Containerization)
+- Azure Container Registry (Image storage)
+- Azure App Service (Container hosting)
 - Azure Database for PostgreSQL (Managed database)
 - Azure Monitor (Logging and monitoring)
-- GitHub Actions (CI/CD)
+- GitHub Actions (CI/CD automation)
 
 **Planned Frontend**
 - React/Next.js
 - TypeScript
 - Tailwind CSS
 
-**Data Sources**
-- ✅ RemoteOK API (98 jobs per collection cycle)
-- ✅ Adzuna API (Global job search with 30-request quota protection)
-- ✅ JSearch API (RapidAPI - Multi-source aggregator)
-- 🔜 Indeed API (Publisher Program)
-- 🔜 TheJobsAPI (Open source)
-- 🔜 RSS Feeds (Company career pages)
-
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Python 3.11+
-- PostgreSQL
-- Docker
+- Python 3.12+
+- Docker Desktop
 - Git
-- Azure account (optional for local development)
+- Azure account (for cloud deployment)
 
-### Local Development
+### 🐳 Quick Start with Docker (Recommended)
 
-1. **Clone the repository**
 ```bash
-git clone https://github.com/GuiDev-01/orion-jobs-ai.git
-cd orion-jobs-ai
+# Clone the repository
+git clone https://github.com/yourusername/orionjobs-ai.git
+cd orionjobs-ai
+
+# Start with Docker (includes PostgreSQL)
+docker compose up -d
+
+# Check if containers are running
+docker compose ps
+
+# Test the API
+curl http://localhost:8000/health
+
+# View logs
+docker compose logs -f api
+
+# Stop containers
+docker compose down
 ```
 
-2. **Create virtual environment**
+### 🔧 Local Development Setup
+
 ```bash
+# Create virtual environment
 python -m venv .venv
 .venv\Scripts\activate  # Windows
 # source .venv/bin/activate  # Linux/Mac
-```
 
-3. **Install dependencies**
-```bash
+# Install dependencies
 pip install -r requirements.txt
-```
 
-4. **Set up environment variables**
-```bash
+# Set up environment variables
 copy .env.example .env
-# Edit .env with your database credentials and API keys
-```
+# Edit .env with your credentials
 
-5. **Run database migrations**
-```bash
+# Run database migrations
 alembic upgrade head
-```
 
-6. **Run tests**
-```bash
+# Run tests
 pytest
-```
 
-7. **Run integration tests**
-```bash
-python run.py test
-```
-
-8. **Start the application**
-```bash
+# Start the application
 python run.py
 ```
 
-### Cloud Deployment (Azure)
+### ☁️ Azure Cloud Deployment
 
-1. **Build Docker image**
+For complete Azure deployment instructions, see **[DEPLOYMENT.md](DEPLOYMENT.md)**
+
+**Quick Azure Setup:**
 ```bash
-docker build -t orionjobs-ai .
+# Build and deploy to Azure
+docker build -t orionjobs .
+az acr login --name your-registry
+docker push your-registry.azurecr.io/orionjobs:latest
 ```
 
-2. **Deploy to Azure VM**
+## 🎯 Development Roadmap
+
+### Phase 1: Foundation ✅ **COMPLETED**
+- [x] Database setup and models
+- [x] FastAPI integration  
+- [x] Basic CRUD operations
+
+### Phase 2: Core API ✅ **COMPLETED**
+- [x] Complete REST endpoints (GET, POST, PUT, DELETE)
+- [x] Data validation schemas (Pydantic)
+- [x] Request/Response models
+- [x] Advanced error handling
+- [x] API rate limiting
+
+### Phase 3: Data Collection ✅ **COMPLETED**
+- [x] RemoteOK API integration
+- [x] Adzuna API integration with quota management
+- [x] JSearch API (RapidAPI) integration
+- [x] Smart caching system for API responses
+- [x] Automated job scheduler
+- [x] Database migrations with Alembic
+- [x] Comprehensive testing suite (17 tests passing)
+- [x] Data cleaning and normalization
+- [x] **Production milestone: 1,396+ jobs collected**
+
+### Phase 4: Cloud Infrastructure ✅ **COMPLETED** 
+- [x] **Security Hardening**: API credentials protection
+- [x] **Docker Containerization**: Full application containerization
+- [x] **Azure Infrastructure**: Complete cloud deployment setup
+- [x] **CI/CD Pipeline**: GitHub Actions automation
+- [x] **Health Monitoring**: Comprehensive health checks
+- [x] **Documentation**: Complete deployment guides
+- [x] **Production Ready**: Tested and verified system
+
+### Phase 5: User Experience 🔮 **NEXT**
+- [ ] Daily job summaries and notifications
+- [ ] Messaging bot integration (Telegram/Discord)
+- [ ] User preferences and filtering system
+- [ ] Advanced search capabilities
+
+### Phase 6: Web Interface 🌐
+- [ ] React dashboard with modern UI
+- [ ] Real-time job filtering interface
+- [ ] User management and authentication
+- [ ] Analytics and reporting dashboard
+- [ ] Mobile-responsive design
+
+### Phase 7: AI Features 🧠
+- [ ] Machine learning job recommendation engine
+- [ ] AI-powered career consulting
+- [ ] Skill gap analysis and suggestions
+- [ ] Natural language processing for job descriptions
+- [ ] Personalized career path recommendations
+
+## 🐳 Docker Development
+
+This project supports Docker for both local development and production deployment.
+
+### Development Commands
+
 ```bash
-# Automated via GitHub Actions
-git push origin main
+# Build and run containers
+docker compose up -d
+
+# Check container status
+docker compose ps
+
+# View application logs
+docker compose logs -f api
+
+# Run tests inside container
+docker compose exec api pytest
+
+# Access container shell
+docker compose exec api bash
+
+# Stop containers
+docker compose down
+
+# Rebuild containers
+docker compose up --build
+```
+
+### Production Deployment
+
+```bash
+# Build production image
+docker build -t orionjobs-production .
+
+# Run with production settings
+docker run -e ENVIRONMENT=production orionjobs-production
 ```
 
 ## ☁️ Azure Architecture
 
 ```
-┌── GitHub Actions (CI/CD) ──┐
-│   ├─ Automated testing     │
-│   ├─ Docker build          │
-│   └─ Azure deployment      │
-└─────────────────────────────┘
+┌─── GitHub Repository ────────┐
+│   ├─ Source code             │
+│   ├─ GitHub Actions CI/CD    │
+│   └─ Automated deployment    │
+└───────────────────────────────┘
             │
             ▼
-┌── Azure VM (B1s) ──────────┐
-│   ├─ Ubuntu 22.04         │
-│   ├─ Docker runtime       │
-│   ├─ FastAPI application  │
-│   └─ Public endpoint      │
-└─────────────────────────────┘
+┌─── Azure Container Registry ──┐
+│   ├─ Docker image storage     │
+│   ├─ Automated builds         │
+│   └─ Version management       │
+└───────────────────────────────┘
             │
             ▼
-┌── Azure Database PostgreSQL ┐
-│   ├─ Managed service       │
-│   ├─ Automated backups     │
-│   ├─ 99.9% SLA            │
-│   └─ Private connection    │
-└─────────────────────────────┘
+┌─── Azure App Service ────────┐
+│   ├─ Container hosting       │
+│   ├─ Auto-scaling            │
+│   ├─ Health monitoring       │
+│   └─ SSL/HTTPS encryption    │
+└───────────────────────────────┘
+            │
+            ▼
+┌─── Azure Database PostgreSQL ┐
+│   ├─ Managed database        │
+│   ├─ Automated backups       │
+│   ├─ High availability       │
+│   └─ Performance monitoring  │
+└───────────────────────────────┘
 ```
 
 ## 📁 Project Structure
 
 ```
-orion-jobs-ai/
-├── app/
-│   ├── models/          # SQLAlchemy models & Pydantic schemas
-│   ├── services/        # API integrations & business logic
-│   ├── routers/         # FastAPI routes
-│   ├── tests/           # Comprehensive test suite
-│   ├── config.py        # Configuration
-│   ├── database.py      # Database connection
-│   └── main.py          # FastAPI application
-├── alembic/             # Database migrations
-│   └── versions/        # Migration scripts
-├── examples/            # API usage examples
-├── .github/
-│   └── workflows/       # GitHub Actions CI/CD
-├── job_schedule.py      # Automated job collection
-├── run.py              # Application entry point
-├── Dockerfile           # Container configuration
-├── docker-compose.yml   # Local development
-├── .env.example         # Environment variables template
-├── requirements.txt     # Python dependencies
-└── README.md
+orionjobs-ai/
+├── 🐳 Docker Configuration
+│   ├── Dockerfile              # Container configuration
+│   ├── docker-compose.yml      # Local development
+│   └── docker-entrypoint.sh    # Startup automation
+├── ☁️ Azure Infrastructure  
+│   ├── .github/workflows/      # CI/CD automation
+│   ├── DEPLOYMENT.md           # Cloud setup guide
+│   └── .env.example            # Environment template
+├── 🚀 Application Core
+│   ├── app/
+│   │   ├── models/             # Data models
+│   │   ├── services/           # API integrations
+│   │   ├── routers/            # FastAPI routes
+│   │   ├── tests/              # Test suite
+│   │   └── main.py             # Application entry
+│   ├── alembic/                # Database migrations
+│   └── run.py                  # Application launcher
+└── 📚 Documentation
+    ├── README.md               # Project overview
+    ├── examples/               # Usage examples
+    └── LICENSE                 # MIT license
 ```
 
-## 🎯 Roadmap
+## 💰 Azure Cost Management
 
-### Phase 1: Foundation ✅
-- [x] Database setup and models ✅
-- [x] FastAPI integration ✅
-- [x] Basic CRUD operations ✅
-
-### Phase 2: Core API ✅
-- [x] Complete REST endpoints (GET, POST, PUT, DELETE) ✅
-- [x] Data validation schemas (Pydantic) ✅
-- [x] Request/Response models ✅
-- [x] Advanced error handling ✅
-- [x] API rate limiting ✅
-
-### Phase 3: Data Collection ✅ **COMPLETED**
-- [x] RemoteOK API integration (priority 1) ✅
-- [x] Adzuna API integration with quota management ✅
-- [x] JSearch API (RapidAPI) integration ✅
-- [x] Smart caching system for API responses ✅
-- [x] Automated job scheduler ✅
-- [x] Database migrations with Alembic ✅
-- [x] Comprehensive testing suite (17 tests passing) ✅
-- [x] Data cleaning and normalization ✅
-- [x] Automated job discovery ✅
-- [x] **Production milestone: 1,396+ jobs collected** ✅
-- [ ] RSS feed processors
-
-### Phase 4: User Experience 🔮
-- [ ] Daily job summaries
-- [ ] Messaging bot integration
-- [ ] User preferences system
-
-### Phase 5: Web Interface 🌐
-- [ ] React dashboard
-- [ ] Job filtering interface
-- [ ] User management
-- [ ] Real-time job alerts
-- [ ] Analytics and reporting
-
-### Phase 6: AI Features 🧠
-- [ ] Job recommendation engine
-- [ ] Career consulting AI
-- [ ] Skill gap analysis
-- [ ] Natural language processing for job descriptions
-
-### Phase 7: Cloud Deployment (MVP on Azure) ☁️
-- [ ] Azure Database for PostgreSQL: Managed database setup
-- [ ] Docker Containerization: Application packaging for cloud deployment
-- [ ] Azure VM Deployment: Linux virtual machine configuration
-- [ ] CI/CD Pipeline: GitHub Actions integration with Azure
-- [ ] Azure Monitor: Basic logging and monitoring setup
-- [ ] Cost Optimization: Resource management for student budget
-
-## 💰 Cost Management
-
-**Azure for Students Benefits:**
-- $100 in free Azure credits
-- Access to 25+ free services
-- No credit card required
-
-**Estimated Monthly Costs:**
-- Azure VM B1s: ~$7-10/month
-- PostgreSQL Basic: ~$5-8/month
-- Storage and networking: ~$2-3/month
-- **Total: ~$15-20/month** (well within credit limits)
+**Estimated Monthly Costs (with $100 student credits):**
+- Azure Container Registry: ~$5
+- Azure App Service (B1): ~$15  
+- Azure Database PostgreSQL: ~$15-20
+- **Total: ~$35-40/month** (sustainable with credits)
 
 **Cost Optimization Tips:**
-- Deallocate VM when not in use
+- Deallocate resources when not in use
 - Use Basic tier for development
 - Monitor usage with Azure Cost Management
 - Leverage free tier services when possible
 
-## 🤖 Legal Job Data Collection
+## 🔒 Security Features
 
-OrionJobs AI prioritizes legal and sustainable data collection through:
+- **✅ API Credentials Protection**: Sensitive data never logged
+- **✅ Container Security**: Non-root user configuration
+- **✅ Environment Isolation**: Proper secrets management
+- **✅ Rate Limiting**: API abuse protection
+- **✅ Input Validation**: Pydantic schema validation
+- **✅ Error Handling**: Secure error responses
 
-### ✅ Active APIs (2025) - Production Ready
-- **RemoteOK API**: ✅ Fully integrated - 98 jobs per collection cycle
-- **Adzuna API**: ✅ Operational with quota protection (30 requests/month)
-- **JSearch API**: ✅ Multi-source aggregator via RapidAPI
-- **Indeed Publisher API**: 🔜 Official access (application required)
-- **TheJobsAPI**: 🔜 Open source job board API
+## 🧪 Testing & Quality
 
-### ✅ RSS Feeds
-- Company career page feeds
-- Job board RSS endpoints
-- Industry-specific feeds
-
-### ✅ Ethical Guidelines
-- Respect robots.txt files
-- Implement proper rate limiting
-- Follow terms of service
-- No aggressive scraping practices
-- Focus on publicly available postings
-- Smart caching to minimize API calls
-
-## 🧪 Testing
-
-**Run the complete test suite:**
+**Comprehensive Testing Suite:**
 ```bash
+# Run all tests
 pytest
-```
 
-**Run integration tests:**
-```bash
+# Run with coverage
+pytest --cov=app
+
+# Run integration tests
 python run.py test
+
+# Test specific modules
+pytest app/tests/test_adzuna_service.py
 ```
 
-**Test coverage includes:**
-- Unit tests for all services
-- API integration tests with mocking
-- Database model validation
-- Error handling scenarios
-- Cache system functionality
+**Quality Metrics:**
+- ✅ 17 tests passing
+- ✅ Security vulnerability patched
+- ✅ Docker containers tested
+- ✅ Health checks implemented
+- ✅ Error handling coverage
 
 ## 🤝 Contributing
 
-OrionJobs AI aims to democratize job hunting with AI. Whether you're a developer, designer, or passionate about career technology - your contribution matters!
+OrionJobs AI aims to democratize job hunting with AI. Contributions welcome!
 
-### Ways to Contribute
-- 🐛 **Report bugs** and suggest features
-- 💻 **Submit pull requests** for new features or fixes
-- 📖 **Improve documentation** and examples
-- 🎨 **Design UI/UX** improvements
-- 🧪 **Add tests** and improve code coverage
-- 🌍 **Translate** the application
+### Development Setup
+1. Fork the repository
+2. Create a feature branch
+3. Set up Docker development environment
+4. Make your changes with tests
+5. Submit a pull request
 
-### Development Guidelines
-- Follow PEP 8 for Python code style
-- Write descriptive commit messages
+### Guidelines
+- Follow Python PEP 8 style
 - Add tests for new features
-- Update documentation as needed
-- Respect the existing code architecture
-- Follow legal boundaries in data collection
+- Update documentation
+- Use conventional commit messages
+- Respect legal data collection boundaries
 
-## 📞 Support
+## 📞 Support & Community
 
-- **Issues**: [GitHub Issues](https://github.com/GuiDev-01/orion-jobs-ai/issues) for bug reports and feature requests
-- **Discussions**: [GitHub Discussions](https://github.com/GuiDev-01/orion-jobs-ai/discussions) for general questions
-- **Email**: guilhermesantosdev01@gmail.com
-- **Documentation**: Check `/examples` for detailed API guides
+- **🐛 Issues**: [GitHub Issues](https://github.com/your-username/orionjobs-ai/issues)
+- **💬 Discussions**: [GitHub Discussions](https://github.com/your-username/orionjobs-ai/discussions)
+- **📧 Email**: your-email@example.com
+- **📖 Documentation**: Check `/examples` directory
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
 
-## 🌟 Join the Movement
+## 🌟 Star the Project
 
-OrionJobs AI aims to democratize career opportunities through technology. Whether you're a job seeker, developer, or career enthusiast, your contribution can help thousands of professionals find their dream jobs.
+If you find OrionJobs AI useful, please ⭐ star the repository to show your support!
 
-**Star ⭐ this repository if you believe in the mission!**
+## 🏆 Acknowledgments
 
-## 🌟 Acknowledgments
-
-- FastAPI community for excellent documentation
-- SQLAlchemy team for robust ORM capabilities
-- Microsoft Azure for educational credits
-- Job board APIs for legal data access
-- Open source community for inspiration and tools
+- **FastAPI** community for excellent framework
+- **Microsoft Azure** for educational credits
+- **Docker** for containerization technology
+- **PostgreSQL** for robust database solutions
+- **Open Source** community for inspiration
 
 ---
 
 **Made with ❤️ for the developer community**
 
-*Navigate your career journey with AI-powered precision*
+*Phase 4 Complete - Now Production Ready with Cloud Infrastructure* 🚀

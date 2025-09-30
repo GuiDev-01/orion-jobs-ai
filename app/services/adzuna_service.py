@@ -5,7 +5,7 @@ from typing import List, Dict
 from dotenv import load_dotenv
 import hashlib
 from datetime import datetime
-
+from app.config import ADZUNA_APP_ID, ADZUNA_APP_KEY
 from app.services.cache_service import get_cached_response, save_response_to_cache
 from app.database import SessionLocal
 
@@ -15,10 +15,6 @@ load_dotenv()
 # Configure logging
 logger = logging.getLogger(__name__)
 
-# Load Adzuna API credentials from environment variables
-ADZUNA_APP_ID = os.getenv("ADZUNA_APP_ID")
-ADZUNA_APP_KEY = os.getenv("ADZUNA_APP_KEY")
-
 # Adzuna API endpoint
 ADZUNA_API_URL = "https://api.adzuna.com/v1/api/jobs"
 
@@ -27,6 +23,7 @@ def fetch_adzuna_jobs(
     country: str = "gb",
     query: str = "developer",
     results_per_page: int = 10,
+    page: int = 1,
     salary_min: int = None,
     location: str = None,
     sort_by: str = None,
@@ -45,7 +42,7 @@ def fetch_adzuna_jobs(
                 )
                 return cached_response.response
 
-            url = f"{ADZUNA_API_URL}/{country}/search/1"
+            url = f"{ADZUNA_API_URL}/{country}/search/{page}"
             params = {
                 "app_id": ADZUNA_APP_ID,
                 "app_key": ADZUNA_APP_KEY,
@@ -66,7 +63,8 @@ def fetch_adzuna_jobs(
             if permanent:
                 params["permanent"] = "1"
 
-            logger.info(f"Requesting Adzuna API with params: {params}")
+            safe_params = {k: v for k, v in params.items() if k not in ['app_id', 'app_key']}
+            logger.info(f"Requesting Adzuna API with params: {safe_params}")
             response = requests.get(url, params=params)
             response.raise_for_status()
             jobs = response.json().get("results", [])

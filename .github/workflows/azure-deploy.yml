@@ -1,0 +1,76 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Login to Azure Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ secrets.ACR_NAME }}.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+    
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: |
+          ${{ secrets.ACR_NAME }}.azurecr.io/orionjobs:latest
+          ${{ secrets.ACR_NAME }}.azurecr.io/orionjobs:${{ github.sha }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Configure App Service to use ACR
+      run: |
+        az webapp config container set \
+          --name ${{ secrets.WEBAPP_NAME }} \
+          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+          --docker-custom-image-name ${{ secrets.ACR_NAME }}.azurecr.io/orionjobs:${{ github.sha }} \
+          --docker-registry-server-url https://${{ secrets.ACR_NAME }}.azurecr.io \
+          --docker-registry-server-user ${{ secrets.ACR_USERNAME }} \
+          --docker-registry-server-password ${{ secrets.ACR_PASSWORD }}
+    
+    - name: Set App Service environment variables
+      run: |
+        az webapp config appsettings set \
+          --name ${{ secrets.WEBAPP_NAME }} \
+          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+          --settings \
+          DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+          ENVIRONMENT="production" \
+          COLLECT_MAX_PAGES="2" \
+          COLLECT_SLEEP_SECONDS="1.5" \
+          COLLECT_ADZUNA_MAX_REQUESTS="30" \
+          ADZUNA_APP_ID="${{ secrets.ADZUNA_APP_ID }}" \
+          ADZUNA_APP_KEY="${{ secrets.ADZUNA_APP_KEY }}" \
+          JSEARCH_API_KEY="${{ secrets.JSEARCH_API_KEY }}"
+    
+    - name: Restart App Service
+      run: |
+        az webapp restart \
+          --name ${{ secrets.WEBAPP_NAME }} \
+          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
+    
+    - name: Verify deployment
+      run: |
+        echo "Deployment completed. App URL: https://${{ secrets.WEBAPP_NAME }}.azurewebsites.net"
+        echo "Health check: https://${{ secrets.WEBAPP_NAME }}.azurewebsites.net/health"

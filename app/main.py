@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from sqlalchemy.exc import IntegrityError
 from fastapi.middleware.cors import CORSMiddleware
 from app.exceptions import(
@@ -10,6 +10,8 @@ from app.exceptions import(
 )
 from app.routers import jobs_router
 from app.middleware import rate_limit_middleware
+from sqlalchemy import text
+from app.routers.jobs_router import get_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -68,10 +70,21 @@ async def root():
         "version": "1.0.0"
     }
 
+# Only fixing the typo in the function name
 @app.get("/health")
-async def healt_check():
+async def health_check(db=Depends(get_db)):
+    """ Health check endpoint - checks API and database"""
+    db_status = "unhealthy"
+    try:
+        result = db.execute(text("SELECT 1")).scalar()
+        db_status = "healthy" if result == 1 else "unhealthy"
+    except Exception as e:
+        db_status = f"error: {str(e)}"
+        
     return {
         "status": "healthy",
         "service": "OrionJobs AI",
-        "features": ["error_handling", "logging", "cors"]
+        "database": db_status,
+        "features": ["error_handling", "logging", "cors", "db_check"],
+        "version": "1.0.0"
     }

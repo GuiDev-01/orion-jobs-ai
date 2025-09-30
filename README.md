@@ -358,9 +358,7 @@ OrionJobs AI aims to democratize job hunting with AI. Contributions welcome!
 
 ## 📞 Support & Community
 
-- **🐛 Issues**: [GitHub Issues](https://github.com/your-username/orionjobs-ai/issues)
-- **💬 Discussions**: [GitHub Discussions](https://github.com/your-username/orionjobs-ai/discussions)
-- **📧 Email**: your-email@example.com
+- **📧 Email**: guilhermesantosdev01@gmail.com
 - **📖 Documentation**: Check `/examples` directory
 
 ## 📄 License

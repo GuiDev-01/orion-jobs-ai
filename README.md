@@ -92,7 +92,7 @@ docker compose up -d
 docker compose ps
 
 # Test the API
-curl http://localhost:8000/health
+curl http://0.0.0.0:8000/health
 
 # View logs
 docker compose logs -f api

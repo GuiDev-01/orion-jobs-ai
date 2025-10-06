@@ -2,7 +2,7 @@ name: Deploy to Azure
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, phase-4-azure-deployment ]
   workflow_dispatch:
 
 jobs:

@@ -44,10 +44,10 @@ jobs:
         az webapp config container set \
           --name ${{ secrets.WEBAPP_NAME }} \
           --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-          --docker-custom-image-name ${{ secrets.ACR_NAME }}.azurecr.io/orionjobs:${{ github.sha }} \
-          --docker-registry-server-url https://${{ secrets.ACR_NAME }}.azurecr.io \
-          --docker-registry-server-user ${{ secrets.ACR_USERNAME }} \
-          --docker-registry-server-password ${{ secrets.ACR_PASSWORD }}
+          --container-image-name ${{ secrets.ACR_NAME }}.azurecr.io/orionjobs:${{ github.sha }} \
+          --container-registry-url https://${{ secrets.ACR_NAME }}.azurecr.io \
+          --container-registry-user ${{ secrets.ACR_USERNAME }} \
+          --container-registry-password ${{ secrets.ACR_PASSWORD }}
     
     - name: Set App Service environment variables
       run: |

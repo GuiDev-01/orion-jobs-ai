@@ -25,10 +25,15 @@ def read_jobs(db: Session = Depends(get_db)):
     jobs = db.query(Job).all()
     return jobs
 
+
+from datetime import datetime
+
 # POST Endpoint
 @router.post("/jobs", response_model=JobResponse)
 def create_job(job: JobCreate, db: Session = Depends(get_db)):
-    db_job = Job(**job.model_dump())
+    job_data = job.model_dump()
+    job_data["created_at"] = datetime.now()
+    db_job = Job(**job_data)
     db.add(db_job)
     db.commit()
     db.refresh(db_job)

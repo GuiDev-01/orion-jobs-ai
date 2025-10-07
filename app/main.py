@@ -21,17 +21,27 @@ async def lifespan(app: FastAPI):
     """
     # Startup
     print("🚀 Starting OrionJobs AI...")
-    from job_schedule import start_scheduler
-    scheduler = start_scheduler()
-    print("✅ Scheduler initialized successfully")
+    
+    # Try to start scheduler, but don't fail if it doesn't work
+    scheduler = None
+    try:
+        from job_schedule import start_scheduler
+        scheduler = start_scheduler()
+        print("✅ Scheduler initialized successfully")
+    except Exception as e:
+        print(f"⚠️ Scheduler failed to start: {e}")
+        print("✅ Application will continue without scheduler")
     
     yield # Application is running
     
     # Shutdown
     print("🔄️ Shutting down OrionJobs AI...")
     if scheduler:
-        scheduler.shutdown()
-        print("✅ Scheduler shutdown successfully")
+        try:
+            scheduler.shutdown()
+            print("✅ Scheduler shutdown successfully")
+        except:
+            print("⚠️ Scheduler shutdown failed")
 
 app = FastAPI(
     title="OrionJobs AI",
@@ -60,7 +70,7 @@ app.add_middleware(
 )
 
 # Routers
-app.include_router(jobs_router.router, tags=["jobs"])
+app.include_router(jobs_router.router, prefix="/api/v1", tags=["jobs"])
 
 @app.get("/")
 async def root():

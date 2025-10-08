@@ -8,27 +8,25 @@ WORKDIR /app
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        postgresql-client \
-        build-essential \
-        libpq-dev && \
+        libpq-dev \
+        postgresql-client && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Melhore esta seção:
+# Copy application code
 COPY . .
 
-# Copy and set up entrypoint script
-COPY docker-entrypoint.sh .
-RUN chmod +x docker-entrypoint.sh
+# Create non-root user and set ownership
+RUN adduser --disabled-password --gecos "" appuser && \
+    chown -R appuser:appuser /app
 
-# Create non-root user for security
-RUN adduser --disabled-password --gecos "" appuser
+# Switch to non-root user
 USER appuser
 
 EXPOSE 8000
 
-ENTRYPOINT ["./docker-entrypoint.sh"]
+# Use a simple command instead of entrypoint script
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

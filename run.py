@@ -1,13 +1,31 @@
 import sys
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import uvicorn
 from app.services.remoteok_service import fetch_remote_jobs, normalize_remote_jobs
 from app.database import SessionLocal
 from app.services.cache_service import get_cached_response
 from app.services.remoteok_service import save_jobs_to_db
+from sqlalchemy import text
 
 # Add the current directory to the Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+def test_database_connection():
+    """Test if database is accessible"""
+    try:
+        db = SessionLocal()
+        db.execute(text("SELECT 1"))
+        db.close()
+        print(" Database connection successful")
+        return True
+    except Exception as e:
+        print(f" Database connection failed: {e}")
+        print("Make sure Docker containers are running: docker compose up")
+        return False
 
 def test_remoteok_integration():
     
@@ -136,6 +154,12 @@ def run_tests():
     """Run all integration tests"""
     print("🧪 Running integration tests...")
     print('-' * 60)
+
+    # Test connection with database first
+    if not test_database_connection():
+        print("Cannot proceed without database connection")
+        return False
+
     # Ensure DB tables exist (useful for SQLite test DB)
     try:
         from app.database import engine
@@ -164,16 +188,15 @@ if __name__ == "__main__":
         # Just run tests
         run_tests()
     else:
-        # Run tests firsts, then start server
+        # Run tests first, then start server
         print("🔧 OrionJobs AI - Starting Integration Tests")
         tests_passed = run_tests()
         
         if tests_passed:
-            print("\n All tests passed! Starting OrionJobs AI server...")
+            print("\n✅ All tests passed! Starting OrionJobs AI server...")
         else:
             print("\n⚠️ Some tests failed, but starting server anyway...")
         
         # Start server
-    # Correct ASGI module path: module:app_object
-    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
+        uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
             

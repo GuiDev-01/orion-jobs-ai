@@ -20,7 +20,7 @@ def get_jobs(db: Session = Depends(get_db)):
                 "title": job.title,
                 "company": job.company,
                 "work_modality": job.work_modality,
-                "tags": job.tags,
+                "tags": job.tags if isinstance(job.tags, list) else job.tags.split(","),
                 "url": job.url,
                 "created_at": str(job.created_at)
             })

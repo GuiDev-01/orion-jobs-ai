@@ -234,4 +234,4 @@ docker-volumes/
 
 # Local development env files
 .env.development.local
-.env.production.local
+.env.production.local.env

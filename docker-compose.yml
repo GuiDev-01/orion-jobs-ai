@@ -5,45 +5,18 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/orionjobs
+      - DATABASE_URL=${DATABASE_URL}
       - ENVIRONMENT=development
       - COLLECT_MAX_PAGES=1
       - COLLECT_SLEEP_SECONDS=1
       - COLLECT_ADZUNA_MAX_REQUESTS=5
     volumes:
       - .:/app
-    depends_on:
-      db:
-        condition: service_healthy
     restart: unless-stopped
     command: >
       sh -c "
-        echo 'Waiting for PostgreSQL...' &&
-        while ! pg_isready -h db -p 5432 -U postgres; do sleep 1; done &&
-        echo 'PostgreSQL is ready!' &&
         echo 'Running migrations...' &&
         alembic upgrade head &&
         echo 'Starting OrionJobs API...' &&
         uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
       "
-  
-  db:
-    image: postgres:16
-    container_name: orionjobs-db
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=orionjobs
-    ports: 
-      - "5433:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-volumes:
-  postgres_data:

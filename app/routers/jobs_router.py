@@ -1,12 +1,44 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.database import get_db
+from app.models.job import Job
 import requests
 import json
 
 router = APIRouter()
 
 @router.get("/jobs")
-def get_jobs():
-    return {"message": "Jobs endpoint is working!", "jobs": [], "total": 0, "status": "success"}
+def get_jobs(db: Session = Depends(get_db)):
+    """Get all jobs from database"""
+    try:
+        jobs = db.query(Job).all()
+        
+        jobs_list = []
+        for job in jobs:
+            jobs_list.append({
+                "id": job.id,
+                "title": job.title,
+                "company": job.company,
+                "work_modality": job.work_modality,
+                "tags": job.tags,
+                "url": job.url,
+                "created_at": str(job.created_at)
+            })
+        
+        return {
+            "message": "Jobs retrieved successfully!",
+            "jobs": jobs_list,
+            "total": len(jobs_list),
+            "status": "success"
+        }
+    except Exception as e:
+        return {
+            "message": "Error retrieving jobs", 
+            "error": str(e), 
+            "jobs": [], 
+            "total": 0,
+            "status": "error"
+        }
 
 @router.post("/jobs/collect")
 def collect_jobs_manual():

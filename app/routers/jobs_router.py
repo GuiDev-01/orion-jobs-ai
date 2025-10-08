@@ -15,12 +15,13 @@ def get_jobs(db: Session = Depends(get_db)):
         
         jobs_list = []
         for job in jobs:
+            formatted_tags = job.tags if isinstance(job.tags, list) else job.tags.split(",") if job.tags else []
             jobs_list.append({
                 "id": job.id,
                 "title": job.title,
                 "company": job.company,
                 "work_modality": job.work_modality,
-                "tags": job.tags if isinstance(job.tags, list) else job.tags.split(","),
+                "tags": formatted_tags,
                 "url": job.url,
                 "created_at": str(job.created_at)
             })

@@ -117,13 +117,8 @@ docker compose up -d
 # Check if containers are running
 docker compose ps
 
-<<<<<<< HEAD
 # Test the API
 curl http://0.0.0.0:8000/health
-=======
-# Test the local API
-curl http://localhost:8000/api/v1/jobs
->>>>>>> phase-4-azure-deployment
 
 # View logs
 docker compose logs -f api
@@ -369,11 +364,8 @@ OrionJobs AI aims to democratize job hunting with AI. Contributions welcome!
 ## 📞 Support & Community
 
 - **📧 Email**: guilhermesantosdev01@gmail.com
-<<<<<<< HEAD
 - **📖 Documentation**: Check `/examples` directory
-=======
 - **🌐 Live API**: https://orionjobs-api.azurewebsites.net
->>>>>>> phase-4-azure-deployment
 
 ## 📄 License
 

@@ -74,3 +74,10 @@ jobs:
       run: |
         echo "Deployment completed. App URL: https://${{ secrets.WEBAPP_NAME }}.azurewebsites.net"
         echo "Health check: https://${{ secrets.WEBAPP_NAME }}.azurewebsites.net/health"
+      
+    - name: Verify container status
+      run: |
+        az webapp show \
+          --name ${{ secrets.WEBAPP_NAME }} \
+          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+          --query "state"

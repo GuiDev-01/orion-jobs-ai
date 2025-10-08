@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - phase-3-data-collection
+      - phase-4-azure-deployment
   pull_request:
     branches:
       - main
       - phase-3-data-collection
+      - phase-4-azure-deployment
 
 jobs:
   test:
@@ -29,11 +31,13 @@ jobs:
         pip install -r requirements.txt
 
     - name: Setup database with Alembic
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL}}
       run: |
-        export DATABASE_URL=sqlite:///test.db
-        alembic upgrade head  # ✅ CRIAR TABELAS ANTES DOS TESTES
+        alembic upgrade head 
 
     - name: Run tests
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL}}
       run: |
-        export DATABASE_URL=sqlite:///test.db
         pytest

@@ -11,32 +11,41 @@
 
 Transform your job search from hours of manual browsing to intelligent, automated career guidance through legal API integrations and smart filtering, deployed on Microsoft Azure cloud infrastructure.
 
-## 📊 Current Status (September 2025)
+## 📊 Current Status (October 2025)
 
 🎯 **Phase 4 COMPLETED** - Cloud-Ready Production System
 - **✅ Security Hardened**: Critical vulnerability patched in API logging
 - **✅ Docker Containerized**: Full containerization with PostgreSQL
-- **✅ Azure Ready**: Complete deployment infrastructure configured
+- **✅ Azure Deployed**: Complete deployment infrastructure on Microsoft Azure
 - **✅ CI/CD Pipeline**: GitHub Actions automation implemented
-- **✅ Production Database**: 1,396+ jobs collected and stored
+- **✅ Production Database**: Multi-source job collection active
 - **✅ Health Monitoring**: Comprehensive health checks implemented
-- **✅ Documentation**: Complete deployment guides and examples
+- **✅ Live API**: Fully functional endpoints at `/api/v1/jobs`
+
+## 🌐 Live Application
+
+**Production API:** `https://orionjobs-api.azurewebsites.net`
+
+### Available Endpoints:
+- **GET `/api/v1/jobs`** - Retrieve all jobs
+- **GET `/docs`** - Interactive API documentation
+- **GET `/health`** - Health check endpoint
 
 ## ✨ Features
 
 ### ✅ Current Features (Production Ready)
 - **🔒 Security Hardened**: API credentials protection and secure logging
 - **🐳 Docker Containerization**: Complete containerization with PostgreSQL
-- **☁️ Azure Cloud Ready**: Full deployment infrastructure on Microsoft Azure
+- **☁️ Azure Cloud Deployed**: Fully operational on Microsoft Azure infrastructure
 - **🔄 CI/CD Pipeline**: Automated deployment via GitHub Actions
 - **📊 Health Monitoring**: Comprehensive health checks and monitoring
-- **🗄️ Production Database**: 1,396+ jobs collected and stored in PostgreSQL
+- **🗄️ Production Database**: Azure PostgreSQL with multi-source job data
 - **🔌 Multi-Source Integration**: RemoteOK, Adzuna, and JSearch APIs
 - **🧠 Smart Caching System**: Optimized API calls with intelligent response caching
 - **⏰ Automated Scheduling**: Daily job collection with APScheduler
 - **🔍 Advanced Filtering**: Location, work modality, and skill-based filters
 - **📋 REST API**: Complete CRUD operations with FastAPI
-- **✅ Comprehensive Testing**: 17 tests passing with full coverage
+- **✅ Comprehensive Testing**: Full test suite with CI/CD integration
 - **⚡ Rate Limiting**: Built-in protection against API abuse
 - **🔗 Smart Deduplication**: Intelligent job filtering using deterministic IDs
 
@@ -50,7 +59,7 @@ Transform your job search from hours of manual browsing to intelligent, automate
 
 **Backend (Production Ready)**
 - FastAPI (Python web framework)
-- PostgreSQL (Database)
+- PostgreSQL (Azure Database)
 - SQLAlchemy 2.0 (ORM)
 - Alembic (Database migrations)
 - Pydantic v2 (Data validation)
@@ -78,21 +87,43 @@ Transform your job search from hours of manual browsing to intelligent, automate
 - Git
 - Azure account (for cloud deployment)
 
-### 🐳 Quick Start with Docker (Recommended)
+### 🌐 Using the Live API
+
+```bash
+# Test the production API
+curl https://orionjobs-api.azurewebsites.net/api/v1/jobs
+
+# Check API health
+curl https://orionjobs-api.azurewebsites.net/health
+
+# Access interactive documentation
+open https://orionjobs-api.azurewebsites.net/docs
+```
+
+### 🐳 Local Development with Docker
 
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/orionjobs-ai.git
 cd orionjobs-ai
 
-# Start with Docker (includes PostgreSQL)
+# Configure environment variables
+cp .env.example .env
+# Edit .env with your Azure database credentials
+
+# Start with Docker (API only, uses Azure database)
 docker compose up -d
 
 # Check if containers are running
 docker compose ps
 
+<<<<<<< HEAD
 # Test the API
 curl http://0.0.0.0:8000/health
+=======
+# Test the local API
+curl http://localhost:8000/api/v1/jobs
+>>>>>>> phase-4-azure-deployment
 
 # View logs
 docker compose logs -f api
@@ -114,7 +145,7 @@ pip install -r requirements.txt
 
 # Set up environment variables
 copy .env.example .env
-# Edit .env with your credentials
+# Edit .env with your Azure database credentials
 
 # Run database migrations
 alembic upgrade head
@@ -126,16 +157,37 @@ pytest
 python run.py
 ```
 
-### ☁️ Azure Cloud Deployment
+## ☁️ Azure Architecture
 
-For complete Azure deployment instructions, see **[DEPLOYMENT.md](DEPLOYMENT.md)**
-
-**Quick Azure Setup:**
-```bash
-# Build and deploy to Azure
-docker build -t orionjobs .
-az acr login --name your-registry
-docker push your-registry.azurecr.io/orionjobs:latest
+```
+┌─── GitHub Repository ────────┐
+│   ├─ Source code             │
+│   ├─ GitHub Actions CI/CD    │
+│   └─ Automated deployment    │
+└───────────────────────────────┘
+            │
+            ▼
+┌─── Azure Container Registry ──┐
+│   ├─ Docker image storage     │
+│   ├─ Automated builds         │
+│   └─ Version management       │
+└───────────────────────────────┘
+            │
+            ▼
+┌─── Azure App Service ────────┐
+│   ├─ Container hosting       │ ✅ DEPLOYED
+│   ├─ Auto-scaling            │
+│   ├─ Health monitoring       │
+│   └─ SSL/HTTPS encryption    │
+└───────────────────────────────┘
+            │
+            ▼
+┌─── Azure Database PostgreSQL ┐
+│   ├─ Managed database        │ ✅ ACTIVE
+│   ├─ Automated backups       │
+│   ├─ High availability       │
+│   └─ Performance monitoring  │
+└───────────────────────────────┘
 ```
 
 ## 🎯 Development Roadmap
@@ -159,18 +211,18 @@ docker push your-registry.azurecr.io/orionjobs:latest
 - [x] Smart caching system for API responses
 - [x] Automated job scheduler
 - [x] Database migrations with Alembic
-- [x] Comprehensive testing suite (17 tests passing)
+- [x] Comprehensive testing suite
 - [x] Data cleaning and normalization
-- [x] **Production milestone: 1,396+ jobs collected**
 
 ### Phase 4: Cloud Infrastructure ✅ **COMPLETED** 
 - [x] **Security Hardening**: API credentials protection
 - [x] **Docker Containerization**: Full application containerization
 - [x] **Azure Infrastructure**: Complete cloud deployment setup
 - [x] **CI/CD Pipeline**: GitHub Actions automation
+- [x] **Production Database**: Azure PostgreSQL fully configured
+- [x] **Live Deployment**: API accessible at https://orionjobs-api.azurewebsites.net
 - [x] **Health Monitoring**: Comprehensive health checks
 - [x] **Documentation**: Complete deployment guides
-- [x] **Production Ready**: Tested and verified system
 
 ### Phase 5: User Experience 🔮 **NEXT**
 - [ ] Daily job summaries and notifications
@@ -199,7 +251,7 @@ This project supports Docker for both local development and production deploymen
 ### Development Commands
 
 ```bash
-# Build and run containers
+# Build and run containers (connects to Azure database)
 docker compose up -d
 
 # Check container status
@@ -221,95 +273,26 @@ docker compose down
 docker compose up --build
 ```
 
-### Production Deployment
-
-```bash
-# Build production image
-docker build -t orionjobs-production .
-
-# Run with production settings
-docker run -e ENVIRONMENT=production orionjobs-production
-```
-
-## ☁️ Azure Architecture
-
-```
-┌─── GitHub Repository ────────┐
-│   ├─ Source code             │
-│   ├─ GitHub Actions CI/CD    │
-│   └─ Automated deployment    │
-└───────────────────────────────┘
-            │
-            ▼
-┌─── Azure Container Registry ──┐
-│   ├─ Docker image storage     │
-│   ├─ Automated builds         │
-│   └─ Version management       │
-└───────────────────────────────┘
-            │
-            ▼
-┌─── Azure App Service ────────┐
-│   ├─ Container hosting       │
-│   ├─ Auto-scaling            │
-│   ├─ Health monitoring       │
-│   └─ SSL/HTTPS encryption    │
-└───────────────────────────────┘
-            │
-            ▼
-┌─── Azure Database PostgreSQL ┐
-│   ├─ Managed database        │
-│   ├─ Automated backups       │
-│   ├─ High availability       │
-│   └─ Performance monitoring  │
-└───────────────────────────────┘
-```
-
-## 📁 Project Structure
-
-```
-orionjobs-ai/
-├── 🐳 Docker Configuration
-│   ├── Dockerfile              # Container configuration
-│   ├── docker-compose.yml      # Local development
-│   └── docker-entrypoint.sh    # Startup automation
-├── ☁️ Azure Infrastructure  
-│   ├── .github/workflows/      # CI/CD automation
-│   ├── DEPLOYMENT.md           # Cloud setup guide
-│   └── .env.example            # Environment template
-├── 🚀 Application Core
-│   ├── app/
-│   │   ├── models/             # Data models
-│   │   ├── services/           # API integrations
-│   │   ├── routers/            # FastAPI routes
-│   │   ├── tests/              # Test suite
-│   │   └── main.py             # Application entry
-│   ├── alembic/                # Database migrations
-│   └── run.py                  # Application launcher
-└── 📚 Documentation
-    ├── README.md               # Project overview
-    ├── examples/               # Usage examples
-    └── LICENSE                 # MIT license
-```
-
 ## 💰 Azure Cost Management
 
-**Estimated Monthly Costs (with $100 student credits):**
+**Current Monthly Costs:**
 - Azure Container Registry: ~$5
 - Azure App Service (B1): ~$15  
 - Azure Database PostgreSQL: ~$15-20
-- **Total: ~$35-40/month** (sustainable with credits)
+- **Total: ~$35-40/month**
 
 **Cost Optimization Tips:**
-- Deallocate resources when not in use
-- Use Basic tier for development
 - Monitor usage with Azure Cost Management
+- Use Basic tier for development
 - Leverage free tier services when possible
+- Scale down during low usage periods
 
 ## 🔒 Security Features
 
 - **✅ API Credentials Protection**: Sensitive data never logged
 - **✅ Container Security**: Non-root user configuration
 - **✅ Environment Isolation**: Proper secrets management
+- **✅ Azure Security**: Managed database with SSL encryption
 - **✅ Rate Limiting**: API abuse protection
 - **✅ Input Validation**: Pydantic schema validation
 - **✅ Error Handling**: Secure error responses
@@ -318,7 +301,7 @@ orionjobs-ai/
 
 **Comprehensive Testing Suite:**
 ```bash
-# Run all tests
+# Run all tests locally
 pytest
 
 # Run with coverage
@@ -332,11 +315,38 @@ pytest app/tests/test_adzuna_service.py
 ```
 
 **Quality Metrics:**
-- ✅ 17 tests passing
-- ✅ Security vulnerability patched
-- ✅ Docker containers tested
-- ✅ Health checks implemented
-- ✅ Error handling coverage
+- ✅ Full test suite passing
+- ✅ Production deployment tested
+- ✅ Azure integration verified
+- ✅ CI/CD pipeline active
+- ✅ Health monitoring implemented
+
+## 📁 Project Structure
+
+```
+orionjobs-ai/
+├── 🐳 Docker Configuration
+│   ├── Dockerfile              # Container configuration
+│   ├── docker-compose.yml      # Local development
+│   └── .dockerignore           # Docker ignore rules
+├── ☁️ Azure Infrastructure  
+│   ├── .github/workflows/      # CI/CD automation
+│   │   ├── azure-deploy.yml    # Azure deployment
+│   │   └── ci.yml              # Continuous integration
+│   └── .env.example            # Environment template
+├── 🚀 Application Core
+│   ├── app/
+│   │   ├── models/             # Data models
+│   │   ├── services/           # API integrations
+│   │   ├── routers/            # FastAPI routes
+│   │   ├── tests/              # Test suite
+│   │   └── main.py             # Application entry
+│   ├── alembic/                # Database migrations
+│   └── run.py                  # Application launcher
+└── 📚 Documentation
+    ├── README.md               # Project overview
+    └── LICENSE                 # MIT license
+```
 
 ## 🤝 Contributing
 
@@ -345,7 +355,7 @@ OrionJobs AI aims to democratize job hunting with AI. Contributions welcome!
 ### Development Setup
 1. Fork the repository
 2. Create a feature branch
-3. Set up Docker development environment
+3. Set up local development environment
 4. Make your changes with tests
 5. Submit a pull request
 
@@ -354,12 +364,16 @@ OrionJobs AI aims to democratize job hunting with AI. Contributions welcome!
 - Add tests for new features
 - Update documentation
 - Use conventional commit messages
-- Respect legal data collection boundaries
+- Test with the live Azure database
 
 ## 📞 Support & Community
 
 - **📧 Email**: guilhermesantosdev01@gmail.com
+<<<<<<< HEAD
 - **📖 Documentation**: Check `/examples` directory
+=======
+- **🌐 Live API**: https://orionjobs-api.azurewebsites.net
+>>>>>>> phase-4-azure-deployment
 
 ## 📄 License
 
@@ -372,13 +386,16 @@ If you find OrionJobs AI useful, please ⭐ star the repository to show your sup
 ## 🏆 Acknowledgments
 
 - **FastAPI** community for excellent framework
-- **Microsoft Azure** for educational credits
+- **Microsoft Azure** for robust cloud infrastructure
 - **Docker** for containerization technology
-- **PostgreSQL** for robust database solutions
+- **PostgreSQL** for reliable database solutions
+- **GitHub Actions** for seamless CI/CD
 - **Open Source** community for inspiration
 
 ---
 
 **Made with ❤️ for the developer community**
 
-*Phase 4 Complete - Now Production Ready with Cloud Infrastructure* 🚀
+*Phase 4 Complete - Production Ready with Live Azure Deployment* 🚀
+
+**🌐 Try it now: [https://orionjobs-api.azurewebsites.net/api/v1/jobs](https://orionjobs-api.azurewebsites.net/api/v1/jobs)**

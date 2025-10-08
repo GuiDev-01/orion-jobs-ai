@@ -41,20 +41,19 @@ def normalize_remote_jobs(raw_jobs: List[Dict]):
     logger.info("Normalizing jobs... ")
     normalized_jobs = []
     for job in raw_jobs:
-        # prepare tags as CSV string (tests expect "python,django")
+        # Prepare tags as a list of strings
         raw_tags = job.get("tags", [])
         if isinstance(raw_tags, (list, tuple)):
             tags_list = [str(t).strip() for t in raw_tags if str(t).strip()]
         else:
             tags_list = [t.strip() for t in str(raw_tags).split(",") if t.strip()]
-        tags_csv = ",".join(tags_list) if tags_list else ""
 
         normalized_jobs.append({
             "id": int(job.get("id")),
             "title": job.get("position"),
             "company": job.get("company"),
             "work_modality": job.get("work_modality") if job.get("work_modality") else "Remote",
-            "tags": tags_csv,
+            "tags": tags_list,
             "url": job.get("url"),
             "created_at": job.get("date")  # Date the job was posted (keeps string as tests expect)
         })

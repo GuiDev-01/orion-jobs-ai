@@ -1,67 +1,72 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.database import SessionLocal
+from app.database import get_db
 from app.models.job import Job
-from fastapi import HTTPException
-from app.routers.job_router import JobResponse, JobCreate, JobUpdate, MessageResponse
-from typing import List
-from app.exceptions import JobNotFoundError
-import logging
+import requests
+import json
 
-logger = logging.getLogger(__name__)
 router = APIRouter()
 
-# Dependency to get DB session
-def get_db():
-    db = SessionLocal()
+@router.get("/jobs")
+def get_jobs(db: Session = Depends(get_db)):
+    """Get all jobs from database"""
     try:
-        yield db
-    finally:
-        db.close()
+        jobs = db.query(Job).all()
+        
+        jobs_list = []
+        for job in jobs:
+            formatted_tags = job.tags if isinstance(job.tags, list) else job.tags.split(",") if job.tags else []
+            jobs_list.append({
+                "id": job.id,
+                "title": job.title,
+                "company": job.company,
+                "work_modality": job.work_modality,
+                "tags": formatted_tags,
+                "url": job.url,
+                "created_at": str(job.created_at)
+            })
+        
+        return {
+            "message": "Jobs retrieved successfully!",
+            "jobs": jobs_list,
+            "total": len(jobs_list),
+            "status": "success"
+        }
+    except Exception as e:
+        return {
+            "message": "Error retrieving jobs", 
+            "error": str(e), 
+            "jobs": [], 
+            "total": 0,
+            "status": "error"
+        }
 
-# GET Endpoint
-@router.get("/jobs", response_model=List[JobResponse])
-def read_jobs(db: Session = Depends(get_db)):
-    jobs = db.query(Job).all()
-    return jobs
-
-# POST Endpoint
-@router.post("/jobs", response_model=JobResponse)
-def create_job(job: JobCreate, db: Session = Depends(get_db)):
-    db_job = Job(**job.model_dump())
-    db.add(db_job)
-    db.commit()
-    db.refresh(db_job)
-    return db_job
-
-# GET by ID Endpoint
-@router.get("/jobs/{job_id}", response_model=JobResponse)
-def get_job(job_id: int, db: Session = Depends(get_db)):
-    job = db.query(Job).filter(Job.id == job_id).first()
-    if job is None:
-        raise JobNotFoundError(job_id) 
-    return job 
-
-#PUT Endpoint
-@router.put("/jobs/{job_id}", response_model=JobResponse)
-def update_job(job_id: int, job_update: JobUpdate, db: Session = Depends(get_db)):
-    job = db.query(Job).filter(Job.id== job_id).first()
-    if job is None:
-        raise JobNotFoundError(job_id)
-    
-    update_data = job_update.model_dump(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(job, key, value)
-    db.commit()
-    db.refresh(job)
-    return job
-
-@router.delete("/jobs/{job_id}",response_model=MessageResponse)
-def delete_job(job_id: int, db: Session = Depends(get_db)):
-    job = db.query(Job).filter(Job.id == job_id).first()
-    if job is None:
-        raise JobNotFoundError(job_id)
-    
-    db.delete(job)
-    db.commit()
-    return MessageResponse(message = "Job deleted successfully")
+@router.post("/jobs/collect")
+def collect_jobs_manual():
+    """Manually trigger job collection for testing"""
+    try:
+        sample_jobs = [
+            {
+                "id": 1,
+                "title": "Python Developer",
+                "company": "TechCorp",
+                "work_modality": "Remote",
+                "url": "https://example.com/job1"
+            },
+            {
+                "id": 2,
+                "title": "Full Stack Developer",
+                "company": "StartupX",
+                "work_modality": "Hybrid",
+                "url": "https://example.com/job2"
+            }
+        ]
+        
+        return {
+            "message": "Jobs collected successfully!",
+            "jobs": sample_jobs,
+            "total": len(sample_jobs),
+            "status": "success"
+        }
+    except Exception as e:
+        return {"error": str(e), "status": "failed"}

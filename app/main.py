@@ -11,7 +11,7 @@ from app.exceptions import(
 from app.routers import jobs_router
 from app.middleware import rate_limit_middleware
 from sqlalchemy import text
-from app.routers.jobs_router import get_db
+from app.database import get_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

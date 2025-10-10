@@ -50,7 +50,7 @@ pytest==8.4.2
 python-dotenv==1.1.1
 regex==2025.9.18
 requests==2.32.5
-rich==14.1.0
+rich==14.2.0
 ruamel.yaml==0.18.15
 ruamel.yaml.clib==0.2.14
 safety==3.6.2

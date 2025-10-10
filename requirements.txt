@@ -10,7 +10,7 @@ cffi==2.0.0
 charset-normalizer==3.4.3
 click==8.3.0
 cryptography==46.0.2
-cyclonedx-python-lib==9.1.0
+cyclonedx-python-lib==11.1.0
 defusedxml==0.7.1
 dparse==0.6.4
 fastapi==0.118.3

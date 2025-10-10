@@ -6,6 +6,9 @@
 ![Azure](https://img.shields.io/badge/Azure-Cloud-blue)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
 ![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen)
+![Security](https://img.shields.io/badge/Security-Verified-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-Passing-success)
+![Dependabot](https://img.shields.io/badge/Dependabot-Enabled-blue)
 
 > Navigate your career journey with AI-powered precision.
 

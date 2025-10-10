@@ -30,6 +30,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Security scan
+      run: |
+        pip install safety
+        safety scan --continue-on-error --output text
+      continue-on-error: true
+
     - name: Setup database with Alembic
       env:
         DATABASE_URL: ${{ secrets.DATABASE_URL}}

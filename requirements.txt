@@ -29,7 +29,7 @@ markdown-it-py==4.0.0
 MarkupSafe==3.0.3
 marshmallow==4.0.1
 mdurl==0.1.2
-msgpack==1.1.1
+msgpack==1.1.2
 nltk==3.9.2
 packageurl-python==0.17.5
 packaging==25.0

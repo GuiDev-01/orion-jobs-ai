@@ -16,21 +16,21 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
     
-    - name: Login to Azure Container Registry
-      uses: docker/login-action@v3
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v2
       with:
-        registry: ${{ secrets.ACR_NAME }}.azurecr.io
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GHCR_TOKEN }}
     
     - name: Build and push Docker image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v4
       with:
         context: .
         push: true
         tags: |
-          ${{ secrets.ACR_NAME }}.azurecr.io/orionjobs:latest
-          ${{ secrets.ACR_NAME }}.azurecr.io/orionjobs:${{ github.sha }}
+          ghcr.io/GuiDev-01/orion-jobs-ai:latest
+          ghcr.io/GuiDev-01/orion-jobs-ai:${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
         
@@ -39,15 +39,14 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
-    - name: Configure App Service to use ACR
+    - name: Configure App Service to use GitHub Container Registry
       run: |
         az webapp config container set \
           --name ${{ secrets.WEBAPP_NAME }} \
           --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-          --container-image-name ${{ secrets.ACR_NAME }}.azurecr.io/orionjobs:${{ github.sha }} \
-          --container-registry-url https://${{ secrets.ACR_NAME }}.azurecr.io \
-          --container-registry-user ${{ secrets.ACR_USERNAME }} \
-          --container-registry-password ${{ secrets.ACR_PASSWORD }}
+          --docker-custom-image-name ghcr.io/GuiDev-01/orion-jobs-ai:latest \
+          --registry-username ${{ github.actor }} \
+          --registry-password ${{ secrets.GHCR_TOKEN }}
     
     - name: Set App Service environment variables
       run: |

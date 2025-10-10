@@ -29,8 +29,8 @@ jobs:
         context: .
         push: true
         tags: |
-          ghcr.io/GuiDev-01/orion-jobs-ai:latest
-          ghcr.io/GuiDev-01/orion-jobs-ai:${{ github.sha }}
+          ghcr.io/guidev-01/orion-jobs-ai:latest
+          ghcr.io/guidev-01/orion-jobs-ai:${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
         

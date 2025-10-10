@@ -44,9 +44,10 @@ jobs:
         az webapp config container set \
           --name ${{ secrets.WEBAPP_NAME }} \
           --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-          --docker-custom-image-name ghcr.io/GuiDev-01/orion-jobs-ai:latest \
-          --registry-username ${{ github.actor }} \
-          --registry-password ${{ secrets.GHCR_TOKEN }}
+          --docker-custom-image-name ghcr.io/guidev-01/orion-jobs-ai:latest \
+          --docker-registry-server-url https://ghcr.io \
+          --docker-registry-server-user ${{ github.actor }} \
+          --docker-registry-server-password ${{ secrets.GHCR_TOKEN }}
     
     - name: Set App Service environment variables
       run: |

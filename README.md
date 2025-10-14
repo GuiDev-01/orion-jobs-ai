@@ -5,6 +5,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Latest-blue)
 ![Azure](https://img.shields.io/badge/Azure-Cloud-blue)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
+![GHCR](https://img.shields.io/badge/GHCR-GitHub%20Registry-blue)
 ![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen)
 ![Security](https://img.shields.io/badge/Security-Verified-brightgreen)
 ![Tests](https://img.shields.io/badge/Tests-Passing-success)
@@ -19,6 +20,7 @@ Transform your job search from hours of manual browsing to intelligent, automate
 🎯 **Phase 4 COMPLETED** - Cloud-Ready Production System
 - **✅ Security Hardened**: Critical vulnerability patched in API logging
 - **✅ Docker Containerized**: Full containerization with PostgreSQL
+- **✅ GHCR Integration** : Migrate to GitHub Container Registry for open source compliance
 - **✅ Azure Deployed**: Complete deployment infrastructure on Microsoft Azure
 - **✅ CI/CD Pipeline**: GitHub Actions automation implemented
 - **✅ Production Database**: Multi-source job collection active
@@ -34,11 +36,24 @@ Transform your job search from hours of manual browsing to intelligent, automate
 - **GET `/docs`** - Interactive API documentation
 - **GET `/health`** - Health check endpoint
 
+## 📦 Container Registry
+
+**Docker Images:** `ghcr.io/yourusername/orionjobs-ai:latest`
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/yourusername/orionjobs-ai:latest
+
+# Run locally with GHCR image
+docker run -p 8000:8000 ghcr.io/yourusername/orionjobs-ai:latest
+```
+
 ## ✨ Features
 
 ### ✅ Current Features (Production Ready)
 - **🔒 Security Hardened**: API credentials protection and secure logging
 - **🐳 Docker Containerization**: Complete containerization with PostgreSQL
+- **📦 GHCR Integration**: Open source container registry for public access
 - **☁️ Azure Cloud Deployed**: Fully operational on Microsoft Azure infrastructure
 - **🔄 CI/CD Pipeline**: Automated deployment via GitHub Actions
 - **📊 Health Monitoring**: Comprehensive health checks and monitoring
@@ -71,7 +86,7 @@ Transform your job search from hours of manual browsing to intelligent, automate
 
 **Cloud Infrastructure (Azure)**
 - 🐳 Docker (Containerization)
-- Azure Container Registry (Image storage)
+- GitHub Container Registry (Image storage)
 - Azure App Service (Container hosting)
 - Azure Database for PostgreSQL (Managed database)
 - Azure Monitor (Logging and monitoring)
@@ -161,11 +176,12 @@ python run.py
 ┌─── GitHub Repository ────────┐
 │   ├─ Source code             │
 │   ├─ GitHub Actions CI/CD    │
+    ├─ GitHub Container Registry│ ✅GHCR
 │   └─ Automated deployment    │
 └───────────────────────────────┘
             │
             ▼
-┌─── Azure Container Registry ──┐
+┌─── GitHub Container Registry ──┐
 │   ├─ Docker image storage     │
 │   ├─ Automated builds         │
 │   └─ Version management       │
@@ -175,7 +191,8 @@ python run.py
 ┌─── Azure App Service ────────┐
 │   ├─ Container hosting       │ ✅ DEPLOYED
 │   ├─ Auto-scaling            │
-│   ├─ Health monitoring       │
+│   ├─ Health monitoring
+├   ├─ GHCR integration        │
 │   └─ SSL/HTTPS encryption    │
 └───────────────────────────────┘
             │
@@ -274,10 +291,10 @@ docker compose up --build
 ## 💰 Azure Cost Management
 
 **Current Monthly Costs:**
-- Azure Container Registry: ~$5
+- GitHub Container Registry: FREE
 - Azure App Service (B1): ~$15  
 - Azure Database PostgreSQL: ~$15-20
-- **Total: ~$35-40/month**
+- **Total: ~$30-35/month**
 
 **Cost Optimization Tips:**
 - Monitor usage with Azure Cost Management

@@ -12,6 +12,7 @@ from app.routers import jobs_router
 from app.middleware import rate_limit_middleware
 from sqlalchemy import text
 from app.database import get_db
+from app.routers.summary_router import router as summary_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -71,6 +72,7 @@ app.add_middleware(
 
 # Routers
 app.include_router(jobs_router.router, prefix="/api/v1", tags=["jobs"])
+app.include_router(summary_router)
 
 @app.get("/")
 async def root():

@@ -37,77 +37,69 @@ def fetch_remote_jobs() -> List[Dict]:
         logger.error(f"Unexpected error fetching jobs from RemoteOK API: {e}")
         return []
     
-def normalize_remote_jobs(raw_jobs: List[Dict]):
-    logger.info("Normalizing jobs... ")
+def normalize_remote_jobs(raw_jobs: List[Dict]) -> List[Dict]:
+    """Normalize job data from RemoteOK API."""
+    logger.info("Normalizing RemoteOK jobs...")
     normalized_jobs = []
+    
     for job in raw_jobs:
-        # Prepare tags as a list of strings
-        raw_tags = job.get("tags", [])
-        if isinstance(raw_tags, (list, tuple)):
-            tags_list = [str(t).strip() for t in raw_tags if str(t).strip()]
-        else:
-            tags_list = [t.strip() for t in str(raw_tags).split(",") if t.strip()]
-
+        if 'position' not in job or not job.get('id'):
+            continue  # Skip invalid jobs
+            
+        tags_list = []
+        raw_tags = job.get('tags', [])
+        
+        if isinstance(raw_tags, str) and (raw_tags.startswith('{') and raw_tags.endswith('}')):
+            clean_str = raw_tags.strip('{}')
+            if clean_str:
+                import re
+                matches = re.findall(r'"([^"]+)"|([^,]+)', clean_str)
+                tags_list = [match[0] if match[0] else match[1].strip() for match in matches]
+        elif isinstance(raw_tags, list):
+            # Clean and filter list items
+            tags_list = [str(tag).strip() for tag in raw_tags 
+                        if tag and isinstance(tag, (str, int, float))]
+            
+        # Clean out empty or single-char tags
+        tags_list = [tag for tag in tags_list if tag and len(tag) > 1]
+            
+        # Add the normalized job
         normalized_jobs.append({
             "id": int(job.get("id")),
-            "title": job.get("position"),
-            "company": job.get("company"),
-            "work_modality": job.get("work_modality") if job.get("work_modality") else "Remote",
-            "tags": tags_list,
-            "url": job.get("url"),
-            "created_at": job.get("date")  # Date the job was posted (keeps string as tests expect)
+            "title": job.get("position", ""),
+            "company": job.get("company", ""),
+            "work_modality": job.get("work_modality") or "Remote",
+            "tags": tags_list,  # Properly formatted tags list
+            "url": job.get("url", ""),
+            "created_at": job.get("date") or datetime.utcnow().isoformat()
         })
-        
-    logger.info(f"Normalized {len(normalized_jobs)} jobs")
+    
+    logger.info(f"Normalized {len(normalized_jobs)} RemoteOK jobs")
     return normalized_jobs
 
 from sqlalchemy.orm import Session
 from app.models.job import Job
 
 def save_jobs_to_db(jobs: List[Dict], db: Session) -> None:
-    logger.info("Saving jobs to database...")
     """
     Saves a list of jobs to the database.
     """
+    logger.info("Saving jobs to database...")
     for job in jobs:
         # Check if the job already exists in the database by ID
-        try:
-            existing_job = db.query(Job).filter(Job.id == job["id"]).first()
-        except Exception:
-            # If the session is in a bad state, try to rollback and continue
-            try:
-                db.rollback()
-            except Exception:
-                pass
-            existing_job = None
-
+        existing_job = db.query(Job).filter(Job.id == job["id"]).first()
         if existing_job:
             continue
-
-        # Create a new record
-        created = job.get("created_at")
-        # If created_at is a string, try to parse to datetime
-        if isinstance(created, str):
-            try:
-                created_dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
-            except Exception:
-                # fallback: leave as None
-                created_dt = None
-        elif isinstance(created, (datetime,)):
-            created_dt = created
-        else:
-            created_dt = None
 
         # Normalize tags: accept list or CSV -> produce Python list or None
         raw_tags = job.get("tags")
         tags_val = None
         if raw_tags:
-            if isinstance(raw_tags, (list, tuple)):
-                cleaned = [str(t).strip() for t in raw_tags if str(t).strip()]
+            if isinstance(raw_tags, list):
+                cleaned = [str(tag).strip() for tag in raw_tags if isinstance(tag, str) and tag.strip()]
                 tags_val = cleaned if cleaned else None
-            else:
-                s = str(raw_tags).strip()
-                cleaned = [t.strip() for t in s.split(",") if t.strip()]
+            elif isinstance(raw_tags, str):
+                cleaned = [tag.strip() for tag in raw_tags.split(",") if tag.strip()]
                 tags_val = cleaned if cleaned else None
 
         new_job = Job(
@@ -115,9 +107,9 @@ def save_jobs_to_db(jobs: List[Dict], db: Session) -> None:
             title=job.get("title") or "",
             company=job.get("company") or "",
             work_modality=job.get("work_modality") or "",
-            tags=tags_val if tags_val is not None else [],  # Use empty array if None (Postgres array column requires non-null)
+            tags=tags_val if tags_val is not None else [],  # Use empty array if None
             url=job.get("url") or "",
-            created_at=created_dt if created_dt is not None else datetime.utcnow()
+            created_at=datetime.utcnow() 
         )
 
         # Insert job with per-job commit to avoid whole-batch failure
@@ -126,9 +118,6 @@ def save_jobs_to_db(jobs: List[Dict], db: Session) -> None:
             db.commit()
         except Exception as e:
             logger.exception(f"Failed to insert job id={job.get('id')}: {e}")
-            try:
-                db.rollback()
-            except Exception:
-                pass
+            db.rollback()
 
     logger.info("Jobs saved (attempted) to database")

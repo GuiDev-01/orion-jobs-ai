@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daily Job Summary</title>
+</head>
+<body>
+    <h1>Daily Job Summary</h1>
+    <p>Here are the latest job opportunities based on your preferences:</p>
+    <ul>
+        {% for job in jobs %}
+        <li>
+            <strong>{{ job.title }}</strong> - {{ job.company }}
+            <br>
+            Location: {{ job.location }}
+            <br>
+            <a href="{{ job.url }}">View Job</a>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

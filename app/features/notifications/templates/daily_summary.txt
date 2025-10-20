@@ -1,0 +1,9 @@
+Daily Job Summary
+
+Here are the latest job opportunities based on your preferences:
+
+{% for job in jobs %}
+- {{ job.title }} - {{ job.company }}
+  Location: {{ job.location }}
+  Link: {{ job.url }}
+{% endfor %}

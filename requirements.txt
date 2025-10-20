@@ -1,6 +1,6 @@
 # Core API
 fastapi==0.119.0
-uvicorn==0.37.0
+uvicorn==0.38.0
 starlette==0.48.0
 
 # Database

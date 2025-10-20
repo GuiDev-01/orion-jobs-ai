@@ -6,11 +6,13 @@ on:
       - main
       - phase-3-data-collection
       - phase-4-azure-deployment
+      - phase-5-user-experience
   pull_request:
     branches:
       - main
       - phase-3-data-collection
       - phase-4-azure-deployment
+      - phase-5-user-experience
 
 jobs:
   test:

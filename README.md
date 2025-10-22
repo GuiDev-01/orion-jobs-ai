@@ -78,7 +78,7 @@ curl "https://orionjobs-api.azurewebsites.net/api/v1/summary/daily?period_days=3
 
 #### 📊 **Smart Job Analytics** ✅ **IMPLEMENTED**
 - **🧠 Daily Intelligence Reports**: Automated job market analysis with filtering
-- **📈 Summary Analytics**: Top companies, skills demand, and work modality insights
+- **� Summary Analytics**: Top companies, skills demand, and work modality insights
 - **🎯 Advanced Filtering**: Location, work modality, skills, and time-based filters
 - **📋 JSON API Responses**: Structured data for integrations
 - **💡 Skills Analysis**: Real-time skills demand tracking with fixed tag parsing
@@ -177,7 +177,7 @@ curl "https://orionjobs-api.azurewebsites.net/api/v1/summary/daily?period_days=3
 - [x] **Health Monitoring**: Comprehensive health checks
 - [x] **Documentation**: Complete deployment guides
 
-### Phase 5: User Experience 🚧 **IN PROGRESS** 
+### Phase 5: User Experience � **IN PROGRESS** 
 - [x] **Smart Job Summaries**: Daily intelligent job digest with advanced filtering
 - [x] **Summary APIs**: RESTful endpoints with comprehensive analytics
 - [x] **Advanced Filtering**: Location, work modality, skills, and time-based filters

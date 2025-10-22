@@ -9,11 +9,7 @@ router = APIRouter(prefix="/api/v1/summary", tags=["summaries"])
 @router.get("/daily")
 async def get_daily_summary(
     location: Optional[str] = Query(None, description="Filter by work modality (remote, hybrid, onsite)"),
-<<<<<<< HEAD
     tags: Optional[List[str]] = Query(None, description="Filter by skills/tags"),
-=======
-    tags: Optional[List[str]] = Query([], description="Filter by skills/tags"),
->>>>>>> d19e04434f073371540ca667b51000824c042575
     period_days: int = Query(1, ge=1, le=30, description="Days to look back"),
     limit: int = Query(50, ge=1, le=200, description="Max jobs to return"),
     format: str = Query("json", description="Response format: json, telegram, discord"),
@@ -40,7 +36,6 @@ async def get_daily_summary(
     elif format == "discord":
         return {"message": "Discord format coming soon", "data": data}
     else:
-<<<<<<< HEAD
         return {"error": "Invalid format. Use: json, telegram, or discord"}
 
 @router.get("/recent")
@@ -52,6 +47,3 @@ async def get_recent_jobs(
     summary_service = SummaryService(db)
     data = summary_service.get_daily_summary(period_days=30, limit=limit)
     return data
-=======
-        return {"error": "Invalid format. Use: json, telegram, or discord"}
->>>>>>> d19e04434f073371540ca667b51000824c042575

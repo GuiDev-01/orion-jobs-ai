@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 def debug_tags():
     db = SessionLocal()
     try:
-        # Busca alguns jobs para ver como as tags estão
         jobs = db.query(Job).limit(10).all()
         
         for job in jobs:
@@ -25,7 +24,6 @@ def debug_tags():
                 print(f"First tag: {repr(job.tags[0])} (type: {type(job.tags[0])})")
                 print(f"First tag length: {len(job.tags[0]) if job.tags[0] else 0}")
                 
-                # Conta quantas tags são de 1 caractere
                 single_chars = [t for t in job.tags if isinstance(t, str) and len(t) == 1]
                 print(f"Single char tags: {len(single_chars)}/{len(job.tags)}")
                 

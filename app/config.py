@@ -14,6 +14,12 @@ ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 # Database configuration
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///default.db")
 
+if "neon.tech" in DATABASE_URL:
+    if "?" in DATABASE_URL:
+        DATABASE_URL += "&connect_timeout=10&command_timeout=60"
+    else:
+        DATABASE_URL += "?sslmode=require&connect_timeout=10&command_timeout=60"
+
 # API keys for job services
 ADZUNA_APP_ID = os.getenv("ADZUNA_APP_ID")
 ADZUNA_APP_KEY = os.getenv("ADZUNA_APP_KEY")

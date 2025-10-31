@@ -16,9 +16,13 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///default.db")
 
 if "neon.tech" in DATABASE_URL:
     if "?" in DATABASE_URL:
-        DATABASE_URL += "&connect_timeout=10&command_timeout=60"
+        # Remove command_timeout if it exists
+        if "command_timeout" in DATABASE_URL:
+            DATABASE_URL += "&connect_timeout=10"
+        if "application_name" not in DATABASE_URL:
+            DATABASE_URL += "&application_name=orionjobs" 
     else:
-        DATABASE_URL += "?sslmode=require&connect_timeout=10&command_timeout=60"
+        DATABASE_URL += "?sslmode=require&connect_timeout=10&application_name=orionjobs"
 
 # API keys for job services
 ADZUNA_APP_ID = os.getenv("ADZUNA_APP_ID")

@@ -9,6 +9,7 @@ from app.exceptions import(
     JobNotFoundError
 )
 from app.routers import jobs_router
+from app.routers.notifications_router import router as notifications_router
 from app.middleware import rate_limit_middleware
 from sqlalchemy import text
 from app.database import get_db
@@ -73,6 +74,7 @@ app.add_middleware(
 # Routers
 app.include_router(jobs_router.router, prefix="/api/v1", tags=["jobs"])
 app.include_router(summary_router)
+app.include_router(notifications_router)
 
 @app.get("/")
 async def root():

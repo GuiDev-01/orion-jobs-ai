@@ -34,6 +34,20 @@ COLLECT_MAX_PAGES = int(os.getenv("COLLECT_MAX_PAGES", "3"))
 COLLECT_SLEEP_SECONDS = float(os.getenv("COLLECT_SLEEP_SECONDS", "1.5"))
 COLLECT_ADZUNA_MAX_REQUESTS = int(os.getenv("COLLECT_ADZUNA_MAX_REQUESTS", "30"))
 
+# Email configuration
+SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+SMTP_USERNAME = os.getenv("SMTP_USERNAME", "")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+EMAIL_FROM_NAME = os.getenv("EMAIL_FROM_NAME", "OrionJobs AI")
+DEFAULT_EMAIL_RECIPIENTS = os.getenv("DEFAULT_EMAIL_RECIPIENTS", "")
+
+def get_email_recipients_list() -> list:
+    """Convert comma separated email strings to list."""
+    if not DEFAULT_EMAIL_RECIPIENTS:
+        return []
+    return [email.strip() for email in DEFAULT_EMAIL_RECIPIENTS.split(",")]
+
 # Logging configuration
 LOG_LEVEL = "DEBUG" if ENVIRONMENT != "production" else "INFO"
 logging.basicConfig(

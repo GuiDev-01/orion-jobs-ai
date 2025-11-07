@@ -1,9 +1,31 @@
-Daily Job Summary
+🚀 OrionJobs AI - Daily Career Intelligence Report
 
-Here are the latest job opportunities based on your preferences:
+📊 SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🆕 New Opportunities: {{ total_jobs }}
 
-{% for job in jobs %}
-- {{ job.title }} - {{ job.company }}
-  Location: {{ job.location }}
-  Link: {{ job.url }}
-{% endfor %}
+{% if top_companies -%}
+🏢 Top Hiring Companies: {{ top_companies[:5]|join(", ") }}
+{% if top_companies|length > 5 %}... and {{ top_companies|length - 5 }} more{% endif %}
+
+{% endif -%}
+{% if top_skills -%}
+💡 Most Demanded Skills: {% for skill in top_skills[:5] %}{{ skill.skill }} ({{ skill.count }}){% if not loop.last %}, {% endif %}{% endfor %}
+
+{% endif -%}
+📋 LATEST JOB OPPORTUNITIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{% for job in jobs[:20] -%}
+{{ loop.index }}. {{ job.title }} - {{ job.company }}
+   📍 Location: {{ job.location }}
+   {% if job.tags -%}🏷️  Skills: {{ job.tags[:3]|join(", ") }}{% if job.tags|length > 3 %}...{% endif %}
+   {% endif -%}🔗 Apply: {{ job.url }}
+
+{% endfor -%}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 Powered by OrionJobs AI
+🌐 Dashboard: https://orionjobs-api.azurewebsites.net
+
+This summary was generated automatically based on real-time job market data.

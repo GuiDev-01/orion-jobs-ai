@@ -62,10 +62,10 @@ Transform your job search from hours of manual browsing to intelligent, automate
 - **GET `/api/v1/summary/daily?location=remote&tags=python&period_days=7`** - Advanced filtering
 - **Multiple filtering**: Location, skills, work modality, time-based
 
-#### 📧 Email Notifications ✅ **IMPLEMENTED**
+#### 📧 Email Notifications ✅ **IMPLEMENTED & TESTED**
 - **GET `/api/v1/notifications/email-config`** - Check email configuration
-- **POST `/api/v1/notifications/test-email`** - Test email service connectivity
-- **POST `/api/v1/notifications/send-daily-summary`** - Send formatted job summary via email
+- **POST `/api/v1/notifications/test-email`** - Test email service connectivity  
+- **POST `/api/v1/notifications/send-daily-summary?recipients=email@example.com`** - Send formatted job summary via email
 
 #### 🔍 Working Examples
 ```bash
@@ -75,8 +75,11 @@ curl "https://orionjobs-api.azurewebsites.net/api/v1/summary/daily?location=remo
 # Test email configuration
 curl "https://orionjobs-api.azurewebsites.net/api/v1/notifications/email-config"
 
-# Send daily summary email
-curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/send-daily-summary"
+# Send daily summary email to specific recipient
+curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/send-daily-summary?recipients=your-email@gmail.com"
+
+# Send test email
+curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/test-email"
 ```
 
 ## ✨ Features

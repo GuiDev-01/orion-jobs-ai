@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 from typing import List, Optional
 import logging
 from ..features.notifications.email_service import EmailService
@@ -59,9 +59,9 @@ async def test_email_service(recipients: Optional[List[str]] = None):
 
 @router.post("/send-daily-summary")
 async def send_daily_summary_email(
-    recipients: Optional[List[str]] = None,
-    period_days: int = 1,
-    limit: int = 50,
+    recipients: Optional[List[str]] = Query(None), 
+    period_days: int = Query(default=1),
+    limit: int = Query(default=50),
     db: Session = Depends(get_db)
 ):
     """Send daily summary email."""
@@ -77,10 +77,11 @@ async def send_daily_summary_email(
         
         # Use provided recipients or default ones
         email_recipients = recipients or config.get_email_recipients_list()
+            
         if not email_recipients:
             raise HTTPException(
                 status_code=400, 
-                detail="No recipients provided. Set DEFAULT_EMAIL_RECIPIENTS in .env or provide recipients in request"
+                detail="No recipients provided. Use ?recipients=email@example.com or set DEFAULT_EMAIL_RECIPIENTS in .env"
             )
         
         # Send summary email

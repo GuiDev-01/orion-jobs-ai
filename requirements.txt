@@ -14,7 +14,7 @@ httpx==0.28.1
 
 # Configuration
 python-dotenv==1.2.1
-pydantic==2.12.3
+pydantic==2.12.4
 
 # Scheduling
 APScheduler==3.11.1

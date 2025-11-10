@@ -1,7 +1,7 @@
 # Core API
 fastapi==0.120.0
 uvicorn==0.38.0
-starlette==0.48.0
+starlette==0.50.0
 
 # Database
 sqlalchemy==2.0.44

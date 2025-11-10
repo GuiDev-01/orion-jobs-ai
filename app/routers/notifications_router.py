@@ -6,6 +6,7 @@ from ..features.summaries.summary_service import SummaryService
 from .. import config
 from ..database import get_db
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 
 router = APIRouter(prefix="/api/v1/notifications", tags=["notifications"])
 logger = logging.getLogger(__name__)
@@ -57,9 +58,15 @@ async def test_email_service(recipients: Optional[List[str]] = None):
         logger.error(f"Email test failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+class EmailRequest(BaseModel):
+    recipients: Optional[List[str]] = None
+    period_days: Optional[int] = 1
+    limit: Optional[int] = 50
+
 @router.post("/send-daily-summary")
 async def send_daily_summary_email(
-    recipients: Optional[List[str]] = Query(None), 
+    request: Optional[EmailRequest] = None,
+    recipients: Optional[List[str]] = Query(None),
     period_days: int = Query(default=1),
     limit: int = Query(default=50),
     db: Session = Depends(get_db)
@@ -69,20 +76,26 @@ async def send_daily_summary_email(
         email_service = get_email_service()
         summary_service = SummaryService(db)
         
-        # Get daily summary data
-        summary_data = summary_service.get_daily_summary(
-            period_days=period_days, 
-            limit=limit
-        )
+        if request and request.recipients:
+            email_recipients = request.recipients
+            final_period_days = request.period_days or period_days
+            final_limit = request.limit or limit
+        else:
+            email_recipients = recipients or config.get_email_recipients_list()
+            final_period_days = period_days
+            final_limit = limit
         
-        # Use provided recipients or default ones
-        email_recipients = recipients or config.get_email_recipients_list()
-            
         if not email_recipients:
             raise HTTPException(
                 status_code=400, 
-                detail="No recipients provided. Use ?recipients=email@example.com or set DEFAULT_EMAIL_RECIPIENTS in .env"
+                detail="No recipients provided. Add recipients in request body or set DEFAULT_EMAIL_RECIPIENTS in .env"
             )
+        
+        # Get daily summary data
+        summary_data = summary_service.get_daily_summary(
+            period_days=final_period_days, 
+            limit=final_limit
+        )
         
         # Send summary email
         success = email_service.send_daily_summary(email_recipients, summary_data)
@@ -92,7 +105,7 @@ async def send_daily_summary_email(
                 "message": f"Daily summary sent successfully to {len(email_recipients)} recipients",
                 "recipients": email_recipients,
                 "jobs_count": summary_data.get("summary", {}).get("total_jobs", 0),
-                "period_days": period_days
+                "period_days": final_period_days
             }
         else:
             raise HTTPException(status_code=500, detail="Failed to send daily summary")

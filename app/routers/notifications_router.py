@@ -73,9 +73,19 @@ async def send_daily_summary_email(
 ):
     """Send daily summary email."""
     try:
+        logger.info("Starting daily summary email process")
+
         email_service = get_email_service()
+        logger.info("Email service created successfully")
+
         summary_service = SummaryService(db)
-        
+        logger.info("Summary service created successfully")
+
+        # Test SMTP connection
+        if not email_service.test_connection():
+            logger.error("SMTP connection test failed")
+            raise HTTPException(status_code=500, detail="SMTP connection failed")
+
         if request and request.recipients:
             email_recipients = request.recipients
             final_period_days = request.period_days or period_days
@@ -92,12 +102,15 @@ async def send_daily_summary_email(
             )
         
         # Get daily summary data
+        logger.info(f"Getting summary data for {final_period_days} days, limit {final_limit}")
         summary_data = summary_service.get_daily_summary(
             period_days=final_period_days, 
             limit=final_limit
         )
-        
+        logger.info(f"Summary data retrieved: {len(summary_data.get('jobs', []))} jobs")
+
         # Send summary email
+        logger.info (f"Sending email to {len(email_recipients)} recipients")
         success = email_service.send_daily_summary(email_recipients, summary_data)
         
         if success:
@@ -123,4 +136,17 @@ async def get_email_config():
         "email_from_name": config.EMAIL_FROM_NAME,
         "default_recipients_count": len(config.get_email_recipients_list()),
         "smtp_configured": bool(config.SMTP_USERNAME and config.SMTP_PASSWORD)
+    }
+
+@router.get("/smtp-debug")
+async def smtp_debug():
+    """Debug SMTP configuration for deployment."""
+    return {
+        "smtp_host": config.SMTP_HOST,
+        "smtp_port": config.SMTP_PORT,
+        "username_configured": bool(config.SMTP_USERNAME),
+        "password_configured": bool(config.SMTP_PASSWORD),
+        "username_preview": config.SMTP_USERNAME[:3] + "***" if config.SMTP_USERNAME else None,
+        "recipients_configured": bool(config.get_email_recipients_list()),
+        "recipients_count": len(config.get_email_recipients_list())
     }

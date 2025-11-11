@@ -70,17 +70,28 @@ class EmailService:
                 "work_modalities": summary_data.get("summary", {}).get("work_modalities", [])
             }
 
+            logger.info(f"Template context prepared. Total jobs: {context['total_jobs']}")
+
             # Render templates
+            logger.info("Rendering HTML template")
             html_content = self.render_template("daily_summary.html", context)
+            logger.info(f"HTML template rendered successfully")
+
+            logger.info("Rendering text template")
             text_content = self.render_template("daily_summary.txt", context)
+            logger.info("Text template rendered successfully")
 
             # Create subject
             total_jobs = context["total_jobs"]
             subject = f"OrionJobs AI - Daily Summary: {total_jobs} New Opportunities"
-            
-            #Send email
-            return self.send_email(recipients, subject, html_content, text_content)
+            logger.info(f"Subject created: {subject}")
 
+            #Send email
+            logger.info("Sending email")
+            result = self.send_email(recipients, subject, html_content, text_content)
+            logger.info(f"Email send result: {result}")
+            return result
+        
         except Exception as e:
             logger.error(f"Failed to send daily summary: {e}")
             return False 

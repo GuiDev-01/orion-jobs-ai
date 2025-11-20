@@ -315,30 +315,43 @@ curl "https://orionjobs-api.azurewebsites.net/api/v1/summary/daily?tags=react&ta
 - 🚧 **Webhook System**: Ready for implementation
 
 ## 🔧 Email Configuration
+## 🔧 Email Configuration
 
 ### Environment Variables
 ```bash
 # Required for email functionality
-SMTP_HOST=smtp.gmail.com
+SMTP_HOST=smtp.sendgrid.net          # Or smtp.gmail.com for Gmail
 SMTP_PORT=587
-SMTP_USERNAME=your-email@gmail.com
-SMTP_PASSWORD=your-app-password
-EMAIL_FROM_NAME=OrionJobs AI
-DEFAULT_EMAIL_RECIPIENTS=user1@example.com,user2@example.com
+SMTP_USERNAME=apikey                  # For SendGrid, or your Gmail address
+SMTP_PASSWORD=your-api-key-here      # SendGrid API key or Gmail app password
+EMAIL_FROM_NAME=OrionJobs AI         # Display name in recipient's inbox
+EMAIL_FROM_ADDRESS=notifications@orionjobs.me
+DEFAULT_EMAIL_RECIPIENTS=user@example.com,user2@example.com
 ```
 
-### Gmail Setup
-1. Enable 2-factor authentication
-2. Generate app-specific password
-3. Use app password in `SMTP_PASSWORD`
+### SendGrid Setup (Recommended)
+1. Create free SendGrid account at https://sendgrid.com
+2. Generate API key with "Mail Send" permissions
+3. Set `SMTP_USERNAME=apikey` (literal string)
+4. Set `SMTP_PASSWORD` to your SendGrid API key
+5. Verify sender email in SendGrid dashboard
+
+### Gmail Setup (Alternative)
+1. Enable 2-factor authentication on your Google account
+2. Generate app-specific password at https://myaccount.google.com/apppasswords
+3. Use your Gmail address as `SMTP_USERNAME`
+4. Use generated app password as `SMTP_PASSWORD`
 
 ### Testing Email Service
 ```bash
-# Local testing
-curl -X POST "http://localhost:8000/api/v1/notifications/test-email"
+# Check configuration
+curl "https://orionjobs-api.azurewebsites.net/api/v1/notifications/email-config"
 
-# Production testing
+# Send test email
 curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/test-email"
+
+# Send daily summary to custom recipient
+curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/send-daily-summary?recipients=your-email@gmail.com&period_days=7&limit=20"
 ```
 
 ## 📁 Project Structure

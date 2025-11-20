@@ -10,12 +10,16 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 logger = logging.getLogger(__name__)
 
+import ssl 
 class EmailService:
-    def __init__(self, smtp_server: str, smtp_port: int, username: str, password: str):
-        self.smtp_server= smtp_server
+    def __init__(self, smtp_host: str, smtp_port: int, username: str, password: str,
+                 from_address: str, from_name: str = "OrionJobs AI"):
+        self.smtp_server= smtp_host
         self.smtp_port = smtp_port
         self.username = username
         self.password = password
+        self.from_address = from_address
+        self.from_name = from_name
 
         # Setup Jinja2 template environment
         template_dir = Path(__file__).parent / "templates"
@@ -28,7 +32,7 @@ class EmailService:
             # Create the email
             msg = MIMEMultipart("alternative")
             msg["Subject"] = subject
-            msg["From"] = self.username
+            msg["From"] = f"{self.from_name} <{self.from_address}>"
             msg["To"] = ", ".join(recipients)
 
             #Attach both plain text and HTML versions
@@ -37,9 +41,12 @@ class EmailService:
 
             # Connect to SMTP server and send email
             with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
-                server.starttls()
+                server.ehlo()
+                context = ssl.create_default_context()
+                server.starttls(context=context)
+                server.ehlo()
                 server.login(self.username, self.password)
-                server.sendmail(self.username, recipients, msg.as_string())
+                server.sendmail(self.from_address, recipients, msg.as_string())
 
             logger.info(f"Email sent successfully to {len(recipients)} recipients")
             return True
@@ -105,7 +112,10 @@ class EmailService:
         """Test SMTP connection."""
         try:
             with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
-                    server.starttls()
+                    server.ehlo()
+                    context = ssl.create_default_context()
+                    server.starttls(context=context)
+                    server.ehlo()
                     server.login(self.username, self.password)
             logger.info("SMTP connection test successful")
             return True

@@ -40,6 +40,7 @@ SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USERNAME = os.getenv("SMTP_USERNAME", "")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 EMAIL_FROM_NAME = os.getenv("EMAIL_FROM_NAME", "OrionJobs AI")
+EMAIL_FROM_ADDRESS =os.getenv("EMAIL_FROM_ADDRESS", "notifications@orionjobs.me")
 DEFAULT_EMAIL_RECIPIENTS = os.getenv("DEFAULT_EMAIL_RECIPIENTS", "")
 
 def get_email_recipients_list() -> list:

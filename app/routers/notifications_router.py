@@ -14,10 +14,12 @@ logger = logging.getLogger(__name__)
 def get_email_service():
     """Get configured email service."""
     return EmailService(
-        smtp_server=config.SMTP_HOST,
+        smtp_host=config.SMTP_HOST,
         smtp_port=config.SMTP_PORT,
         username=config.SMTP_USERNAME,
-        password=config.SMTP_PASSWORD
+        password=config.SMTP_PASSWORD,
+        from_address = config.EMAIL_FROM_ADDRESS,
+        from_name = config.EMAIL_FROM_NAME
     )
 
 @router.post("/test-email")

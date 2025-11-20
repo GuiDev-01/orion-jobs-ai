@@ -36,7 +36,7 @@ def send_daily_summaries():
 
         # Initialize services
         email_service = EmailService(
-            smtp_server=os.getenv("SMTP_SERVER", "smtp.gmail.com"),
+            smtp_host=os.getenv("SMTP_SERVER", "smtp.gmail.com"),
             smtp_port=int(os.getenv("SMTP_PORT", "587")),
             username=os.getenv("SMTP_USERNAME"),
             password=os.getenv("SMTP_PASSWORD")

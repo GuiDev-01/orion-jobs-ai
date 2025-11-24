@@ -9,7 +9,7 @@ class SummaryGenerator:
         """Generate daily summary content based on jobs and user preferences."""
         try:
             # Load templates
-            html_template = self.env.get_template("daily_summary_html")
+            html_template = self.env.get_template("daily_summary.html")
             text_template = self.env.get_template("daily_summary.txt")
 
             # Render templates

@@ -205,3 +205,28 @@ async def smtp_debug():
         "recipients_configured": bool(config.get_email_recipients_list()),
         "recipients_count": len(config.get_email_recipients_list())
     }
+
+@router.post("/test-daily-summary")
+async def test_daily_summary_manually():
+    """
+    Manually trigger daily summary email (for testing).
+    This endpoint allows you to test the email system without waiting for the scheduled time.
+    """
+    try:
+        from datetime import datetime
+        from app.features.notifications.schedulers.daily_scheduler import send_daily_summaries
+
+        # Run the summary job immediately
+        send_daily_summaries()
+
+        return {
+            "message": "Daily summary email sent successfully",
+            "status": "success",
+            "timestamp":datetime.now().isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to send daily summary: {str(e)}"
+        )
+    

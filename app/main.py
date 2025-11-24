@@ -14,6 +14,9 @@ from app.middleware import rate_limit_middleware
 from sqlalchemy import text
 from app.database import get_db
 from app.routers.summary_router import router as summary_router
+import logging
+
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,28 +25,45 @@ async def lifespan(app: FastAPI):
     Handles startup and shutdown events
     """
     # Startup
-    print("🚀 Starting OrionJobs AI...")
+    logger.info("🚀 Starting OrionJobs AI...")
+
+    job_scheduler = None
+    email_scheduler = None
     
     # Try to start scheduler, but don't fail if it doesn't work
-    scheduler = None
     try:
         from job_schedule import start_scheduler
-        scheduler = start_scheduler()
-        print("✅ Scheduler initialized successfully")
+        job_scheduler = start_scheduler()
+        logger.info("✅ Job collection scheduler initialized successfully")
     except Exception as e:
-        print(f"⚠️ Scheduler failed to start: {e}")
-        print("✅ Application will continue without scheduler")
+        logger.error(f"⚠️ Scheduler failed to start: {e}")
+        logger.info("✅ Application will continue without scheduler")
+    
+    # Start email notification scheduler
+    try:
+        from app.features.notifications.schedulers.daily_scheduler import start_scheduler as start_email_scheduler
+        email_scheduler = start_email_scheduler()
+        logger.info("✅ Email notification scheduler initialized")
+    except Exception as e:
+        logger.error(f"⚠️ Email scheduler failed: {e}")
     
     yield # Application is running
     
     # Shutdown
-    print("🔄️ Shutting down OrionJobs AI...")
-    if scheduler:
+    logger.info("🔄️ Shutting down OrionJobs AI...")
+    if job_scheduler:
         try:
-            scheduler.shutdown()
-            print("✅ Scheduler shutdown successfully")
-        except:
-            print("⚠️ Scheduler shutdown failed")
+            job_scheduler.shutdown()
+            logger.info("✅ Job scheduler shutdown successfully")
+        except Exception as e:
+            logger.error(f"⚠️ Job scheduler shutdown failed: {e}")
+    
+    if email_scheduler:
+        try:
+            email_scheduler.shutdown()
+            logger.info(f"✅ Email scheduler shutdown successfully")
+        except Exception as e:
+            logger.error(f"⚠️ Email scheduler shutdown failed: {e}")
 
 app = FastAPI(
     title="OrionJobs AI",

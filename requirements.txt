@@ -4,7 +4,7 @@ uvicorn==0.38.0
 starlette==0.48.0
 
 # Database
-sqlalchemy==2.0.44
+sqlalchemy==2.0.45
 psycopg2-binary==2.9.11
 alembic==1.17.2
 

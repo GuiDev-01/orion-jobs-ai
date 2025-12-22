@@ -17,7 +17,7 @@ python-dotenv==1.2.1
 pydantic==2.12.4
 
 # Scheduling
-APScheduler==3.11.1
+APScheduler==3.11.2
 
 # Email & Templates
 jinja2>=3.1.2

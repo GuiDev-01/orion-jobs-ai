@@ -2,6 +2,8 @@
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green)
+![.NET](https://img.shields.io/badge/.NET-9.0-512BD4)
+![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-512BD4)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-blue)
 ![Azure](https://img.shields.io/badge/Azure-Cloud-blue)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
@@ -14,7 +16,7 @@
 
 > Navigate your career journey with AI-powered precision and intelligent job market analytics.
 
-Transform your job search from hours of manual browsing to intelligent, automated career guidance through legal API integrations, smart analytics, and personalized summaries - deployed on Microsoft Azure cloud infrastructure with cost-optimized Neon PostgreSQL database.
+Transform your job search from hours of manual browsing to intelligent, automated career guidance through legal API integrations, smart analytics, and personalized summaries. Built with Python/FastAPI backend and modern .NET Blazor WebAssembly frontend - deployed on Microsoft Azure cloud infrastructure with cost-optimized Neon PostgreSQL database.
 
 ## 📊 Current Status (January 2026)
 
@@ -150,14 +152,22 @@ curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/test-
 
 ## 🛠️ Tech Stack
 
-**Backend (Production Ready)**
-- FastAPI (Python web framework)
+**Backend API (Python - Production Ready)**
+- FastAPI (Modern Python web framework)
 - Neon PostgreSQL (Serverless database with auto-scaling)
 - SQLAlchemy 2.0 (ORM)
 - Alembic (Database migrations)
 - Pydantic v2 (Data validation)
 - APScheduler (Task automation)
 - Pytest (Testing framework)
+
+**Frontend (C# .NET 9 - In Development)**
+- Blazor WebAssembly (SPA framework with C#)
+- MudBlazor (Material Design components)
+- Refit (Type-safe HTTP client)
+- Blazored.LocalStorage (Browser storage)
+- Plotly.NET (Data visualization)
+- SignalR (Real-time updates - Phase 7)
 
 **Email & Notifications (Production Ready)**
 - SMTP integration with retry logic
@@ -175,7 +185,8 @@ curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/test-
 **Cloud Infrastructure (Azure + Neon)**
 - 🐳 Docker (Containerization)
 - GitHub Container Registry (Image storage)
-- Azure App Service (Container hosting)
+- Azure App Service (Backend API hosting)
+- Azure Static Web Apps (Frontend hosting - planned)
 - Neon PostgreSQL (Serverless database - cost optimized)
 - Azure Monitor (Logging and monitoring)
 - GitHub Actions (CI/CD automation)
@@ -231,12 +242,198 @@ curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/test-
 - [ ] **Webhook Integration**: Discord and Telegram bot implementation (Phase 5.5)
 - [ ] **Template System Enhancement**: Messaging platform templates (Phase 5.5)
 
-### Phase 6: Web Interface 🌐 **NEXT**
-- [ ] React dashboard with modern UI
-- [ ] Real-time job filtering interface
-- [ ] User management and authentication
-- [ ] Analytics and reporting dashboard
-- [ ] Mobile-responsive design
+### Phase 6: Web Interface 🌐 **IN PROGRESS**
+
+#### 🎨 **Frontend Stack (.NET 9)**
+- **Blazor WebAssembly**: Modern C# SPA framework running in the browser
+- **MudBlazor**: Comprehensive Material Design component library
+- **Refit**: Type-safe HTTP client for REST API integration
+- **Blazored.LocalStorage**: Client-side browser storage management
+- **Plotly.NET**: Interactive data visualizations and charts
+- **SignalR**: Real-time notifications (Phase 7)
+
+#### 🏗️ **Frontend Architecture**
+```
+OrionJobs.Frontend/
+├── Pages/                      # Blazor routable pages
+│   ├── Index.razor            # Main dashboard
+│   ├── Jobs/
+│   │   ├── JobList.razor      # Job listing with filters
+│   │   └── JobDetails.razor   # Job detail view
+│   ├── Analytics/
+│   │   └── Dashboard.razor    # Analytics dashboard
+│   └── Settings/
+│       └── Notifications.razor # Email preferences
+├── Components/                 # Reusable components
+│   ├── JobCard.razor
+│   ├── FilterPanel.razor
+│   └── ChartContainer.razor
+├── Services/                   # API integration
+│   ├── IJobApi.cs             # Refit interface
+│   └── JobService.cs          # Business logic
+├── Models/                     # C# DTOs
+│   ├── Job.cs
+│   └── JobSummary.cs
+├── wwwroot/                    # Static assets
+└── Program.cs                  # App configuration
+```
+
+#### ✨ **Planned Features**
+- [ ] **Responsive Dashboard**: Mobile-first design with MudBlazor
+- [ ] **Advanced Job Search**: Filters for location, skills, work modality, period
+- [ ] **Job Details**: Full information with application tracking
+- [ ] **Analytics Dashboard**: Interactive charts with market insights
+- [ ] **User Preferences**: Save searches and notification settings
+- [ ] **Real-time Updates**: SignalR integration for live notifications (Phase 7)
+- [ ] **Dark/Light Theme**: User-customizable themes
+- [ ] **PWA Support**: Installable as native app
+
+#### 🚀 **Quick Start**
+```bash
+# Create Blazor WebAssembly project
+dotnet new blazorwasm -o OrionJobs.Frontend -f net9.0
+cd OrionJobs.Frontend
+
+# Add required packages
+dotnet add package MudBlazor
+dotnet add package Refit
+dotnet add package Refit.HttpClientFactory
+dotnet add package Blazored.LocalStorage
+
+# Run development server
+dotnet watch run
+# Available at: https://localhost:5001
+```
+
+#### 🔗 **API Integration Example**
+```csharp
+// Services/IJobApi.cs
+using Refit;
+
+public interface IJobApi
+{
+    [Get("/api/v1/jobs")]
+    Task<List<Job>> GetJobsAsync(
+        [Query] string? location = null,
+        [Query] string? tags = null,
+        [Query] int? period_days = null
+    );
+
+    [Get("/api/v1/summary/daily")]
+    Task<JobSummary> GetDailySummaryAsync(
+        [Query] int period_days = 7
+    );
+}
+
+// Program.cs
+builder.Services.AddRefitClient<IJobApi>()
+    .ConfigureHttpClient(c => 
+        c.BaseAddress = new Uri("https://orionjobs-api.azurewebsites.net"));
+```
+
+#### 📱 **Component Example**
+```razor
+@page "/jobs"
+@inject IJobApi JobApi
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudText Typo="Typo.h4" Class="mb-4">Available Jobs</MudText>
+    
+    <MudGrid>
+        <MudItem xs="12" md="3">
+            <FilterPanel @bind-Filters="filters" OnFilterChanged="LoadJobs" />
+        </MudItem>
+        
+        <MudItem xs="12" md="9">
+            @if (jobs == null)
+            {
+                <MudProgressCircular Indeterminate="true" />
+            }
+            else
+            {
+                @foreach (var job in jobs)
+                {
+                    <JobCard Job="job" />
+                }
+            }
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private List<Job>? jobs;
+    private FilterOptions filters = new() { PeriodDays = 7 };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadJobs();
+    }
+
+    private async Task LoadJobs()
+    {
+        jobs = await JobApi.GetJobsAsync(
+            location: filters.Location,
+            tags: filters.Tags,
+            period_days: filters.PeriodDays
+        );
+    }
+}
+```
+
+#### 🎯 **Implementation Plan**
+
+**Sprint 1: Setup (2-3 days)**
+- [ ] Create Blazor WebAssembly project
+- [ ] Configure MudBlazor theme
+- [ ] Setup Refit for API integration
+- [ ] Create C# models (DTOs)
+
+**Sprint 2: Core Components (4-5 days)**
+- [ ] Main layout and navigation
+- [ ] Dashboard with statistics
+- [ ] Job list with pagination
+- [ ] Advanced filter panel
+- [ ] Job detail page
+
+**Sprint 3: Analytics (3-4 days)**
+- [ ] Analytics dashboard
+- [ ] Trend charts (Plotly.NET)
+- [ ] Top skills and companies
+- [ ] Market analysis views
+
+**Sprint 4: Polish (3-4 days)**
+- [ ] User preferences (LocalStorage)
+- [ ] Notification settings
+- [ ] Dark/light theme toggle
+- [ ] Mobile responsiveness
+- [ ] PWA manifest
+
+**Sprint 5: Deploy (2-3 days)**
+- [ ] Azure Static Web Apps deployment
+- [ ] CI/CD pipeline
+- [ ] Performance optimization
+- [ ] SEO and meta tags
+
+#### ☁️ **Deployment**
+
+**Azure Static Web Apps (Recommended)**
+```bash
+# Build for production
+dotnet publish -c Release -o publish
+
+# Deploy via Azure CLI
+az staticwebapp create \
+  --name orionjobs-frontend \
+  --resource-group orionjobs-rg \
+  --source ./publish/wwwroot \
+  --location "East US"
+```
+
+**Estimated Cost**: $0/month (Free tier)
+- 100 GB bandwidth/month
+- Custom domain included
+- Automatic SSL
+- Built-in CI/CD
 
 ### Phase 7: AI Features 🧠
 - [ ] Machine learning job recommendation engine
@@ -304,11 +501,12 @@ curl "https://orionjobs-api.azurewebsites.net/api/v1/summary/daily?tags=react&ta
 - GitHub Container Registry: **FREE**
 - Azure App Service (B1): **~$15**  
 - Neon PostgreSQL (Serverless): **FREE** (up to 1GB, auto-scaling)
+- Azure Static Web Apps: **FREE** (100GB bandwidth)
 - **Total: ~$15/month** (66% cost reduction!)
 
 **Previous vs Current:**
 - **Before**: Azure Database (~$20) + App Service (~$15) = **~$35/month**
-- **After**: Neon Database (FREE) + App Service (~$15) = **~$15/month**
+- **After**: Neon Database (FREE) + App Service (~$15) + Static Web Apps (FREE) = **~$15/month**
 - **Savings**: **~$240/year** while maintaining full functionality
 
 **Current ROI:**
@@ -318,6 +516,7 @@ curl "https://orionjobs-api.azurewebsites.net/api/v1/summary/daily?tags=react&ta
 - ✅ **Email Notifications**: Automated daily summaries with professional templates
 - ✅ **Automated Scheduling**: Daily job collection and email delivery at 9 AM UTC
 - ✅ **Cost Optimized**: 66% infrastructure cost reduction with Neon PostgreSQL
+- 🚧 **Modern Web UI**: Blazor WebAssembly frontend with C# (in development)
 - 🚧 **Webhook System**: Ready for implementation (Discord/Telegram)
 
 ## 🔧 Email Configuration
@@ -364,6 +563,16 @@ curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/send-
 
 ```
 orionjobs-ai/
+├── 🌐 Frontend (.NET Blazor - In Development)
+│   └── OrionJobs.Frontend/
+│       ├── Pages/              # Blazor routable pages
+│       ├── Components/         # Reusable UI components
+│       ├── Services/           # API clients (Refit)
+│       ├── Models/             # C# DTOs
+│       ├── Shared/             # Layout components
+│       ├── wwwroot/            # Static assets
+│       └── Program.cs          # App configuration
+├── 🐍 Backend (Python FastAPI - Production Ready)
 ├── 🐳 Docker Configuration
 │   ├── Dockerfile              # Container configuration
 │   ├── docker-compose.yml      # Local development

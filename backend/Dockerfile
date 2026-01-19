@@ -16,8 +16,10 @@ RUN apt-get update && \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY . .
+COPY app/ ./app/
+COPY alembic/ ./alembic/
+COPY run.py .
+COPY job_schedule.py .
 
 # Create non-root user and set ownership
 RUN adduser --disabled-password --gecos "" appuser && \

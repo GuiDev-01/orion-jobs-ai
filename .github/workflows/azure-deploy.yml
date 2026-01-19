@@ -3,6 +3,9 @@ name: Deploy to Azure
 on:
   push:
     branches: [ main, phase-4-azure-deployment ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/azure-deploy.yml'
   workflow_dispatch:
 
 jobs:
@@ -26,7 +29,8 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v6
       with:
-        context: .
+        context: ./backend
+        file: ./backend/Dockerfile 
         push: true
         tags: |
           ghcr.io/guidev-01/orion-jobs-ai:latest
@@ -62,7 +66,13 @@ jobs:
           COLLECT_ADZUNA_MAX_REQUESTS="30" \
           ADZUNA_APP_ID="${{ secrets.ADZUNA_APP_ID }}" \
           ADZUNA_APP_KEY="${{ secrets.ADZUNA_APP_KEY }}" \
-          JSEARCH_API_KEY="${{ secrets.JSEARCH_API_KEY }}"
+          JSEARCH_API_KEY="${{ secrets.JSEARCH_API_KEY }}" \
+          SMTP_SERVER="${{ secrets.SMTP_SERVER }}" \
+          SMTP_PORT="${{ secrets.SMTP_PORT }}" \
+          SMTP_USERNAME="${{ secrets.SMTP_USERNAME }}" \
+          SMTP_PASSWORD="${{ secrets.SMTP_PASSWORD }}" \
+          EMAIL_FROM_NAME="OrionJobs AI" \
+          DEFAULT_EMAIL_RECIPIENTS="${{ secrets.DEFAULT_EMAIL_RECIPIENTS }}"
     
     - name: Restart App Service
       run: |

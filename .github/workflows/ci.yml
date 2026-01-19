@@ -1,51 +1,77 @@
-name: Run Tests
+name: Backend CI
 
 on:
   push:
-    branches:
-      - main
-      - phase-3-data-collection
-      - phase-4-azure-deployment
-      - phase-5-user-experience
+    branches: [ main, develop ]
+    paths:
+      - 'backend/**' 
+      - '.github/workflows/ci.yml'
   pull_request:
-    branches:
-      - main
-      - phase-3-data-collection
-      - phase-4-azure-deployment
-      - phase-5-user-experience
+    branches: [ main, develop ]
+    paths:
+      - 'backend/**'
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: backend  
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v5
-
+    
     - name: Set up Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v5
       with:
-        python-version: 3.14
-
+        python-version: '3.12'
+    
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }} 
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
-    - name: Security scan
-      run: |
-        pip install safety
-        safety scan --continue-on-error --output text
-      continue-on-error: true
-
-    - name: Setup database with Alembic
-      env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL}}
-      run: |
-        alembic upgrade head 
-
+        pip install -r requirements.txt  # ← Agora funciona (working-directory: backend)
+    
     - name: Run tests
+      run: python run.py test 
       env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL}}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+        ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+        JSEARCH_API_KEY: ${{ secrets.JSEARCH_API_KEY }}
+    
+    - name: Check code quality
       run: |
-        pytest
+        pip install flake8
+        flake8 app/ --count --select=E9,F63,F7,F82 --show-source --statistics
+
+  security-scan:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+    
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: 'backend'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: Upload Trivy results to GitHub Security
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'trivy-results.sarif'

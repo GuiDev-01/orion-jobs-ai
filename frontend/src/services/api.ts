@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { JobsResponse, DailySummaryResponse } from '../types/job';
+import type { JobsResponse, DailySummaryResponse, Job } from '../types/job';
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1',
@@ -19,7 +19,7 @@ export const jobsApi = {
         return data;
     },
 
-    getJobById: async (id: number) => {
+    getJobById: async (id: number): Promise<Job> => {
         const { data } = await api.get(`/jobs/${id}`);
         return data;
     },

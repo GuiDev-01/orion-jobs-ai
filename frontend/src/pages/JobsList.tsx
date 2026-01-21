@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'
 import {
   Card,
   CardContent,
@@ -8,7 +9,6 @@ import {
   Box,
   TextField,
   InputAdornment,
-  CircularProgress,
   Alert,
   Pagination,
   Stack,
@@ -218,7 +218,13 @@ interface JobCardProps {
   job: Job;
 }
 
+// Job Card Component
+interface JobCardProps {
+  job: Job;
+}
+
 function JobCard({ job }: JobCardProps) {
+  const navigate = useNavigate(); 
   return (
     <Card
       sx={{
@@ -226,11 +232,13 @@ function JobCard({ job }: JobCardProps) {
         display: 'flex',
         flexDirection: 'column',
         transition: 'transform 0.2s, box-shadow 0.2s',
+        cursor: 'pointer',
         '&:hover': {
           transform: 'translateY(-4px)',
           boxShadow: 4,
         },
       }}
+      onClick={() => navigate(`/jobs/${job.id}`)} // Click anywhere on card
     >
       <CardContent sx={{ flexGrow: 1 }}>
         <Typography variant="h6" gutterBottom noWrap title={job.title}>
@@ -279,9 +287,10 @@ function JobCard({ job }: JobCardProps) {
           variant="contained"
           fullWidth
           endIcon={<OpenInNewIcon />}
-          href={job.url}
-          target="_blank"
-          rel="noopener noreferrer"
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent card click
+            window.open(job.url, '_blank');
+          }}
         >
           View Job
         </Button>

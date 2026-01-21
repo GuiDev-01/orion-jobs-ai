@@ -2,8 +2,8 @@
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green)
-![.NET](https://img.shields.io/badge/.NET-9.0-512BD4)
-![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-512BD4)
+![React](https://img.shields.io/badge/React-18-61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-blue)
 ![Azure](https://img.shields.io/badge/Azure-Cloud-blue)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
@@ -16,7 +16,7 @@
 
 > Navigate your career journey with AI-powered precision and intelligent job market analytics.
 
-Transform your job search from hours of manual browsing to intelligent, automated career guidance through legal API integrations, smart analytics, and personalized summaries. Built with Python/FastAPI backend and modern .NET Blazor WebAssembly frontend - deployed on Microsoft Azure cloud infrastructure with cost-optimized Neon PostgreSQL database.
+Transform your job search from hours of manual browsing to intelligent, automated career guidance through legal API integrations, smart analytics, and personalized summaries. Built with Python/FastAPI backend and modern React frontend - deployed on Microsoft Azure cloud infrastructure with cost-optimized Neon PostgreSQL database.
 
 ## 📊 Current Status (January 2026)
 
@@ -161,13 +161,13 @@ curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/test-
 - APScheduler (Task automation)
 - Pytest (Testing framework)
 
-**Frontend (C# .NET 9 - In Development)**
-- Blazor WebAssembly (SPA framework with C#)
-- MudBlazor (Material Design components)
-- Refit (Type-safe HTTP client)
-- Blazored.LocalStorage (Browser storage)
-- Plotly.NET (Data visualization)
-- SignalR (Real-time updates - Phase 7)
+**Frontend (React + TypeScript - In Development)**
+- React 18 (Modern UI library)
+- TypeScript (Type-safe JavaScript)
+- Material UI (Component library)
+- Axios (HTTP client)
+- Recharts (Data visualization)
+- React Router (Navigation)
 
 **Email & Notifications (Production Ready)**
 - SMTP integration with retry logic
@@ -244,188 +244,181 @@ curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/test-
 
 ### Phase 6: Web Interface 🌐 **IN PROGRESS**
 
-#### 🎨 **Frontend Stack (.NET 9)**
-- **Blazor WebAssembly**: Modern C# SPA framework running in the browser
-- **MudBlazor**: Comprehensive Material Design component library
-- **Refit**: Type-safe HTTP client for REST API integration
-- **Blazored.LocalStorage**: Client-side browser storage management
-- **Plotly.NET**: Interactive data visualizations and charts
-- **SignalR**: Real-time notifications (Phase 7)
+#### 🎨 **Frontend Stack (React + TypeScript)**
+- **React 18**: Modern component-based UI library
+- **TypeScript**: Type-safe development with better DX
+- **Material UI (MUI)**: Comprehensive component library with theming
+- **Axios**: HTTP client for API integration
+- **Recharts**: Responsive charts for analytics visualization
+- **React Router**: Client-side routing and navigation
 
 #### 🏗️ **Frontend Architecture**
 ```
-OrionJobs.Frontend/
-├── Pages/                      # Blazor routable pages
-│   ├── Index.razor            # Main dashboard
-│   ├── Jobs/
-│   │   ├── JobList.razor      # Job listing with filters
-│   │   └── JobDetails.razor   # Job detail view
-│   ├── Analytics/
-│   │   └── Dashboard.razor    # Analytics dashboard
-│   └── Settings/
-│       └── Notifications.razor # Email preferences
-├── Components/                 # Reusable components
-│   ├── JobCard.razor
-│   ├── FilterPanel.razor
-│   └── ChartContainer.razor
-├── Services/                   # API integration
-│   ├── IJobApi.cs             # Refit interface
-│   └── JobService.cs          # Business logic
-├── Models/                     # C# DTOs
-│   ├── Job.cs
-│   └── JobSummary.cs
-├── wwwroot/                    # Static assets
-└── Program.cs                  # App configuration
+frontend/
+├── src/
+│   ├── pages/                    # Route-based pages
+│   │   ├── Dashboard.tsx        # Main dashboard
+│   │   ├── Jobs.tsx             # Job listing with filters
+│   │   ├── JobDetails.tsx       # Job detail view
+│   │   └── Analytics.tsx        # Analytics dashboard
+│   ├── components/              # Reusable components
+│   │   ├── JobCard.tsx
+│   │   ├── FilterPanel.tsx
+│   │   └── StatsCard.tsx
+│   ├── services/                # API integration
+│   │   └── api.ts               # Axios client
+│   ├── types/                   # TypeScript types
+│   │   └── job.ts
+│   ├── hooks/                   # Custom React hooks
+│   ├── App.tsx                  # Main app component
+│   └── main.tsx                 # Entry point
+├── public/                      # Static assets
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
 ```
 
 #### ✨ **Planned Features**
-- [ ] **Responsive Dashboard**: Mobile-first design with MudBlazor
+- [ ] **Responsive Dashboard**: Mobile-first design with Material UI
 - [ ] **Advanced Job Search**: Filters for location, skills, work modality, period
 - [ ] **Job Details**: Full information with application tracking
 - [ ] **Analytics Dashboard**: Interactive charts with market insights
 - [ ] **User Preferences**: Save searches and notification settings
-- [ ] **Real-time Updates**: SignalR integration for live notifications (Phase 7)
 - [ ] **Dark/Light Theme**: User-customizable themes
 - [ ] **PWA Support**: Installable as native app
 
 #### 🚀 **Quick Start**
 ```bash
-# Create Blazor WebAssembly project
-dotnet new blazorwasm -o OrionJobs.Frontend -f net9.0
-cd OrionJobs.Frontend
+# Create React project with Vite
+npm create vite@latest frontend -- --template react-ts
+cd frontend
 
-# Add required packages
-dotnet add package MudBlazor
-dotnet add package Refit
-dotnet add package Refit.HttpClientFactory
-dotnet add package Blazored.LocalStorage
+# Install dependencies
+npm install @mui/material @mui/icons-material @emotion/react @emotion/styled
+npm install axios recharts react-router-dom
 
 # Run development server
-dotnet watch run
-# Available at: https://localhost:5001
+npm run dev
+# Available at: http://localhost:5173
 ```
 
 #### 🔗 **API Integration Example**
-```csharp
-// Services/IJobApi.cs
-using Refit;
+```typescript
+// services/api.ts
+import axios from 'axios';
 
-public interface IJobApi
-{
-    [Get("/api/v1/jobs")]
-    Task<List<Job>> GetJobsAsync(
-        [Query] string? location = null,
-        [Query] string? tags = null,
-        [Query] int? period_days = null
-    );
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'https://orionjobs-api.azurewebsites.net'
+});
 
-    [Get("/api/v1/summary/daily")]
-    Task<JobSummary> GetDailySummaryAsync(
-        [Query] int period_days = 7
-    );
-}
+export const jobsApi = {
+  getJobs: () => api.get('/api/v1/jobs'),
+  
+  getDailySummary: (params?: {
+    location?: string;
+    tags?: string[];
+    period_days?: number;
+    limit?: number;
+  }) => api.get('/api/v1/summary/daily', { params }),
+};
 
-// Program.cs
-builder.Services.AddRefitClient<IJobApi>()
-    .ConfigureHttpClient(c => 
-        c.BaseAddress = new Uri("https://orionjobs-api.azurewebsites.net"));
+export default api;
 ```
 
 #### 📱 **Component Example**
-```razor
-@page "/jobs"
-@inject IJobApi JobApi
+```tsx
+// pages/Jobs.tsx
+import { useState, useEffect } from 'react';
+import { Container, Grid, Typography, CircularProgress } from '@mui/material';
+import { jobsApi } from '../services/api';
+import JobCard from '../components/JobCard';
+import FilterPanel from '../components/FilterPanel';
+import { Job, Filters } from '../types/job';
 
-<MudContainer MaxWidth="MaxWidth.Large">
-    <MudText Typo="Typo.h4" Class="mb-4">Available Jobs</MudText>
-    
-    <MudGrid>
-        <MudItem xs="12" md="3">
-            <FilterPanel @bind-Filters="filters" OnFilterChanged="LoadJobs" />
-        </MudItem>
+export default function Jobs() {
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState<Filters>({ period_days: 7 });
+
+  useEffect(() => {
+    loadJobs();
+  }, [filters]);
+
+  const loadJobs = async () => {
+    setLoading(true);
+    try {
+      const { data } = await jobsApi.getDailySummary(filters);
+      setJobs(data.jobs || []);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Container maxWidth="lg">
+      <Typography variant="h4" sx={{ mb: 4 }}>Available Jobs</Typography>
+      
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={3}>
+          <FilterPanel filters={filters} onChange={setFilters} />
+        </Grid>
         
-        <MudItem xs="12" md="9">
-            @if (jobs == null)
-            {
-                <MudProgressCircular Indeterminate="true" />
-            }
-            else
-            {
-                @foreach (var job in jobs)
-                {
-                    <JobCard Job="job" />
-                }
-            }
-        </MudItem>
-    </MudGrid>
-</MudContainer>
-
-@code {
-    private List<Job>? jobs;
-    private FilterOptions filters = new() { PeriodDays = 7 };
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadJobs();
-    }
-
-    private async Task LoadJobs()
-    {
-        jobs = await JobApi.GetJobsAsync(
-            location: filters.Location,
-            tags: filters.Tags,
-            period_days: filters.PeriodDays
-        );
-    }
+        <Grid item xs={12} md={9}>
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            jobs.map(job => <JobCard key={job.id} job={job} />)
+          )}
+        </Grid>
+      </Grid>
+    </Container>
+  );
 }
 ```
 
 #### 🎯 **Implementation Plan**
 
-**Sprint 1: Setup (2-3 days)**
-- [ ] Create Blazor WebAssembly project
-- [ ] Configure MudBlazor theme
-- [ ] Setup Refit for API integration
-- [ ] Create C# models (DTOs)
+**Sprint 1: Setup (1-2 days)**
+- [ ] Create Vite + React + TypeScript project
+- [ ] Configure Material UI theme
+- [ ] Setup Axios for API integration
+- [ ] Create TypeScript types
 
-**Sprint 2: Core Components (4-5 days)**
+**Sprint 2: Core Components (3-4 days)**
 - [ ] Main layout and navigation
-- [ ] Dashboard with statistics
+- [ ] Dashboard with statistics cards
 - [ ] Job list with pagination
-- [ ] Advanced filter panel
+- [ ] Filter panel component
 - [ ] Job detail page
 
-**Sprint 3: Analytics (3-4 days)**
+**Sprint 3: Analytics (2-3 days)**
 - [ ] Analytics dashboard
-- [ ] Trend charts (Plotly.NET)
-- [ ] Top skills and companies
-- [ ] Market analysis views
+- [ ] Trend charts with Recharts
+- [ ] Top skills and companies cards
 
-**Sprint 4: Polish (3-4 days)**
-- [ ] User preferences (LocalStorage)
-- [ ] Notification settings
+**Sprint 4: Polish (2-3 days)**
 - [ ] Dark/light theme toggle
 - [ ] Mobile responsiveness
-- [ ] PWA manifest
+- [ ] Error handling and loading states
+- [ ] Performance optimization
 
-**Sprint 5: Deploy (2-3 days)**
+**Sprint 5: Deploy (1-2 days)**
 - [ ] Azure Static Web Apps deployment
 - [ ] CI/CD pipeline
-- [ ] Performance optimization
-- [ ] SEO and meta tags
+- [ ] Environment variables setup
 
 #### ☁️ **Deployment**
 
 **Azure Static Web Apps (Recommended)**
 ```bash
 # Build for production
-dotnet publish -c Release -o publish
+npm run build
 
 # Deploy via Azure CLI
 az staticwebapp create \
   --name orionjobs-frontend \
   --resource-group orionjobs-rg \
-  --source ./publish/wwwroot \
+  --source ./dist \
   --location "East US"
 ```
 
@@ -516,7 +509,7 @@ curl "https://orionjobs-api.azurewebsites.net/api/v1/summary/daily?tags=react&ta
 - ✅ **Email Notifications**: Automated daily summaries with professional templates
 - ✅ **Automated Scheduling**: Daily job collection and email delivery at 9 AM UTC
 - ✅ **Cost Optimized**: 66% infrastructure cost reduction with Neon PostgreSQL
-- 🚧 **Modern Web UI**: Blazor WebAssembly frontend with C# (in development)
+- 🚧 **Modern Web UI**: React + TypeScript frontend (in development)
 - 🚧 **Webhook System**: Ready for implementation (Discord/Telegram)
 
 ## 🔧 Email Configuration
@@ -563,15 +556,20 @@ curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/send-
 
 ```
 orionjobs-ai/
-├── 🌐 Frontend (.NET Blazor - In Development)
-│   └── OrionJobs.Frontend/
-│       ├── Pages/              # Blazor routable pages
-│       ├── Components/         # Reusable UI components
-│       ├── Services/           # API clients (Refit)
-│       ├── Models/             # C# DTOs
-│       ├── Shared/             # Layout components
-│       ├── wwwroot/            # Static assets
-│       └── Program.cs          # App configuration
+├── 🌐 Frontend (React + TypeScript - In Development)
+│   └── frontend/
+│       ├── src/
+│       │   ├── pages/          # Route-based pages
+│       │   ├── components/     # Reusable UI components
+│       │   ├── services/       # API clients (Axios)
+│       │   ├── types/          # TypeScript types
+│       │   ├── hooks/          # Custom React hooks
+│       │   ├── App.tsx         # Main app component
+│       │   └── main.tsx        # Entry point
+│       ├── public/             # Static assets
+│       ├── package.json
+│       ├── tsconfig.json
+│       └── vite.config.ts
 ├── 🐍 Backend (Python FastAPI - Production Ready)
 ├── 🐳 Docker Configuration
 │   ├── Dockerfile              # Container configuration

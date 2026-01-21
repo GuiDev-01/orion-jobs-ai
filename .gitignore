@@ -61,16 +61,19 @@ dmypy.json
 .ruff_cache/
 
 # ============================================
-# .NET (Frontend)
+# React/Node.js (Frontend)
 # ============================================
-frontend/bin/
-frontend/obj/
-frontend/.vs/
-frontend/.vscode/
-frontend/*.user
-frontend/*.suo
-frontend/.idea/
-frontend/publish/
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.production.local
+frontend/coverage/
+frontend/.eslintcache
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
 
 # ============================================
 # IDEs

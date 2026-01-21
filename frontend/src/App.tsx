@@ -1,47 +1,19 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import JobsList from './pages/JobsList';
-
-// Custom theme
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
-  },
-  components: {
-    // Force no margins globally
-    MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          margin: 0,
-          padding: 0,
-        },
-      },
-    },
-  },
-});
+import JobDetails from './pages/JobDetails';
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <ThemeProvider>
       <BrowserRouter>
         <Layout>
           <Routes>
-            {/* Dashboard route */}
             <Route path="/" element={<Dashboard />} />
-            
-            {/* Jobs list route */}
             <Route path="/jobs" element={<JobsList />} />
-            
-            {/* Redirect unknown routes to home */}
+            <Route path="/jobs/:id" element={<JobDetails />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Layout>

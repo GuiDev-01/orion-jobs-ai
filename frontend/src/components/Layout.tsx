@@ -1,9 +1,21 @@
 import { type ReactNode } from 'react';
-import { AppBar, Toolbar, Typography, Container, Box, Button } from '@mui/material';
+import { 
+  AppBar, 
+  Toolbar, 
+  Typography, 
+  Container, 
+  Box, 
+  Button,
+  IconButton,
+  Tooltip
+} from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import WorkIcon from '@mui/icons-material/Work';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ListAltIcon from '@mui/icons-material/ListAlt';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import { useThemeMode } from '../contexts/ThemeContext';
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,6 +24,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { mode, toggleTheme } = useThemeMode();
 
   return (
     <Box 
@@ -24,7 +37,6 @@ export default function Layout({ children }: LayoutProps) {
         width: '100%'
       }}
     >
-      {/* Fixed header - full width, no margins */}
       <AppBar 
         position="static" 
         sx={{ 
@@ -66,6 +78,7 @@ export default function Layout({ children }: LayoutProps) {
             startIcon={<ListAltIcon />}
             onClick={() => navigate('/jobs')}
             sx={{
+              mr: 2,
               backgroundColor: location.pathname === '/jobs' ? 'rgba(255,255,255,0.1)' : 'transparent',
               '&:hover': {
                 backgroundColor: 'rgba(255,255,255,0.2)',
@@ -74,10 +87,26 @@ export default function Layout({ children }: LayoutProps) {
           >
             Jobs
           </Button>
+
+          {/* Theme Toggle Button */}
+          <Tooltip title={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}>
+            <IconButton 
+              onClick={toggleTheme} 
+              color="inherit"
+              sx={{
+                ml: 1,
+                '&:hover': {
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                },
+              }}
+            >
+              {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
+          </Tooltip>
         </Toolbar>
       </AppBar>
 
-      {/* Main content with controlled padding */}
+      {/* Main content */}
       <Container 
         maxWidth={false} 
         sx={{ 
@@ -91,14 +120,17 @@ export default function Layout({ children }: LayoutProps) {
         {children}
       </Container>
 
-      {/* Footer - full width */}
+      {/* Footer */}
       <Box 
         component="footer" 
         sx={{ 
           py: 3, 
           px: 2, 
           mt: 'auto', 
-          backgroundColor: '#f5f5f5',
+          backgroundColor: (theme) => 
+            theme.palette.mode === 'dark' 
+              ? 'rgba(255, 255, 255, 0.05)' 
+              : '#f5f5f5',
           width: '100%',
           margin: 0
         }}

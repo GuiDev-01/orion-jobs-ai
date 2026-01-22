@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -22,8 +22,33 @@ import WorkIcon from '@mui/icons-material/Work';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import BusinessIcon from '@mui/icons-material/Business';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { motion } from 'framer-motion';
+import type { Variants } from 'framer-motion'; // ← Import como type
 import { jobsApi } from '../services/api';
 import type { Job, JobsResponse } from '../types/job';
+
+// Animation variants with proper typing
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.3,
+      ease: [0.4, 0, 0.2, 1],
+    },
+  },
+};
 
 export default function JobsList() {
   const [data, setData] = useState<JobsResponse | null>(null);
@@ -69,7 +94,6 @@ export default function JobsList() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Error state
   if (error) {
     return <Alert severity="error">{error}</Alert>;
   }
@@ -149,31 +173,35 @@ export default function JobsList() {
         </CardContent>
       </Card>
 
-      {/* Jobs Grid */}
-      <Grid container spacing={3}>
-        {loading ? (
-          // Skeleton loaders while loading
-          Array.from(new Array(pageSize)).map((_, index) => (
-            <Grid key={index} size={{ xs: 12, sm: 6, lg: 4 }}>
-              <JobCardSkeleton />
+      {/* Jobs Grid with animations */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        key={currentPage} // Re-trigger animation on page change
+      >
+        <Grid container spacing={3}>
+          {loading ? (
+            Array.from(new Array(pageSize)).map((_, index) => (
+              <Grid key={index} size={{ xs: 12, sm: 6, lg: 4 }}>
+                <JobCardSkeleton />
+              </Grid>
+            ))
+          ) : data && data.jobs.length > 0 ? (
+            data.jobs.map((job) => (
+              <Grid key={job.id} size={{ xs: 12, sm: 6, lg: 4 }}>
+                <JobCard job={job} />
+              </Grid>
+            ))
+          ) : (
+            <Grid size={{ xs: 12 }}>
+              <Alert severity="info">
+                No jobs found. Try adjusting your filters.
+              </Alert>
             </Grid>
-          ))
-        ) : data && data.jobs.length > 0 ? (
-          // Actual job cards
-          data.jobs.map((job) => (
-            <Grid key={job.id} size={{ xs: 12, sm: 6, lg: 4 }}>
-              <JobCard job={job} />
-            </Grid>
-          ))
-        ) : (
-          // No results
-          <Grid size={{ xs: 12 }}>
-            <Alert severity="info">
-              No jobs found. Try adjusting your filters.
-            </Alert>
-          </Grid>
-        )}
-      </Grid>
+          )}
+        </Grid>
+      </motion.div>
 
       {/* Pagination */}
       {totalPages > 1 && !loading && (
@@ -213,88 +241,86 @@ function JobCardSkeleton() {
   );
 }
 
-// Job Card Component
-interface JobCardProps {
-  job: Job;
-}
-
-// Job Card Component
+// Job Card Component with animation
 interface JobCardProps {
   job: Job;
 }
 
 function JobCard({ job }: JobCardProps) {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
   return (
-    <Card
-      sx={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        transition: 'transform 0.2s, box-shadow 0.2s',
-        cursor: 'pointer',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: 4,
-        },
-      }}
-      onClick={() => navigate(`/jobs/${job.id}`)} // Click anywhere on card
-    >
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Typography variant="h6" gutterBottom noWrap title={job.title}>
-          {job.title}
-        </Typography>
-
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          <BusinessIcon sx={{ fontSize: 18, mr: 0.5, color: 'text.secondary' }} />
-          <Typography variant="body2" color="text.secondary" noWrap>
-            {job.company}
+    <motion.div variants={itemVariants}>
+      <Card
+        sx={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            transform: 'translateY(-8px)',
+            boxShadow: 6,
+          },
+        }}
+        onClick={() => navigate(`/jobs/${job.id}`)}
+      >
+        <CardContent sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" gutterBottom noWrap title={job.title}>
+            {job.title}
           </Typography>
-        </Box>
 
-        {job.location && (
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <LocationOnIcon sx={{ fontSize: 18, mr: 0.5, color: 'text.secondary' }} />
+            <BusinessIcon sx={{ fontSize: 18, mr: 0.5, color: 'text.secondary' }} />
             <Typography variant="body2" color="text.secondary" noWrap>
-              {job.location}
+              {job.company}
             </Typography>
           </Box>
-        )}
 
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <WorkIcon sx={{ fontSize: 18, mr: 0.5, color: 'text.secondary' }} />
-          <Chip label={job.work_modality} size="small" color="primary" />
-        </Box>
+          {job.location && (
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <LocationOnIcon sx={{ fontSize: 18, mr: 0.5, color: 'text.secondary' }} />
+              <Typography variant="body2" color="text.secondary" noWrap>
+                {job.location}
+              </Typography>
+            </Box>
+          )}
 
-        {(job.salary_min || job.salary_max) && (
-          <Typography variant="body2" color="success.main" sx={{ mb: 2, fontWeight: 600 }}>
-            ${job.salary_min?.toLocaleString() || '?'} - ${job.salary_max?.toLocaleString() || '?'}
-          </Typography>
-        )}
-
-        {job.tags && job.tags.length > 0 && (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
-            {job.tags.slice(0, 3).map((tag) => (
-              <Chip key={tag} label={tag} size="small" variant="outlined" />
-            ))}
-            {job.tags.length > 3 && (
-              <Chip label={`+${job.tags.length - 3}`} size="small" variant="outlined" />
-            )}
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <WorkIcon sx={{ fontSize: 18, mr: 0.5, color: 'text.secondary' }} />
+            <Chip label={job.work_modality} size="small" color="primary" />
           </Box>
-        )}
 
-        <Button
-          variant="contained"
-          fullWidth
-          endIcon={<OpenInNewIcon />}
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent card click
-            window.open(job.url, '_blank');
-          }}
-        >
-          View Job
-        </Button>
-      </CardContent>
-    </Card>
+          {(job.salary_min || job.salary_max) && (
+            <Typography variant="body2" color="success.main" sx={{ mb: 2, fontWeight: 600 }}>
+              ${job.salary_min?.toLocaleString() || '?'} - ${job.salary_max?.toLocaleString() || '?'}
+            </Typography>
+          )}
+
+          {job.tags && job.tags.length > 0 && (
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
+              {job.tags.slice(0, 3).map((tag) => (
+                <Chip key={tag} label={tag} size="small" variant="outlined" />
+              ))}
+              {job.tags.length > 3 && (
+                <Chip label={`+${job.tags.length - 3}`} size="small" variant="outlined" />
+              )}
+            </Box>
+          )}
+
+          <Button
+            variant="contained"
+            fullWidth
+            endIcon={<OpenInNewIcon />}
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(job.url, '_blank');
+            }}
+          >
+            View Job
+          </Button>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }

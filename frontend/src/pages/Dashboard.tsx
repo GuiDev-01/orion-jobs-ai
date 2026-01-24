@@ -1,44 +1,87 @@
 import { useState, useEffect } from 'react';
-import { Grid, Card, CardContent, Typography, Chip, Box, CircularProgress } from '@mui/material';
+import { Grid, Card, CardContent, Typography, Chip, Box, CircularProgress, useTheme, alpha } from '@mui/material';
 import WorkIcon from '@mui/icons-material/Work';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import { motion } from 'framer-motion';
-import type { Variants } from 'framer-motion'; // ← Import como type
+import type { Variants } from 'framer-motion';
 import { jobsApi } from '../services/api';
 import type { DailySummaryResponse } from '../types/job';
 import TrendChart from '../components/charts/TrendChart';
 import TopCompaniesChart from '../components/charts/TopCompaniesChart';
 
-// Animation variants with proper typing
+// Smooth animation variants
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
     },
   },
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.5,
-      ease: [0.4, 0, 0.2, 1],
+      duration: 0.6,
+      ease: [0.25, 0.46, 0.45, 0.94],
     },
   },
 };
 
-// ... resto do arquivo permanece igual
+// Icon wrapper with gradient background
+const iconWrapperSx = (gradient: string) => ({
+  width: 56,
+  height: 56,
+  borderRadius: 2,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: gradient,
+  boxShadow: '0 8px 16px rgba(0, 0, 0, 0.3)',
+  mr: 2,
+});
 
 export default function Dashboard() {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  
   const [data, setData] = useState<DailySummaryResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Theme-aware glassmorphism card style
+  const glassCardSx = {
+    background: isDark 
+      ? 'linear-gradient(135deg, rgba(19, 47, 76, 0.8) 0%, rgba(19, 47, 76, 0.4) 100%)'
+      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%)',
+    backdropFilter: 'blur(20px)',
+    border: isDark 
+      ? '1px solid rgba(255, 255, 255, 0.08)'
+      : '1px solid rgba(48, 79, 254, 0.15)',
+    borderRadius: 3,
+    boxShadow: isDark
+      ? '0 8px 32px rgba(0, 0, 0, 0.3)'
+      : '0 8px 32px rgba(48, 79, 254, 0.1)',
+    transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    '&:hover': {
+      transform: 'translateY(-8px)',
+      boxShadow: isDark
+        ? '0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(48, 79, 254, 0.15)'
+        : '0 20px 40px rgba(48, 79, 254, 0.2), 0 0 40px rgba(255, 167, 38, 0.1)',
+      border: `1px solid ${alpha(theme.palette.secondary.main, 0.4)}`,
+    },
+  };
+  
+  // Theme-aware text colors
+  const textPrimary = theme.palette.text.primary;
+  const textSecondary = theme.palette.text.secondary;
 
   useEffect(() => {
     async function fetchData() {
@@ -88,33 +131,73 @@ export default function Dashboard() {
       initial="hidden"
       animate="visible"
     >
-      {/* Page Title with fade-in */}
+      {/* Hero Section */}
       <motion.div variants={itemVariants}>
-        <Typography variant="h4" gutterBottom>
-          Dashboard
-        </Typography>
-        <Typography variant="body1" color="text.secondary" paragraph>
-          Overview of the developer job market
-        </Typography>
+        <Box sx={{ mb: 5 }}>
+          <Typography 
+            variant="h3" 
+            sx={{
+              fontWeight: 800,
+              background: isDark 
+                ? 'linear-gradient(135deg, #ffffff 0%, #b0bec5 100%)'
+                : 'linear-gradient(135deg, #1a237e 0%, #304ffe 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              mb: 1,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Dashboard
+          </Typography>
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              color: textSecondary,
+              fontWeight: 400,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
+            <AutoGraphIcon sx={{ fontSize: 20, color: 'secondary.main' }} />
+            Real-time overview of the developer job market
+          </Typography>
+        </Box>
       </motion.div>
 
-      {/* Stats Cards with stagger animation */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      {/* Stats Cards */}
+      <Grid container spacing={3} sx={{ mb: 5 }}>
         {/* Total Jobs Card */}
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <motion.div variants={itemVariants}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <WorkIcon color="primary" sx={{ mr: 1 }} />
-                  <Typography variant="h6">Total Jobs</Typography>
+            <Card sx={glassCardSx}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                  <Box sx={iconWrapperSx('linear-gradient(135deg, #ffa726 0%, #ff7043 100%)')}>
+                    <WorkIcon sx={{ color: '#fff', fontSize: 28 }} />
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" sx={{ color: textSecondary, fontWeight: 500, textTransform: 'uppercase', letterSpacing: 1, fontSize: '0.7rem' }}>
+                      Total Jobs
+                    </Typography>
+                    <Typography variant="h3" sx={{ fontWeight: 700, color: textPrimary, lineHeight: 1.1 }}>
+                      {totalJobs.toLocaleString()}
+                    </Typography>
+                  </Box>
                 </Box>
-                <Typography variant="h3" component="div" sx={{ mb: 1 }}>
-                  {totalJobs}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Collected positions (last 1 day)
-                </Typography>
+                <Box sx={{ 
+                  pt: 2, 
+                  borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                }}>
+                  <Box sx={{ width: 8, height: 8, borderRadius: '50%', background: '#4caf50', animation: 'pulse 2s infinite' }} />
+                  <Typography variant="caption" sx={{ color: textSecondary }}>
+                    Last 24 hours
+                  </Typography>
+                </Box>
               </CardContent>
             </Card>
           </motion.div>
@@ -123,18 +206,29 @@ export default function Dashboard() {
         {/* Latest Jobs Card */}
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <motion.div variants={itemVariants}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <TrendingUpIcon color="success" sx={{ mr: 1 }} />
-                  <Typography variant="h6">Latest Jobs</Typography>
+            <Card sx={glassCardSx}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                  <Box sx={iconWrapperSx('linear-gradient(135deg, #42a5f5 0%, #7c4dff 100%)')}>
+                    <TrendingUpIcon sx={{ color: '#fff', fontSize: 28 }} />
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" sx={{ color: textSecondary, fontWeight: 500, textTransform: 'uppercase', letterSpacing: 1, fontSize: '0.7rem' }}>
+                      Displayed
+                    </Typography>
+                    <Typography variant="h3" sx={{ fontWeight: 700, color: textPrimary, lineHeight: 1.1 }}>
+                      {latestJobs.length}
+                    </Typography>
+                  </Box>
                 </Box>
-                <Typography variant="h3" component="div" sx={{ mb: 1 }}>
-                  {latestJobs.length}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Showing recent positions
-                </Typography>
+                <Box sx={{ 
+                  pt: 2, 
+                  borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                }}>
+                  <Typography variant="caption" sx={{ color: textSecondary }}>
+                    Most recent positions
+                  </Typography>
+                </Box>
               </CardContent>
             </Card>
           </motion.div>
@@ -143,11 +237,17 @@ export default function Dashboard() {
         {/* Work Modalities Card */}
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <motion.div variants={itemVariants}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <BusinessCenterIcon color="info" sx={{ mr: 1 }} />
-                  <Typography variant="h6">Work Modalities</Typography>
+            <Card sx={glassCardSx}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                  <Box sx={iconWrapperSx('linear-gradient(135deg, #26a69a 0%, #00897b 100%)')}>
+                    <BusinessCenterIcon sx={{ color: '#fff', fontSize: 28 }} />
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" sx={{ color: textSecondary, fontWeight: 500, textTransform: 'uppercase', letterSpacing: 1, fontSize: '0.7rem' }}>
+                      Work Types
+                    </Typography>
+                  </Box>
                 </Box>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   {Object.entries(modalityCounts)
@@ -157,8 +257,16 @@ export default function Dashboard() {
                       <Chip
                         key={modality}
                         label={`${modality} (${count})`}
-                        color="primary"
                         size="small"
+                        sx={{
+                          background: alpha(theme.palette.secondary.main, 0.15),
+                          color: 'secondary.main',
+                          border: `1px solid ${alpha(theme.palette.secondary.main, 0.3)}`,
+                          fontWeight: 600,
+                          '&:hover': {
+                            background: alpha(theme.palette.secondary.main, 0.25),
+                          },
+                        }}
                       />
                     ))}
                 </Box>
@@ -168,17 +276,30 @@ export default function Dashboard() {
         </Grid>
       </Grid>
 
-      {/* Charts with stagger animation */}
-      <Grid container spacing={3} sx={{ mt: 2 }}>
+      {/* Charts Section */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
         {/* Trend Chart */}
         <Grid size={{ xs: 12, lg: 6 }}>
           <motion.div variants={itemVariants}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
+            <Card sx={{
+              ...glassCardSx,
+              height: '100%',
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    color: textPrimary,
+                    mb: 0.5,
+                  }}
+                >
                   Job Posting Trends
                 </Typography>
-                <Typography variant="body2" color="text.secondary" paragraph>
+                <Typography 
+                  variant="body2" 
+                  sx={{ color: textSecondary, mb: 3 }}
+                >
                   Number of jobs posted over time
                 </Typography>
                 <TrendChart jobs={data.jobs} />
@@ -190,12 +311,25 @@ export default function Dashboard() {
         {/* Top Companies Chart */}
         <Grid size={{ xs: 12, lg: 6 }}>
           <motion.div variants={itemVariants}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
+            <Card sx={{
+              ...glassCardSx,
+              height: '100%',
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    color: textPrimary,
+                    mb: 0.5,
+                  }}
+                >
                   Top Companies Hiring
                 </Typography>
-                <Typography variant="body2" color="text.secondary" paragraph>
+                <Typography 
+                  variant="body2" 
+                  sx={{ color: textSecondary, mb: 3 }}
+                >
                   Companies with most job openings
                 </Typography>
                 <TopCompaniesChart jobs={data.jobs} />
@@ -205,14 +339,21 @@ export default function Dashboard() {
         </Grid>
       </Grid>
 
-      {/* Top Companies List */}
+      {/* Companies Tags Section */}
       <motion.div variants={itemVariants}>
-        <Card sx={{ mt: 3 }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
+        <Card sx={glassCardSx}>
+          <CardContent sx={{ p: 3 }}>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 600, 
+                color: textPrimary,
+                mb: 2,
+              }}
+            >
               Companies Hiring
             </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {Object.entries(
                 data.jobs.reduce((acc, job) => {
                   acc[job.company] = (acc[job.company] || 0) + 1;
@@ -225,13 +366,31 @@ export default function Dashboard() {
                   <Chip
                     key={company}
                     label={`${company} (${count})`}
-                    variant="outlined"
+                    sx={{
+                      background: alpha(theme.palette.text.primary, 0.05),
+                      color: alpha(theme.palette.text.primary, 0.8),
+                      border: `1px solid ${alpha(theme.palette.text.primary, 0.1)}`,
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        background: alpha(theme.palette.primary.main, 0.2),
+                        border: `1px solid ${alpha(theme.palette.primary.main, 0.4)}`,
+                        transform: 'translateY(-2px)',
+                      },
+                    }}
                   />
                 ))}
             </Box>
           </CardContent>
         </Card>
       </motion.div>
+
+      {/* Pulse animation keyframes */}
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
     </motion.div>
   );
 }

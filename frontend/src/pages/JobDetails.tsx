@@ -14,7 +14,9 @@ import {
   Alert,
   Paper,
   Grid,
-  Skeleton
+  Skeleton,
+  useTheme,
+  alpha
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -30,6 +32,8 @@ import type { Job } from '../types/job';
 export default function JobDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
@@ -128,10 +132,30 @@ export default function JobDetails() {
       <Grid container spacing={3}>
         {/* Left Column - Main Info */}
         <Grid size={{ xs: 12, lg: 8 }}>
-          <Card>
-            <CardContent>
+          <Card sx={{
+            background: isDark 
+              ? 'linear-gradient(135deg, rgba(19, 47, 76, 0.8) 0%, rgba(19, 47, 76, 0.4) 100%)'
+              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%)',
+            backdropFilter: 'blur(20px)',
+            border: isDark 
+              ? '1px solid rgba(255, 255, 255, 0.08)'
+              : '1px solid rgba(48, 79, 254, 0.15)',
+          }}>
+            <CardContent sx={{ p: 4 }}>
               {/* Job Title */}
-              <Typography variant="h4" gutterBottom>
+              <Typography 
+                variant="h4" 
+                gutterBottom
+                sx={{
+                  fontWeight: 700,
+                  background: isDark 
+                    ? 'linear-gradient(135deg, #ffffff 0%, #b0bec5 100%)'
+                    : 'linear-gradient(135deg, #1a237e 0%, #304ffe 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
                 {job.title}
               </Typography>
 
@@ -197,7 +221,22 @@ export default function JobDetails() {
 
         {/* Right Column - Details Card */}
         <Grid size={{ xs: 12, lg: 4 }}>
-          <Paper elevation={3} sx={{ p: 3, position: 'sticky', top: 20 }}>
+          <Paper 
+            elevation={0} 
+            sx={{ 
+              p: 3, 
+              position: 'sticky', 
+              top: 20,
+              background: isDark 
+                ? 'linear-gradient(135deg, rgba(19, 47, 76, 0.9) 0%, rgba(19, 47, 76, 0.6) 100%)'
+                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%)',
+              backdropFilter: 'blur(20px)',
+              border: isDark 
+                ? '1px solid rgba(255, 255, 255, 0.1)'
+                : '1px solid rgba(48, 79, 254, 0.15)',
+              borderRadius: 3,
+            }}
+          >
             <Typography variant="h6" gutterBottom>
               Job Details
             </Typography>
@@ -271,7 +310,19 @@ export default function JobDetails() {
               href={job.url}
               target="_blank"
               rel="noopener noreferrer"
-              sx={{ mt: 4 }}
+              sx={{ 
+                mt: 4,
+                background: 'linear-gradient(135deg, #ffa726 0%, #ff7043 100%)',
+                color: '#fff',
+                fontWeight: 700,
+                py: 1.5,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #ff7043 0%, #ffa726 100%)',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 8px 24px rgba(255, 167, 38, 0.4)',
+                },
+              }}
             >
               Apply Now
             </Button>

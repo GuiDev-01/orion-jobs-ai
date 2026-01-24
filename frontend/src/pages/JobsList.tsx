@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   Typography,
-  Grid,
   Chip,
   Box,
   TextField,
@@ -15,42 +14,22 @@ import {
   Button,
   FormControlLabel,
   Checkbox,
-  Skeleton
+  Skeleton,
+  useTheme,
+  alpha
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import WorkIcon from '@mui/icons-material/Work';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import BusinessIcon from '@mui/icons-material/Business';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { motion } from 'framer-motion';
-import type { Variants } from 'framer-motion'; // ← Import como type
 import { jobsApi } from '../services/api';
 import type { Job, JobsResponse } from '../types/job';
 
-// Animation variants with proper typing
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
-    },
-  },
-};
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.3,
-      ease: [0.4, 0, 0.2, 1],
-    },
-  },
-};
-
 export default function JobsList() {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  
   const [data, setData] = useState<JobsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -103,18 +82,52 @@ export default function JobsList() {
   return (
     <Box>
       {/* Header */}
-      <Typography variant="h4" gutterBottom>
-        Job Listings
-      </Typography>
-      <Typography variant="body1" color="text.secondary" paragraph>
-        {data ? `Browse ${data.total} available positions` : 'Loading jobs...'}
-      </Typography>
+      <Box sx={{ mb: 4 }}>
+        <Typography 
+          variant="h3" 
+          sx={{
+            fontWeight: 800,
+            background: isDark 
+              ? 'linear-gradient(135deg, #ffffff 0%, #b0bec5 100%)'
+              : 'linear-gradient(135deg, #1a237e 0%, #304ffe 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            mb: 1,
+            letterSpacing: '-0.02em',
+          }}
+        >
+          Job Listings
+        </Typography>
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            color: 'text.secondary',
+            fontWeight: 400,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+          }}
+        >
+          <WorkIcon sx={{ fontSize: 20, color: 'secondary.main' }} />
+          {data ? `Browse ${data.total.toLocaleString()} available positions` : 'Loading jobs...'}
+        </Typography>
+      </Box>
 
       {/* Filters Section */}
-      <Card sx={{ mb: 3 }}>
+      <Card sx={{ 
+        mb: 3,
+        background: isDark 
+          ? 'linear-gradient(135deg, rgba(19, 47, 76, 0.8) 0%, rgba(19, 47, 76, 0.4) 100%)'
+          : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%)',
+        backdropFilter: 'blur(20px)',
+        border: isDark 
+          ? '1px solid rgba(255, 255, 255, 0.08)'
+          : '1px solid rgba(48, 79, 254, 0.15)',
+      }}>
         <CardContent>
-          <Grid container spacing={2} alignItems="center">
-            <Grid size={{ xs: 12, md: 8 }}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
+            <Box sx={{ flex: 1 }}>
               <TextField
                 fullWidth
                 placeholder="Search by job title, company, or keywords..."
@@ -129,9 +142,9 @@ export default function JobsList() {
                   ),
                 }}
               />
-            </Grid>
+            </Box>
 
-            <Grid size={{ xs: 12, md: 4 }}>
+            <Box>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -143,8 +156,8 @@ export default function JobsList() {
                 }
                 label="Remote only"
               />
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
 
           {(searchTerm || remoteOnly) && (
             <Box sx={{ mt: 2 }}>
@@ -173,35 +186,56 @@ export default function JobsList() {
         </CardContent>
       </Card>
 
-      {/* Jobs Grid with animations */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        key={currentPage} // Re-trigger animation on page change
+      {/* Jobs Grid with stagger animation */}
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, 1fr)',
+            lg: 'repeat(3, 1fr)',
+          },
+          gap: 3,
+          '& > *': {
+            animation: 'fadeInUp 0.6s ease-out',
+            animationFillMode: 'both',
+          },
+          '& > *:nth-of-type(1)': { animationDelay: '0.05s' },
+          '& > *:nth-of-type(2)': { animationDelay: '0.1s' },
+          '& > *:nth-of-type(3)': { animationDelay: '0.15s' },
+          '& > *:nth-of-type(4)': { animationDelay: '0.2s' },
+          '& > *:nth-of-type(5)': { animationDelay: '0.25s' },
+          '& > *:nth-of-type(6)': { animationDelay: '0.3s' },
+          '@keyframes fadeInUp': {
+            from: {
+              opacity: 0,
+              transform: 'translateY(20px)',
+            },
+            to: {
+              opacity: 1,
+              transform: 'translateY(0)',
+            },
+          },
+        }}
       >
-        <Grid container spacing={3}>
-          {loading ? (
-            Array.from(new Array(pageSize)).map((_, index) => (
-              <Grid key={index} size={{ xs: 12, sm: 6, lg: 4 }}>
-                <JobCardSkeleton />
-              </Grid>
-            ))
-          ) : data && data.jobs.length > 0 ? (
-            data.jobs.map((job) => (
-              <Grid key={job.id} size={{ xs: 12, sm: 6, lg: 4 }}>
-                <JobCard job={job} />
-              </Grid>
-            ))
-          ) : (
-            <Grid size={{ xs: 12 }}>
-              <Alert severity="info">
-                No jobs found. Try adjusting your filters.
-              </Alert>
-            </Grid>
-          )}
-        </Grid>
-      </motion.div>
+        {loading ? (
+          // Loading skeletons
+          Array.from(new Array(pageSize)).map((_, index) => (
+            <JobCardSkeleton key={index} />
+          ))
+        ) : data && data.jobs.length > 0 ? (
+          // Actual job cards
+          data.jobs.map((job) => (
+            <JobCard key={job.id} job={job} />
+          ))
+        ) : (
+          <Box sx={{ gridColumn: '1 / -1' }}>
+            <Alert severity="info">
+              No jobs found. Try adjusting your filters.
+            </Alert>
+          </Box>
+        )}
+      </Box>
 
       {/* Pagination */}
       {totalPages > 1 && !loading && (
@@ -250,26 +284,56 @@ function JobCard({ job }: JobCardProps) {
   const navigate = useNavigate();
 
   return (
-    <motion.div variants={itemVariants}>
-      <Card
-        sx={{
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-          '&:hover': {
-            transform: 'translateY(-8px)',
-            boxShadow: 6,
-          },
-        }}
-        onClick={() => navigate(`/jobs/${job.id}`)}
-      >
+    <Card
+      sx={(theme) => ({
+        // Glassmorphism effect that works in both modes
+        background: theme.palette.mode === 'dark' 
+          ? 'rgba(255, 255, 255, 0.05)' 
+          : '#ffffff',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '16px',
+        border: theme.palette.mode === 'dark'
+          ? '1px solid rgba(255, 255, 255, 0.1)'
+          : '1px solid rgba(0, 0, 0, 0.08)',
+        
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        cursor: 'pointer',
+        
+        // Smooth transitions
+        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        
+        // Hover effects
+        '&:hover': {
+          transform: 'translateY(-8px) scale(1.02)',
+          boxShadow: theme.palette.mode === 'dark'
+            ? '0 12px 40px rgba(102, 126, 234, 0.4)'
+            : '0 12px 40px rgba(102, 126, 234, 0.25)',
+          border: '1px solid rgba(102, 126, 234, 0.6)',
+        },
+      })}
+      onClick={() => navigate(`/jobs/${job.id}`)}
+    >
         <CardContent sx={{ flexGrow: 1 }}>
-          <Typography variant="h6" gutterBottom noWrap title={job.title}>
+          {/* Job title with gradient */}
+          <Typography 
+            variant="h6" 
+            gutterBottom 
+            noWrap 
+            title={job.title}
+            sx={{
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
             {job.title}
           </Typography>
 
+          {/* Company */}
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
             <BusinessIcon sx={{ fontSize: 18, mr: 0.5, color: 'text.secondary' }} />
             <Typography variant="body2" color="text.secondary" noWrap>
@@ -277,6 +341,7 @@ function JobCard({ job }: JobCardProps) {
             </Typography>
           </Box>
 
+          {/* Location */}
           {job.location && (
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <LocationOnIcon sx={{ fontSize: 18, mr: 0.5, color: 'text.secondary' }} />
@@ -286,28 +351,73 @@ function JobCard({ job }: JobCardProps) {
             </Box>
           )}
 
+          {/* Work modality with gradient */}
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <WorkIcon sx={{ fontSize: 18, mr: 0.5, color: 'text.secondary' }} />
-            <Chip label={job.work_modality} size="small" color="primary" />
+            <Chip 
+              label={job.work_modality} 
+              size="small"
+              sx={{
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                fontWeight: 500,
+                border: 'none',
+              }}
+            />
           </Box>
 
+          {/* Salary */}
           {(job.salary_min || job.salary_max) && (
             <Typography variant="body2" color="success.main" sx={{ mb: 2, fontWeight: 600 }}>
               ${job.salary_min?.toLocaleString() || '?'} - ${job.salary_max?.toLocaleString() || '?'}
             </Typography>
           )}
 
+          {/* Tags with better styling */}
           {job.tags && job.tags.length > 0 && (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
               {job.tags.slice(0, 3).map((tag) => (
-                <Chip key={tag} label={tag} size="small" variant="outlined" />
+                <Chip 
+                  key={tag} 
+                  label={tag} 
+                  size="small" 
+                  variant="outlined"
+                  sx={(theme) => ({
+                    borderColor: theme.palette.mode === 'dark'
+                      ? 'rgba(102, 126, 234, 0.5)'
+                      : 'rgba(102, 126, 234, 0.6)',
+                    color: theme.palette.mode === 'dark'
+                      ? 'rgba(102, 126, 234, 1)'
+                      : '#667eea',
+                    fontWeight: 500,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      borderColor: '#667eea',
+                      backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    },
+                  })}
+                />
               ))}
               {job.tags.length > 3 && (
-                <Chip label={`+${job.tags.length - 3}`} size="small" variant="outlined" />
+                <Chip 
+                  label={`+${job.tags.length - 3}`} 
+                  size="small" 
+                  variant="outlined"
+                  sx={(theme) => ({
+                    borderColor: theme.palette.mode === 'dark'
+                      ? 'rgba(102, 126, 234, 0.5)'
+                      : 'rgba(102, 126, 234, 0.6)',
+                    color: theme.palette.mode === 'dark'
+                      ? 'rgba(102, 126, 234, 1)'
+                      : '#667eea',
+                    fontWeight: 500,
+                  })}
+                />
               )}
             </Box>
           )}
 
+          {/* View Job button with gradient */}
           <Button
             variant="contained"
             fullWidth
@@ -316,11 +426,23 @@ function JobCard({ job }: JobCardProps) {
               e.stopPropagation();
               window.open(job.url, '_blank');
             }}
+            sx={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: 'white',
+              fontWeight: 600,
+              textTransform: 'none',
+              py: 1,
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                transform: 'scale(1.02)',
+                boxShadow: '0 4px 20px rgba(102, 126, 234, 0.4)',
+              },
+            }}
           >
             View Job
           </Button>
         </CardContent>
       </Card>
-    </motion.div>
   );
 }

@@ -1,122 +1,133 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { ThemeProvider as MuiThemeProvider, createTheme, CssBaseline } from '@mui/material';
-
-type ThemeMode = 'light' | 'dark';
+import { createContext, useContext, useState, useMemo } from 'react';
+import type { ReactNode } from 'react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 interface ThemeContextType {
-  mode: ThemeMode;
+  mode: 'light' | 'dark';
   toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType>({
+  mode: 'dark',
+  toggleTheme: () => {},
+});
 
-// Custom hook to use theme
-export const useThemeMode = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useThemeMode must be used within ThemeProvider');
-  }
-  return context;
-};
+export const useThemeMode = () => useContext(ThemeContext);
 
-interface ThemeProviderProps {
+interface ThemeProviderWrapperProps {
   children: ReactNode;
 }
 
-export function ThemeProvider({ children }: ThemeProviderProps) {
-  // Get theme from localStorage or default to 'dark'
-  const [mode, setMode] = useState<ThemeMode>(() => {
-    const saved = localStorage.getItem('theme-mode');
-    return (saved as ThemeMode) || 'dark'; // Default to dark 😎
-  });
-
-  // Save to localStorage when theme changes
-  useEffect(() => {
-    localStorage.setItem('theme-mode', mode);
-  }, [mode]);
+export function ThemeProviderWrapper({ children }: ThemeProviderWrapperProps) {
+  const [mode, setMode] = useState<'light' | 'dark'>('dark');
 
   const toggleTheme = () => {
-    setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
+    setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
   };
 
-  // Create MUI theme based on mode
-  const theme = createTheme({
-    palette: {
-      mode,
-      ...(mode === 'dark'
-        ? {
-            // Dark mode colors
-            primary: {
-              main: '#90caf9', // Light blue
-              light: '#bbdefb',
-              dark: '#42a5f5',
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode,
+          primary: {
+            main: '#304ffe', // Azul espacial vibrante
+            light: '#7c4dff', // Roxo nebulosa
+            dark: '#1a237e', // Azul noturno profundo
+          },
+          secondary: {
+            main: '#ffa726', // Dourado estelar
+            light: '#ffb74d', // Âmbar brilhante
+            dark: '#f57c00', // Laranja profundo
+          },
+          background: {
+            default: mode === 'dark' ? '#0a1929' : '#f5f5f5',
+            paper: mode === 'dark' ? '#132f4c' : '#ffffff',
+          },
+          text: {
+            primary: mode === 'dark' ? '#ffffff' : '#1a237e',
+            secondary: mode === 'dark' ? '#b0bec5' : '#546e7a',
+          },
+          success: {
+            main: '#66bb6a',
+          },
+          info: {
+            main: '#7c4dff',
+          },
+        },
+        typography: {
+          fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+          h1: {
+            fontSize: '3rem',
+            fontWeight: 700,
+            background: 'linear-gradient(135deg, #ffa726 0%, #ffb74d 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          },
+          h2: {
+            fontSize: '2.5rem',
+            fontWeight: 600,
+            color: '#304ffe',
+          },
+          h4: {
+            fontSize: '2rem',
+            fontWeight: 700,
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          },
+          h6: {
+            fontSize: '1.25rem',
+            fontWeight: 600,
+          },
+          body1: {
+            fontSize: '1rem',
+          },
+          body2: {
+            fontSize: '0.875rem',
+          },
+        },
+        shape: {
+          borderRadius: 16,
+        },
+        components: {
+          MuiCard: {
+            styleOverrides: {
+              root: {
+                backgroundImage: 'none',
+                backgroundColor: mode === 'dark' ? 'rgba(19, 47, 76, 0.6)' : 'rgba(255, 255, 255, 0.9)',
+                backdropFilter: 'blur(10px)',
+              },
             },
-            secondary: {
-              main: '#f48fb1', // Pink
+          },
+          MuiButton: {
+            styleOverrides: {
+              root: {
+                textTransform: 'none',
+                fontWeight: 600,
+                borderRadius: 12,
+              },
             },
-            background: {
-              default: '#0a1929', // Dark blue background
-              paper: '#132f4c', // Slightly lighter for cards
-            },
-            text: {
-              primary: '#fff',
-              secondary: '#b2bac2',
-            },
-          }
-        : {
-            // Light mode colors (original)
-            primary: {
-              main: '#1976d2',
-            },
-            secondary: {
-              main: '#dc004e',
-            },
-            background: {
-              default: '#f5f5f5',
-              paper: '#fff',
-            },
-          }),
-    },
-    components: {
-      MuiCssBaseline: {
-        styleOverrides: {
-          body: {
-            margin: 0,
-            padding: 0,
-            scrollbarColor: mode === 'dark' ? '#6b6b6b #2b2b2b' : '#c1c1c1 #f1f1f1',
-            '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
-              width: 8,
-            },
-            '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
-              borderRadius: 8,
-              backgroundColor: mode === 'dark' ? '#6b6b6b' : '#c1c1c1',
-              minHeight: 24,
-            },
-            '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
-              backgroundColor: mode === 'dark' ? '#959595' : '#a8a8a8',
+          },
+          MuiChip: {
+            styleOverrides: {
+              root: {
+                fontWeight: 500,
+              },
             },
           },
         },
-      },
-      MuiCard: {
-        styleOverrides: {
-          root: {
-            backgroundImage: 'none', // Remove default gradient
-          },
-        },
-      },
-    },
-    typography: {
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    },
-  });
+      }),
+    [mode]
+  );
 
   return (
     <ThemeContext.Provider value={{ mode, toggleTheme }}>
-      <MuiThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}>
         <CssBaseline />
         {children}
-      </MuiThemeProvider>
+      </ThemeProvider>
     </ThemeContext.Provider>
   );
 }

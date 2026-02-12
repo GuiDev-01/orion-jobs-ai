@@ -73,7 +73,8 @@ jobs:
           SMTP_PASSWORD="${{ secrets.SMTP_PASSWORD }}" \
           EMAIL_FROM_NAME="OrionJobs AI" \
           DEFAULT_EMAIL_RECIPIENTS="${{ secrets.DEFAULT_EMAIL_RECIPIENTS }}" \
-          WEBSITES_PORT="8000"
+          WEBSITES_PORT="8000" \
+          ALLOWED_ORIGINS="http://localhost:3000,http://localhost:5173,https://gray-water-0be9a250f.2.azurestaticapps.net"
     
     - name: Restart App Service
       run: |

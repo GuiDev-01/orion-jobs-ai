@@ -89,6 +89,9 @@ No seu repositório GitHub, adicione estes secrets:
 ## Passo 5: Deploy inicial
 
 ```bash
+# Navegar para o diretório backend
+cd backend
+
 # Build e push da imagem
 docker build -t orionjobsacr.azurecr.io/orionjobs:latest .
 az acr login --name orionjobsacr
@@ -103,8 +106,32 @@ az webapp config appsettings set \
   ENVIRONMENT="production" \
   COLLECT_MAX_PAGES="2" \
   ADZUNA_APP_ID="your_adzuna_id" \
-  ADZUNA_APP_KEY="your_adzuna_key"
+  ADZUNA_APP_KEY="your_adzuna_key" \
+  WEBSITES_PORT="8000"
+
+# Reiniciar o Web App para aplicar as mudanças
+az webapp restart --name orionjobs-api --resource-group orionjobs-rg
 ```
+
+## Troubleshooting
+
+### API não responde
+1. Verifique os logs do container:
+   ```bash
+   az webapp log tail --name orionjobs-api --resource-group orionjobs-rg
+   ```
+
+2. Certifique-se que a variável `WEBSITES_PORT` está configurada corretamente
+
+3. Verifique se o container está rodando:
+   ```bash
+   az webapp show --name orionjobs-api --resource-group orionjobs-rg --query state
+   ```
+
+### Erro de banco de dados
+1. Verifique as regras de firewall do PostgreSQL
+2. Teste a conexão com o banco localmente
+3. Verifique se a string de conexão está correta
 
 ## Monitoramento
 

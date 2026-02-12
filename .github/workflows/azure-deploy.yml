@@ -72,7 +72,8 @@ jobs:
           SMTP_USERNAME="${{ secrets.SMTP_USERNAME }}" \
           SMTP_PASSWORD="${{ secrets.SMTP_PASSWORD }}" \
           EMAIL_FROM_NAME="OrionJobs AI" \
-          DEFAULT_EMAIL_RECIPIENTS="${{ secrets.DEFAULT_EMAIL_RECIPIENTS }}"
+          DEFAULT_EMAIL_RECIPIENTS="${{ secrets.DEFAULT_EMAIL_RECIPIENTS }}" \
+          WEBSITES_PORT="8000"
     
     - name: Restart App Service
       run: |

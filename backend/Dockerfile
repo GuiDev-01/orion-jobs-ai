@@ -16,19 +16,22 @@ RUN apt-get update && \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY alembic.ini .
 COPY app/ ./app/
 COPY alembic/ ./alembic/
 COPY run.py .
 COPY job_schedule.py .
+COPY startup.sh .
 
 # Create non-root user and set ownership
 RUN adduser --disabled-password --gecos "" appuser && \
-    chown -R appuser:appuser /app
+    chown -R appuser:appuser /app && \
+    chmod +x /app/startup.sh
 
 # Switch to non-root user
 USER appuser
 
 EXPOSE 8000
 
-# Use a simple command instead of entrypoint script
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Use startup script that handles Azure PORT variable
+CMD ["./startup.sh"]

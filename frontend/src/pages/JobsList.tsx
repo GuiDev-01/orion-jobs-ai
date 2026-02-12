@@ -15,8 +15,7 @@ import {
   FormControlLabel,
   Checkbox,
   Skeleton,
-  useTheme,
-  alpha
+  useTheme
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import WorkIcon from '@mui/icons-material/Work';

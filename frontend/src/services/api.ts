@@ -1,11 +1,16 @@
 import axios from 'axios';
 import type { JobsResponse, DailySummaryResponse, Job } from '../types/job';
 
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+
+console.log('🔧 API Base URL:', baseURL);
+
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1',
+    baseURL,
     headers: {
         'Content-Type': 'application/json',
     },
+    timeout: 10000,
 });
 
 export const jobsApi = {
@@ -28,7 +33,9 @@ export const jobsApi = {
         days?: number;
         remote_only?: boolean;
     }): Promise<DailySummaryResponse> => {
+        console.log('📊 Fetching summary from:', api.defaults.baseURL + '/summary/daily');
         const { data } = await api.get('/summary/daily', { params });
+        console.log('✅ Summary data received:', data);
         return data;
     },
 };

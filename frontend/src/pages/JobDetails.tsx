@@ -15,8 +15,7 @@ import {
   Paper,
   Grid,
   Skeleton,
-  useTheme,
-  alpha
+  useTheme
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';

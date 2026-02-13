@@ -15,7 +15,10 @@ import {
   Paper,
   Grid,
   Skeleton,
-  useTheme
+  useTheme,
+  IconButton,
+  Tooltip,
+  Snackbar
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -25,6 +28,10 @@ import BusinessIcon from '@mui/icons-material/Business';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import HomeIcon from '@mui/icons-material/Home';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import ShareIcon from '@mui/icons-material/Share';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import { motion } from 'framer-motion';
 import { jobsApi } from '../services/api';
 import type { Job } from '../types/job';
 
@@ -35,8 +42,12 @@ export default function JobDetails() {
   const isDark = theme.palette.mode === 'dark';
   
   const [job, setJob] = useState<Job | null>(null);
+  const [similarJobs, setSimilarJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSaved, setIsSaved] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   useEffect(() => {
     async function fetchJobDetails() {
@@ -47,6 +58,16 @@ export default function JobDetails() {
         setError(null);
         const data = await jobsApi.getJobById(parseInt(id));
         setJob(data);
+        
+        // Fetch similar jobs (mock for now - would use actual API)
+        const allJobs = await jobsApi.getJobs({ page: 1, page_size: 20 });
+        const similar = allJobs.jobs.filter(j => 
+          j.id !== data.id && (
+            j.tags?.some(tag => data.tags?.includes(tag)) ||
+            j.work_modality === data.work_modality
+          )
+        ).slice(0, 3);
+        setSimilarJobs(similar);
       } catch (err) {
         setError('Failed to load job details. Please try again.');
         console.error(err);
@@ -57,6 +78,26 @@ export default function JobDetails() {
 
     fetchJobDetails();
   }, [id]);
+
+  const handleSaveClick = () => {
+    setIsSaved(!isSaved);
+    setToastMessage(isSaved ? 'Removed from saved jobs' : 'Job saved successfully!');
+    setShowToast(true);
+  };
+
+  const handleShareClick = () => {
+    if (navigator.share && job) {
+      navigator.share({
+        title: job.title,
+        text: `Check out this job: ${job.title} at ${job.company}`,
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      setToastMessage('Link copied to clipboard!');
+      setShowToast(true);
+    }
+  };
 
   // Loading state
   if (loading) {
@@ -119,13 +160,65 @@ export default function JobDetails() {
       </Breadcrumbs>
 
       {/* Back Button */}
-      <Button
-        startIcon={<ArrowBackIcon />}
-        onClick={() => navigate('/jobs')}
-        sx={{ mb: 3 }}
-      >
-        Back to Jobs
-      </Button>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate('/jobs')}
+        >
+          Back to Jobs
+        </Button>
+        
+        {/* Quick Actions */}
+        <Stack direction="row" spacing={1}>
+          <Tooltip title={isSaved ? "Remove from saved" : "Save job"}>
+            <IconButton 
+              onClick={handleSaveClick}
+              sx={{
+                background: isDark 
+                  ? 'rgba(255, 255, 255, 0.05)'
+                  : 'rgba(0, 0, 0, 0.03)',
+                backdropFilter: 'blur(10px)',
+                border: isDark 
+                  ? '1px solid rgba(255, 255, 255, 0.1)'
+                  : '1px solid rgba(0, 0, 0, 0.08)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  background: isDark 
+                    ? 'rgba(255, 167, 38, 0.2)'
+                    : 'rgba(255, 167, 38, 0.1)',
+                  transform: 'translateY(-2px)',
+                },
+              }}
+            >
+              {isSaved ? <BookmarkIcon color="warning" /> : <BookmarkBorderIcon />}
+            </IconButton>
+          </Tooltip>
+          
+          <Tooltip title="Share job">
+            <IconButton 
+              onClick={handleShareClick}
+              sx={{
+                background: isDark 
+                  ? 'rgba(255, 255, 255, 0.05)'
+                  : 'rgba(0, 0, 0, 0.03)',
+                backdropFilter: 'blur(10px)',
+                border: isDark 
+                  ? '1px solid rgba(255, 255, 255, 0.1)'
+                  : '1px solid rgba(0, 0, 0, 0.08)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  background: isDark 
+                    ? 'rgba(48, 79, 254, 0.2)'
+                    : 'rgba(48, 79, 254, 0.1)',
+                  transform: 'translateY(-2px)',
+                },
+              }}
+            >
+              <ShareIcon />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      </Stack>
 
       {/* Main Content */}
       <Grid container spacing={3}>
@@ -335,6 +428,119 @@ export default function JobDetails() {
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Similar Jobs Section */}
+      {similarJobs.length > 0 && (
+        <Box sx={{ mt: 4 }}>
+          <Typography 
+            variant="h5" 
+            gutterBottom
+            sx={{
+              fontWeight: 700,
+              mb: 3,
+              background: isDark 
+                ? 'linear-gradient(135deg, #ffffff 0%, #b0bec5 100%)'
+                : 'linear-gradient(135deg, #1a237e 0%, #304ffe 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
+            Similar Jobs
+          </Typography>
+          
+          <Grid container spacing={2}>
+            {similarJobs.map((similarJob) => (
+              <Grid size={{ xs: 12, md: 4 }} key={similarJob.id}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Card
+                    onClick={() => navigate(`/jobs/${similarJob.id}`)}
+                    sx={{
+                      cursor: 'pointer',
+                      height: '100%',
+                      background: isDark 
+                        ? 'linear-gradient(135deg, rgba(19, 47, 76, 0.6) 0%, rgba(19, 47, 76, 0.3) 100%)'
+                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                      backdropFilter: 'blur(20px)',
+                      border: isDark 
+                        ? '1px solid rgba(255, 255, 255, 0.05)'
+                        : '1px solid rgba(48, 79, 254, 0.1)',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      '&:hover': {
+                        transform: 'translateY(-4px)',
+                        boxShadow: isDark
+                          ? '0 12px 40px rgba(102, 126, 234, 0.3)'
+                          : '0 12px 40px rgba(48, 79, 254, 0.2)',
+                        border: isDark
+                          ? '1px solid rgba(102, 126, 234, 0.4)'
+                          : '1px solid rgba(48, 79, 254, 0.3)',
+                      },
+                    }}
+                  >
+                    <CardContent>
+                      <Typography 
+                        variant="h6" 
+                        gutterBottom 
+                        sx={{ 
+                          fontWeight: 600,
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {similarJob.title}
+                      </Typography>
+                      
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        {similarJob.company}
+                      </Typography>
+                      
+                      <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {similarJob.tags?.slice(0, 3).map((tag) => (
+                          <Chip key={tag} label={tag} size="small" variant="outlined" />
+                        ))}
+                      </Box>
+                      
+                      {(similarJob.salary_min || similarJob.salary_max) && (
+                        <Typography 
+                          variant="body2" 
+                          color="success.main"
+                          sx={{ mt: 2, fontWeight: 600 }}
+                        >
+                          ${similarJob.salary_min?.toLocaleString() || '?'} - $
+                          {similarJob.salary_max?.toLocaleString() || '?'}
+                        </Typography>
+                      )}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      )}
+
+      {/* Toast Notification */}
+      <Snackbar
+        open={showToast}
+        autoHideDuration={3000}
+        onClose={() => setShowToast(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert 
+          onClose={() => setShowToast(false)} 
+          severity="success"
+          variant="filled"
+          elevation={6}
+        >
+          {toastMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

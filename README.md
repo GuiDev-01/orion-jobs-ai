@@ -1,681 +1,333 @@
 # 🚀 OrionJobs AI
 
-![Python](https://img.shields.io/badge/Python-3.12-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green)
-![React](https://img.shields.io/badge/React-18-61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-blue)
-![Azure](https://img.shields.io/badge/Azure-Cloud-blue)
-![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
-![GHCR](https://img.shields.io/badge/GHCR-GitHub%20Registry-blue)
-![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen)
-![Security](https://img.shields.io/badge/Security-Verified-brightgreen)
-![Tests](https://img.shields.io/badge/Tests-Passing-success)
-![Analytics](https://img.shields.io/badge/Analytics-Foundational-yellow)
-![Notifications](https://img.shields.io/badge/Email%20Notifications-Ready-brightgreen)
+[![Live App](https://img.shields.io/badge/🔗_Live_App-OrionJobs_AI-667eea?style=for-the-badge&labelColor=1a1a2e)](https://gray-water-0be9a250f.2.azurestaticapps.net)
+[![API](https://img.shields.io/badge/API-Healthy-brightgreen?style=for-the-badge&logo=fastapi&logoColor=white)](https://orionjobs-api.azurewebsites.net/health)
+[![Build](https://img.shields.io/badge/Build-Passing-brightgreen?style=flat-square&logo=githubactions)](https://github.com/GuiDev-01/orion-jobs-ai/actions)
 
-> Navigate your career journey with AI-powered precision and intelligent job market analytics.
+[![React 19](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)](https://react.dev)
+[![TypeScript 5.9](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript)](https://typescriptlang.org)
+[![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Latest-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://neon.tech)
+[![Azure](https://img.shields.io/badge/Azure-Cloud-0078D4?style=flat-square&logo=microsoftazure)](https://azure.microsoft.com)
+[![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=flat-square&logo=docker&logoColor=white)](https://docker.com)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
-Transform your job search from hours of manual browsing to intelligent, automated career guidance through legal API integrations, smart analytics, and personalized summaries. Built with Python/FastAPI backend and modern React frontend - deployed on Microsoft Azure cloud infrastructure with cost-optimized Neon PostgreSQL database.
+> **Full-stack AI-powered job search platform for developers.** Aggregates thousands of positions from multiple APIs, delivers real-time market analytics, and provides intelligent insights — all through a modern React UI deployed on Azure cloud.
 
-## 📊 Current Status (February 2026)
+<p align="center">
+  <a href="https://gray-water-0be9a250f.2.azurestaticapps.net" target="_blank"><strong>🔥 Live Application →</strong></a>
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  <a href="https://orionjobs-api.azurewebsites.net/docs"><strong>📖 API Docs →</strong></a>
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  <a href="https://orionjobs-api.azurewebsites.net/health"><strong>💚 Health Check →</strong></a>
+</p>
 
-🎯 **Phase 6 COMPLETED** 🌐 - Modern React Frontend + Premium UI/UX
-- **✅ React Frontend**: Complete Vite + TypeScript + Material UI v7 setup
-- **✅ Enhanced Dashboard**: 4 stat cards, top skills/locations insights, interactive charts, companies breakdown
-- **✅ Premium Job Cards**: Glassmorphism design, seniority badges, save/share actions, hover effects
-- **✅ Job Listings**: Paginated (12/page), advanced filters (skills, salary, seniority), toast notifications
-- **✅ Job Details**: Full info, save/share actions, similar jobs recommendations, breadcrumbs
-- **✅ Dark/Light Theme**: Context-based system with localStorage persistence
-- **✅ Professional Animations**: Framer Motion page transitions, shimmer effects, smooth scrolling
-- **✅ Mobile Responsive**: Hamburger menu, drawer navigation, responsive typography/spacing
-- **✅ Glassmorphism Effects**: Modern blur effects on cards with dynamic borders
-- **✅ Empty States**: Illustrated error/no-results states with helpful messaging
-- **✅ Toast Notifications**: Success/error feedback for user actions
-- **✅ Custom Scrollbar**: Orion-themed scrollbar with smooth behavior
-- **✅ Production Deployment**: Frontend fully deployed and integrated with backend API
+---
 
-**Recent Achievements (Phase 6 - Sprint 7 - UI/UX Polish Complete):**
-- **✅ Enhanced Job Cards**: Seniority badges, time-ago display, save/share buttons with state
-- **✅ Toast Notifications**: Success/info/warning feedback system with animations
-- **✅ Empty States**: Illustrated no-results/error states with clear messaging
-- **✅ Dashboard Insights**: Top 5 skills with progress bars, top 3 locations breakdown
-- **✅ Mobile Responsiveness**: Hamburger menu, drawer navigation, responsive components
-- **✅ Micro-Animations**: Page transitions, shimmer skeleton loaders, smooth scrolling
-- **✅ Advanced Filters**: Multi-select skills, salary range slider, seniority level filters
-- **✅ Footer Links**: GitHub, API docs, About page with hover effects
-- **✅ Custom Scrollbar**: Orion-themed webkit scrollbar styling
-- **✅ Production Ready**: Build successful, TypeScript errors fixed, zero compilation issues
+## 🌐 Live URLs
 
-**Previous Achievements (Phase 6 - Day 1):**
-- **✅ React Frontend Setup**: Vite + TypeScript + Material UI v7 configured
-- **✅ Dashboard Implementation**: Stats cards with real-time analytics and interactive charts
-- **✅ Job Listings Page**: Paginated cards with search, filters, and smooth animations
-- **✅ Backend Optimization**: Database-level pagination (3800 jobs → 12 per page)
-- **✅ Job Details Page**: Full job information display with breadcrumb navigation
-- **✅ Navigation System**: Header with active route highlighting and theme toggle
+| Service | URL | Status |
+|---|---|---|
+| **Frontend** | [gray-water-0be9a250f.2.azurestaticapps.net](https://gray-water-0be9a250f.2.azurestaticapps.net) | ✅ Live |
+| **Backend API** | [orionjobs-api.azurewebsites.net](https://orionjobs-api.azurewebsites.net/docs) | ✅ Healthy |
+| **Swagger Docs** | [/docs](https://orionjobs-api.azurewebsites.net/docs) | ✅ Interactive |
+| **Health Check** | [/health](https://orionjobs-api.azurewebsites.net/health) | ✅ Operational |
 
-**Phase 5 Achievements:**
-- **✅ Daily Email Scheduler**: Automated job summaries sent daily at 9 AM UTC
-- **✅ Email Service**: Complete SMTP integration with SendGrid and retry logic
-- **✅ Smart Analytics**: Advanced filtering (location, skills, work modality, period)
-- **✅ Cost Optimization**: Migrated to Neon PostgreSQL reducing database costs to $0
-- **✅ Cloud Infrastructure**: Complete Azure deployment with CI/CD
+---
 
-## 🌐 Live Application
+## 🎯 Why This Project?
 
-**Production API:** `https://orionjobs-api.azurewebsites.net`
+Most job boards are cluttered, slow, and have poor developer experience. **OrionJobs AI** solves this:
 
-### Available Endpoints:
+| Problem | Solution |
+|---|---|
+| Scattered listings across multiple sites | **Multi-source aggregation** (RemoteOK, Adzuna, JSearch) |
+| No real-time market visibility | **Analytics dashboard** with skills demand, salary transparency, trends |
+| Slow, outdated interfaces | **Modern React 19 UI** with glassmorphism, animations, dark/light theme |
+| Manual daily searching | **Automated collection** + email summaries at 9 AM UTC |
+| No insights on what's trending | **Real-time analytics** — top skills, remote %, top companies |
 
-#### 📋 Core Job Management
-- **GET `/api/v1/jobs`** - Retrieve all jobs with filtering
-- **POST `/api/v1/jobs/collect`** - Trigger manual job collection
-- **GET `/docs`** - Interactive API documentation
-- **GET `/health`** - Health check endpoint
+This is a **production application** — not a tutorial project — with CI/CD pipelines, cloud infrastructure, automated scheduling, and real data from multiple APIs.
 
-#### 📊 Smart Summaries & Analytics ✅ **IMPLEMENTED**
-- **GET `/api/v1/summary/daily`** - Daily job summary with analytics
-- **GET `/api/v1/summary/daily?location=remote&tags=python&period_days=7`** - Advanced filtering
-- **Multiple filtering**: Location, skills, work modality, time-based
+---
 
-#### 📧 Email Notifications ✅ **PRODUCTION READY**
-- **GET `/api/v1/notifications/email-config`** - Check email configuration
-- **POST `/api/v1/notifications/test-email`** - Test email service connectivity  
-- **POST `/api/v1/notifications/send-daily-summary?recipients=email@example.com`** - Send formatted job summary via email
-- **POST `/api/v1/notifications/test-daily-summary`** - Manually trigger daily scheduler (for testing)
-- **🤖 Automated**: Daily emails sent automatically at 9 AM UTC via APScheduler
+## 🏗️ Architecture
 
-#### 🔍 Working Examples
-```bash
-# Get remote Python jobs from last 7 days
-curl "https://orionjobs-api.azurewebsites.net/api/v1/summary/daily?location=remote&tags=python&period_days=7&limit=20"
-
-# Test email configuration
-curl "https://orionjobs-api.azurewebsites.net/api/v1/notifications/email-config"
-
-# Send daily summary email to specific recipient
-curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/send-daily-summary?recipients=your-email@gmail.com"
-
-# Send test email
-curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/test-email"
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        AZURE CLOUD                              │
+│                                                                 │
+│  ┌──────────────────────┐    ┌─────────────────────────────┐   │
+│  │  Azure Static Web    │    │   Azure App Service          │   │
+│  │  Apps (Frontend)     │───▶│   (Backend API)              │   │
+│  │                      │    │                               │   │
+│  │  React 19 + TS 5.9   │    │   FastAPI + Python 3.12      │   │
+│  │  Vite 7 + MUI 7     │    │   SQLAlchemy 2.0 + Alembic   │   │
+│  │  Framer Motion       │    │   APScheduler + Pydantic v2  │   │
+│  │  Recharts            │    │                               │   │
+│  └──────────────────────┘    └──────────┬──────────────────┘   │
+│                                          │                      │
+│                              ┌───────────▼───────────────┐     │
+│                              │   Neon PostgreSQL          │     │
+│                              │   (Serverless, auto-scale) │     │
+│                              └───────────────────────────┘     │
+│                                                                 │
+│  ┌──────────────────────┐    ┌─────────────────────────────┐   │
+│  │  GitHub Actions       │    │   External APIs              │   │
+│  │  (CI/CD Pipeline)    │    │   RemoteOK · Adzuna · JSearch│   │
+│  └──────────────────────┘    └─────────────────────────────┘   │
+│                                                                 │
+│  ┌──────────────────────┐    ┌─────────────────────────────┐   │
+│  │  Docker + GHCR        │    │   SendGrid SMTP              │   │
+│  │  (Containerization)  │    │   (Email Notifications)      │   │
+│  └──────────────────────┘    └─────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## ✨ Features
-
-### ✅ Current Features (Production Ready)
-
-#### 🏗️ **Core Infrastructure**
-- **🔒 Security Hardened**: API credentials protection and secure logging
-- **🐳 Docker Containerization**: Complete containerization with PostgreSQL
-- **📦 GHCR Integration**: Open source container registry for public access
-- **☁️ Azure Cloud Deployed**: Fully operational on Microsoft Azure infrastructure
-- **🗄️ Neon PostgreSQL**: Cost-optimized database with auto-scaling capabilities
-- **🔄 CI/CD Pipeline**: Automated deployment via GitHub Actions
-- **📊 Health Monitoring**: Comprehensive health checks and monitoring
-
-#### 📊 **Smart Job Analytics** ✅ **IMPLEMENTED**
-- **🧠 Daily Intelligence Reports**: Automated job market analysis with filtering
-- **📈 Summary Analytics**: Top companies, skills demand, and work modality insights
-- **🎯 Advanced Filtering**: Location, work modality, skills, and time-based filters
-- **📋 JSON API Responses**: Structured data for integrations
-- **💡 Skills Analysis**: Real-time skills demand tracking with fixed tag parsing
-- **🏢 Company Analytics**: Top hiring companies identification
-- **🌍 Work Modality Intelligence**: Remote vs. hybrid vs. onsite insights
-- **🔧 Data Quality**: Robust tag handling with database cleanup utilities
-
-#### 📧 **Email Notifications** ✅ **PRODUCTION READY**
-- **📮 SMTP Service**: Complete email integration with retry logic and SendGrid support
-- **🎨 Professional Templates**: Mobile-responsive HTML and text email templates using Jinja2
-- **📊 Summary Emails**: Formatted daily job digest with analytics and insights
-- **⏰ Automated Scheduling**: Daily email delivery at 9 AM UTC with APScheduler
-- **🔧 Configuration Management**: Environment-based email settings with validation
-- **✅ Connection Testing**: SMTP connectivity validation and test email endpoints
-- **👥 Multi-Recipient Support**: Send to multiple email addresses simultaneously
-- **🔄 Error Handling**: Robust retry mechanisms with exponential backoff
-- **📝 Template Engine**: Jinja2-based rendering with user preferences support
-- **🧪 Manual Triggers**: Test endpoints for immediate email sending without waiting
-
-#### 🗄️ **Data Management**
-- **🔌 Multi-Source Integration**: RemoteOK, Adzuna, and JSearch APIs
-- **🧠 Smart Caching System**: Optimized API calls with intelligent response caching
-- **⏰ Automated Scheduling**: Daily job collection with APScheduler
-- **🔗 Smart Deduplication**: Intelligent job filtering using deterministic IDs
-- **📋 REST API**: Complete CRUD operations with FastAPI
-- **✅ Comprehensive Testing**: Full test suite with CI/CD integration
-
-### 🎯 **Next Implementation Priority**
-
-#### 🤖 **Webhook Integration** (Ready for Implementation)
-- **💬 Discord Webhooks**: Server integration framework prepared
-- **🤖 Telegram Integration**: Bot framework and message formatting structure
-- **📱 Message Templates**: Rich formatting for chat platforms
-- **🔔 Real-time Notifications**: Instant job alerts via messaging platforms
-
-#### 📈 **Analytics Extensions**
-- **📊 Advanced Analytics**: Trend analysis service structure
-- **📉 Chart Generation**: Visualization framework prepared
-- **📋 Report Templates**: Professional template system foundation
-
-#### 🛠️ **Developer Tools**
-- **🔧 Database Scripts**: Data cleaning and maintenance tools
-- **🐛 Fix Utilities**: Tag normalization and data repair scripts
+---
 
 ## 🛠️ Tech Stack
 
-**Backend API (Python - Production Ready)**
-- FastAPI (Modern Python web framework)
-- Neon PostgreSQL (Serverless database with auto-scaling)
-- SQLAlchemy 2.0 (ORM)
-- Alembic (Database migrations)
-- Pydantic v2 (Data validation)
-- APScheduler (Task automation)
-- Pytest (Testing framework)
+### Frontend
+| Technology | Version | Purpose |
+|---|---|---|
+| React | 19.2 | Component UI with modern hooks |
+| TypeScript | 5.9 | End-to-end type safety |
+| Vite | 7.2 | Sub-second HMR, optimized builds |
+| Material UI | 7.3 | Enterprise-grade theming |
+| Framer Motion | 12.x | Page transitions, micro-interactions |
+| React Router | 7.x | Client-side routing |
+| Recharts | 3.6 | SVG data visualizations |
+| TanStack Query | 5.x | Server state, caching |
 
-**Frontend (React + TypeScript - In Development)**
-- React 18 (Modern UI library)
-- TypeScript (Type-safe JavaScript)
-- Material UI (Component library)
-- Axios (HTTP client)
-- Recharts (Data visualization)
-- React Router (Navigation)
+### Backend
+| Technology | Version | Purpose |
+|---|---|---|
+| Python | 3.12 | Core runtime |
+| FastAPI | Latest | Async REST API framework |
+| SQLAlchemy | 2.0 | ORM with async support |
+| Alembic | Latest | Database migrations |
+| Pydantic | v2 | Data validation & serialization |
+| APScheduler | Latest | Task scheduling (daily collection + emails) |
+| Pytest | Latest | Test suite |
 
-**Email & Notifications (Production Ready)**
-- SMTP integration with retry logic
-- Jinja2 template engine
-- Professional HTML/text email templates
-- Multi-recipient support
-- Configuration management
+### Infrastructure
+| Technology | Purpose |
+|---|---|
+| Azure App Service | Backend API hosting |
+| Azure Static Web Apps | Frontend hosting (global CDN, auto SSL) |
+| Neon PostgreSQL | Serverless database (auto-scaling, $0 cost) |
+| Docker + GHCR | Containerization & registry |
+| GitHub Actions | CI/CD automation (3 workflows) |
+| SendGrid | SMTP email delivery |
 
-**Analytics & Intelligence (Foundational)**
-- Custom summary service with PostgreSQL queries
-- Advanced filtering and data analysis
-- JSON API responses for integrations
-- Webhook framework for bot integrations
+---
 
-**Cloud Infrastructure (Azure + Neon)**
-- 🐳 Docker (Containerization)
-- GitHub Container Registry (Image storage)
-- Azure App Service (Backend API hosting)
-- Azure Static Web Apps (Frontend hosting - planned)
-- Neon PostgreSQL (Serverless database - cost optimized)
-- Azure Monitor (Logging and monitoring)
-- GitHub Actions (CI/CD automation)
+## ✨ Features
 
-## 🎯 Development Roadmap
+### 📊 Analytics Dashboard
+Real-time job market intelligence with interactive visualizations:
+- **4 Stat Cards** — Total Jobs, Latest Additions, Remote %, Salary Disclosure %
+- **Top Skills** — 5 most in-demand technologies with progress bars
+- **Top Locations** — Leading hiring cities with job distribution
+- **Interactive Charts** — Posting trends + top companies (Recharts)
+- **Work Modalities** — Remote vs Hybrid vs On-site breakdown
 
-### Phase 1: Foundation ✅ **COMPLETED**
-- [x] Database setup and models
-- [x] FastAPI integration  
-- [x] Basic CRUD operations
+### 💼 Job Listings
+Premium browsing experience with advanced filtering:
+- **Glassmorphism Cards** — Gradient overlays, hover effects, seniority badges
+- **Quick Actions** — Save & Share with animated reveal
+- **Advanced Filters** — Skills multi-select, salary range ($0–300k), seniority levels
+- **Server-Side Pagination** — 12/page with debounced search
+- **Empty States** — Illustrated feedback with retry actions
 
-### Phase 2: Core API ✅ **COMPLETED**
-- [x] Complete REST endpoints (GET, POST, PUT, DELETE)
-- [x] Data validation schemas (Pydantic)
-- [x] Request/Response models
-- [x] Advanced error handling
-- [x] API rate limiting
+### 📄 Job Details
+Complete job information with smart recommendations:
+- **Full Details** — Description, salary, location, company, contract type
+- **Similar Jobs** — Tag-based recommendation engine
+- **Breadcrumb Navigation** — Dashboard → Jobs → Job Title
+- **Apply CTA** — Direct link to original posting
 
-### Phase 3: Data Collection ✅ **COMPLETED**
-- [x] RemoteOK API integration
-- [x] Adzuna API integration with quota management
-- [x] JSearch API (RapidAPI) integration
-- [x] Smart caching system for API responses
-- [x] Automated job scheduler
-- [x] Database migrations with Alembic
-- [x] Comprehensive testing suite
-- [x] Data cleaning and normalization
+### 🎨 Design System
+- **Dark / Light Theme** — One-click toggle with localStorage persistence
+- **Responsive** — Mobile-first with hamburger menu and adaptive grids
+- **Animations** — Page transitions, shimmer loaders, micro-interactions
+- **Custom Scrollbar** — Themed webkit scrollbar
 
-### Phase 4: Cloud Infrastructure ✅ **COMPLETED** 
-- [x] **Security Hardening**: API credentials protection
-- [x] **Docker Containerization**: Full application containerization
-- [x] **Azure Infrastructure**: Complete cloud deployment setup
-- [x] **CI/CD Pipeline**: GitHub Actions automation
-- [x] **Production Database**: Initially Azure PostgreSQL, migrated to Neon
-- [x] **Live Deployment**: API accessible at https://orionjobs-api.azurewebsites.net
-- [x] **Health Monitoring**: Comprehensive health checks
-- [x] **Documentation**: Complete deployment guides
+### 📧 Email Notifications
+- **Automated Daily Digest** — Job summaries sent at 9 AM UTC
+- **Professional Templates** — Jinja2 HTML + text templates
+- **Multi-Recipient** — Send to multiple addresses simultaneously
+- **Retry Logic** — Exponential backoff with error handling
 
-### Phase 5: Smart Analytics & Notifications ✅ **COMPLETED** 
-- [x] **Smart Job Summaries**: Daily intelligent job digest with advanced filtering
-- [x] **Summary APIs**: RESTful endpoints with comprehensive analytics
-- [x] **Advanced Filtering**: Location, work modality, skills, and time-based filters
-- [x] **Analytics Foundation**: Complete service architecture and folder structure
-- [x] **Tag System Fix**: Comprehensive tag parsing and database cleanup implemented
-- [x] **Data Quality**: Robust tag handling with fallback mechanisms and utilities
-- [x] **Database Migration**: Seamless migration from Azure PostgreSQL to Neon
-- [x] **Cost Optimization**: Reduced database costs from ~$20/month to $0
-- [x] **Infrastructure Optimization**: Maintained full functionality with improved efficiency
-- [x] **Email Notifications**: Complete SMTP service with professional Jinja2 templates
-- [x] **Automated Scheduling**: Daily email scheduler running at 9 AM UTC
-- [x] **Email Testing Endpoints**: Manual trigger and configuration validation
-- [x] **Application Lifecycle**: Scheduler integrated with startup/shutdown
-- [ ] **Webhook Integration**: Discord and Telegram bot implementation (Phase 5.5)
-- [ ] **Template System Enhancement**: Messaging platform templates (Phase 5.5)
+### 🔌 Multi-Source Aggregation
+- **RemoteOK** — Remote-first developer positions
+- **Adzuna** — Global job market with quota management
+- **JSearch (RapidAPI)** — Comprehensive tech job listings
+- **Smart Deduplication** — Deterministic IDs prevent duplicates
+- **Intelligent Caching** — Optimized API calls
 
-### Phase 6: Web Interface 🌐 **IN PROGRESS** 
+---
 
-#### 🎨 **Frontend Stack (React + TypeScript)** ✅ **CONFIGURED**
-- **React 19**: Latest component-based UI library with enhanced performance
-- **TypeScript 5.9**: Type-safe development with strict type checking
-- **Vite 7**: Lightning-fast build tool with HMR (Hot Module Replacement)
-- **Material UI v7**: Comprehensive component library with dark/light theming
-- **Framer Motion 12**: Professional animations and transitions
-- **Axios**: HTTP client for API integration with environment-based configuration
-- **Recharts**: Responsive charts for analytics visualization
-- **React Router v7**: Client-side routing and navigation
+## 🚀 Quick Start
 
-#### 🏗️ **Frontend Architecture**
-```
-frontend/
-├── src/
-│   ├── pages/                    # Route-based pages
-│   │   ├── Dashboard.tsx        # Main dashboard
-│   │   ├── Jobs.tsx             # Job listing with filters
-│   │   ├── JobDetails.tsx       # Job detail view
-│   │   └── Analytics.tsx        # Analytics dashboard
-│   ├── components/              # Reusable components
-│   │   ├── JobCard.tsx
-│   │   ├── FilterPanel.tsx
-│   │   └── StatsCard.tsx
-│   ├── services/                # API integration
-│   │   └── api.ts               # Axios client
-│   ├── types/                   # TypeScript types
-│   │   └── job.ts
-│   ├── hooks/                   # Custom React hooks
-│   ├── App.tsx                  # Main app component
-│   └── main.tsx                 # Entry point
-├── public/                      # Static assets
-├── package.json
-├── tsconfig.json
-└── vite.config.ts
-```
+### Prerequisites
+- **Node.js** 18+ and **Python** 3.12+
+- **Docker** (optional, for containerized setup)
 
-#### **Implemented Features** ✅
-- [x] **Responsive Dashboard**: Mobile-first design with stats cards and analytics
-- [x] **Interactive Charts**: Trend analysis and top companies visualization with Recharts
-- [x] **Job Listings**: Paginated job cards (12 per page) with search and filters
-- [x] **Database Pagination**: Optimized backend queries (OFFSET/LIMIT) for performance
-- [x] **Advanced Filtering**: Search by keywords, remote filter, period selection
-- [x] **Job Details Page**: Full job information display with breadcrumb navigation
-- [x] **Dark/Light Theme**: Persistent theme with localStorage (dark mode as default)
-- [x] **Professional Animations**: Framer Motion integration with fade-in and stagger effects
-- [x] **Responsive Layout**: Full-width design adapting to mobile, tablet, and desktop
-- [x] **Navigation Menu**: Header with active route highlighting and theme toggle
-- [x] **Skeleton Loaders**: Loading states for better UX during data fetching
-
-#### 🚧 **Next Features**
-- [ ] **Visual Polish**: Gradients in header, glassmorphism effects on cards
-- [ ] **Favorites System**: Save/unsave jobs with localStorage persistence
-- [ ] **Advanced Filters**: Salary range slider, company dropdown, location autocomplete
-- [ ] **User Preferences**: Save searches and notification settings
-- [ ] **PWA Support**: Installable as native app with offline capabilities
-
-#### 🚀 **Quick Start**
+### Frontend
 ```bash
-# Create React project with Vite
-npm create vite@latest frontend -- --template react-ts
 cd frontend
-
-# Install dependencies
-npm install @mui/material @mui/icons-material @emotion/react @emotion/styled
-npm install axios recharts react-router-dom
-
-# Run development server
-npm run dev
-# Available at: http://localhost:5173
+npm install
+npm run dev          # → http://localhost:5173
 ```
 
-#### 🔗 **API Integration Example**
-```typescript
-// services/api.ts
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://orionjobs-api.azurewebsites.net'
-});
-
-export const jobsApi = {
-  getJobs: () => api.get('/api/v1/jobs'),
-  
-  getDailySummary: (params?: {
-    location?: string;
-    tags?: string[];
-    period_days?: number;
-    limit?: number;
-  }) => api.get('/api/v1/summary/daily', { params }),
-};
-
-export default api;
-```
-
-#### 📱 **Component Example**
-```tsx
-// pages/Jobs.tsx
-import { useState, useEffect } from 'react';
-import { Container, Grid, Typography, CircularProgress } from '@mui/material';
-import { jobsApi } from '../services/api';
-import JobCard from '../components/JobCard';
-import FilterPanel from '../components/FilterPanel';
-import { Job, Filters } from '../types/job';
-
-export default function Jobs() {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState<Filters>({ period_days: 7 });
-
-  useEffect(() => {
-    loadJobs();
-  }, [filters]);
-
-  const loadJobs = async () => {
-    setLoading(true);
-    try {
-      const { data } = await jobsApi.getDailySummary(filters);
-      setJobs(data.jobs || []);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <Container maxWidth="lg">
-      <Typography variant="h4" sx={{ mb: 4 }}>Available Jobs</Typography>
-      
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={3}>
-          <FilterPanel filters={filters} onChange={setFilters} />
-        </Grid>
-        
-        <Grid item xs={12} md={9}>
-          {loading ? (
-            <CircularProgress />
-          ) : (
-            jobs.map(job => <JobCard key={job.id} job={job} />)
-          )}
-        </Grid>
-      </Grid>
-    </Container>
-  );
-}
-```
-
-#### 🎯 **Development Progress**
-
-**Sprint 1: Setup** ✅ **COMPLETED**
-- [x] Create Vite + React + TypeScript project
-- [x] Configure Material UI theme with dark/light modes
-- [x] Setup Axios for API integration with environment variables
-- [x] Create TypeScript interfaces (Job, JobsResponse, DailySummaryResponse)
-
-**Sprint 2: Core Components** ✅ **COMPLETED**
-- [x] Main layout with navigation and footer
-- [x] Dashboard with statistics cards and analytics
-- [x] Job list with database-level pagination (12 per page)
-- [x] Search and filter components (keywords, remote, period)
-- [x] Job detail page with full information display
-
-**Sprint 3: Analytics** ✅ **COMPLETED**
-- [x] Dashboard analytics integration
-- [x] Trend charts with Recharts (job posting trends over time)
-- [x] Top companies bar chart (hiring activity visualization)
-- [x] Stats cards (total jobs, top skills, work modalities)
-
-**Sprint 4: Polish** ✅ **COMPLETED**
-- [x] Dark/light theme toggle with localStorage persistence
-- [x] Mobile responsiveness (full-width layout, responsive grid)
-- [x] Error handling and skeleton loading states
-- [x] Performance optimization (backend pagination, API debouncing)
-- [x] Framer Motion animations (fade-in, stagger, hover effects)
-
-**Sprint 5: Theme System** ✅ **COMPLETED**
-- [x] Theme-aware colors (all components adapt to dark/light)
-- [x] Glassmorphism effects with blur and transparency
-- [x] Dynamic gradients (titles, buttons, cards)
-- [x] Professional footer with 3-column layout
-- [x] Unified design language across all pages
-- [x] Removed emojis and refined branding
-
-**Sprint 6: Deploy** 🚧 **NEXT STEP**
-- [ ] Azure Static Web Apps deployment
-- [ ] CI/CD pipeline with GitHub Actions
-- [ ] Environment variables setup for production
-
-#### ☁️ **Deployment**
-
-**Azure Static Web Apps (Recommended)**
+### Backend
 ```bash
-# Build for production
-npm run build
-
-# Deploy via Azure CLI
-az staticwebapp create \
-  --name orionjobs-frontend \
-  --resource-group orionjobs-rg \
-  --source ./dist \
-  --location "East US"
+cd backend
+pip install -r requirements.txt
+cp .env.example .env # Configure environment variables
+python run.py        # → http://localhost:8000
 ```
 
-**Estimated Cost**: $0/month (Free tier)
-- 100 GB bandwidth/month
-- Custom domain included
-- Automatic SSL
-- Built-in CI/CD
-
-### Phase 7: AI Features 🧠
-- [ ] Machine learning job recommendation engine
-- [ ] AI-powered career consulting
-- [ ] Skill gap analysis and suggestions
-- [ ] Natural language processing for job descriptions
-- [ ] Personalized career path recommendations
-
-## 📊 API Examples
-
-### Email Notifications ✅ **WORKING**
+### Docker (Full Stack)
 ```bash
-# Check email configuration
-curl "https://orionjobs-api.azurewebsites.net/api/v1/notifications/email-config"
-
-# Response:
-{
-  "smtp_host": "smtp.gmail.com",
-  "smtp_port": 587,
-  "email_from_name": "OrionJobs AI",
-  "default_recipients_count": 1,
-  "smtp_configured": true
-}
-
-# Send test email
-curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/test-email"
-
-# Send daily summary
-curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/send-daily-summary?period_days=7&limit=20"
+docker-compose up -d # API + Database
+cd frontend && npm run dev
 ```
-
-### Daily Summary with Analytics ✅ **WORKING**
-```bash
-# Get comprehensive job market summary
-curl "https://orionjobs-api.azurewebsites.net/api/v1/summary/daily?period_days=7"
-
-# Response includes:
-{
-  "summary": {
-    "total_jobs": 150,
-    "period_days": 7,
-    "top_companies": ["Google", "Microsoft", "Meta"],
-    "work_modalities": ["Remote", "Hybrid"],
-    "top_skills": [
-      {"skill": "python", "count": 45},
-      {"skill": "javascript", "count": 38}
-    ]
-  },
-  "jobs": [...] // Filtered job listings
-}
-```
-
-### Advanced Filtering ✅ **WORKING**
-```bash
-# Remote Python jobs from last 14 days
-curl "https://orionjobs-api.azurewebsites.net/api/v1/summary/daily?location=remote&tags=python&period_days=14&limit=50"
-
-# Multiple skills filter
-curl "https://orionjobs-api.azurewebsites.net/api/v1/summary/daily?tags=react&tags=typescript&period_days=30"
-```
-
-## 💰 Infrastructure Costs (Optimized)
-
-**Current Monthly Costs:**
-- GitHub Container Registry: **FREE**
-- Azure App Service (B1): **~$15**  
-- Neon PostgreSQL (Serverless): **FREE** (up to 1GB, auto-scaling)
-- Azure Static Web Apps: **FREE** (100GB bandwidth) - 🚧 **Pending deployment**
-- **Total: ~$15/month** (66% cost reduction!)
-
-**Previous vs Current:**
-- **Before**: Azure Database (~$20) + App Service (~$15) = **~$35/month**
-- **After**: Neon Database (FREE) + App Service (~$15) + Static Web Apps (FREE) = **~$15/month**
-- **Savings**: **~$240/year** while maintaining full functionality
-
-**Current ROI:**
-- ✅ **Modern Web Interface**: React 19 + TypeScript frontend with professional UX
-- ✅ **Smart Analytics API**: Market intelligence foundation with real-time insights
-- ✅ **Database Optimization**: Backend pagination reducing load by 99.7% (3800 → 12 jobs per request)
-- ✅ **Multi-Source Data**: Automated job collection from 3 APIs
-- ✅ **Advanced Filtering**: Personalized job insights with multiple parameters
-- ✅ **Email Notifications**: Automated daily summaries with professional templates
-- ✅ **Dark Mode System**: User preference persistence with localStorage
-- ✅ **Professional Animations**: Smooth transitions with Framer Motion
-- ✅ **Cost Optimized**: 66% infrastructure cost reduction with Neon PostgreSQL
-- 🚧 **Deployment Pipeline**: Frontend deployment pending (Sprint 5)
-- 🚧 **Webhook System**: Ready for implementation (Discord/Telegram)
-
-## 🔧 Email Configuration
-## 🔧 Email Configuration
 
 ### Environment Variables
+
 ```bash
-# Required for email functionality
-SMTP_HOST=smtp.sendgrid.net          # Or smtp.gmail.com for Gmail
+# Backend (.env)
+DATABASE_URL=postgresql://user:pass@host/db  # Neon PostgreSQL
+ADZUNA_APP_ID=your-id                        # Adzuna API
+ADZUNA_API_KEY=your-key
+JSEARCH_API_KEY=your-rapidapi-key            # JSearch API
+SMTP_HOST=smtp.sendgrid.net                  # Email (SendGrid)
 SMTP_PORT=587
-SMTP_USERNAME=apikey                  # For SendGrid, or your Gmail address
-SMTP_PASSWORD=your-api-key-here      # SendGrid API key or Gmail app password
-EMAIL_FROM_NAME=OrionJobs AI         # Display name in recipient's inbox
-EMAIL_FROM_ADDRESS=notifications@orionjobs.me
-DEFAULT_EMAIL_RECIPIENTS=user@example.com,user2@example.com
+SMTP_USERNAME=apikey
+SMTP_PASSWORD=your-sendgrid-key
+
+# Frontend (.env)
+VITE_API_URL=https://orionjobs-api.azurewebsites.net
 ```
 
-### SendGrid Setup (Recommended)
-1. Create free SendGrid account at https://sendgrid.com
-2. Generate API key with "Mail Send" permissions
-3. Set `SMTP_USERNAME=apikey` (literal string)
-4. Set `SMTP_PASSWORD` to your SendGrid API key
-5. Verify sender email in SendGrid dashboard
+---
 
-### Gmail Setup (Alternative)
-1. Enable 2-factor authentication on your Google account
-2. Generate app-specific password at https://myaccount.google.com/apppasswords
-3. Use your Gmail address as `SMTP_USERNAME`
-4. Use generated app password as `SMTP_PASSWORD`
+## 📡 API Endpoints
 
-### Testing Email Service
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/v1/jobs` | Paginated job listings with search & filters |
+| `GET` | `/api/v1/jobs/{id}` | Single job details |
+| `POST` | `/api/v1/jobs/collect` | Trigger manual job collection |
+| `GET` | `/api/v1/summary/daily` | Dashboard analytics & insights |
+| `GET` | `/api/v1/notifications/email-config` | Email service status |
+| `POST` | `/api/v1/notifications/send-daily-summary` | Send job digest email |
+| `POST` | `/api/v1/notifications/test-email` | Test SMTP connectivity |
+| `GET` | `/health` | API health check |
+| `GET` | `/docs` | Interactive Swagger UI |
+
 ```bash
-# Check configuration
-curl "https://orionjobs-api.azurewebsites.net/api/v1/notifications/email-config"
-
-# Send test email
-curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/test-email"
-
-# Send daily summary to custom recipient
-curl -X POST "https://orionjobs-api.azurewebsites.net/api/v1/notifications/send-daily-summary?recipients=your-email@gmail.com&period_days=7&limit=20"
+# Example: Get remote Python jobs from last 7 days
+curl "https://orionjobs-api.azurewebsites.net/api/v1/summary/daily?location=remote&tags=python&period_days=7"
 ```
+
+---
 
 ## 📁 Project Structure
 
 ```
 orionjobs-ai/
-├── 🌐 Frontend (React + TypeScript - In Development)
-│   └── frontend/
-│       ├── src/
-│       │   ├── pages/          # Route-based pages
-│       │   ├── components/     # Reusable UI components
-│       │   ├── services/       # API clients (Axios)
-│       │   ├── types/          # TypeScript types
-│       │   ├── hooks/          # Custom React hooks
-│       │   ├── App.tsx         # Main app component
-│       │   └── main.tsx        # Entry point
-│       ├── public/             # Static assets
-│       ├── package.json
-│       ├── tsconfig.json
-│       └── vite.config.ts
-├── 🐍 Backend (Python FastAPI - Production Ready)
-├── 🐳 Docker Configuration
-│   ├── Dockerfile              # Container configuration
-│   ├── docker-compose.yml      # Local development
-│   └── .dockerignore           # Docker ignore rules
-├── ☁️ Azure Infrastructure  
-│   ├── .github/workflows/      # CI/CD automation
-│   │   ├── azure-deploy.yml    # Azure deployment
-│   │   └── ci.yml              # Continuous integration
-│   └── .env.example            # Environment template with email config
-├── 🚀 Application Core
+├── frontend/                    # React 19 + TypeScript SPA
+│   ├── src/
+│   │   ├── pages/              # Dashboard, JobsList, JobDetails
+│   │   ├── components/         # Layout, Charts, Cards
+│   │   ├── contexts/           # ThemeContext (dark/light)
+│   │   ├── services/           # Axios API client
+│   │   └── types/              # TypeScript interfaces
+│   ├── staticwebapp.config.json
+│   └── vite.config.ts
+│
+├── backend/                     # FastAPI + Python
 │   ├── app/
-│   │   ├── models/             # Data models
-│   │   ├── services/           # API integrations
-│   │   ├── routers/            # FastAPI routes including notifications
-│   │   ├── tests/              # Test suite
-│   │   ├── 📊 features/        # ✅ User Experience Foundation
-│   │   │   ├── summaries/      # ✅ Smart job summaries (IMPLEMENTED)
-│   │   │   │   ├── summary_service.py    # ✅ Core analytics
-│   │   │   │   ├── filters/              # ✅ Advanced filtering (IMPLEMENTED)
-│   │   │   │   └── formatters/           # 🚧 Multi-format output (structure ready)
-│   │   │   └── notifications/  # ✅ Email notifications (IMPLEMENTED)
-│   │   │       ├── email_service.py     # ✅ Complete SMTP integration
-│   │   │       ├── templates/           # ✅ Professional HTML/text templates
-│   │   │       ├── summary_generator.py # 🚧 Template engine (structure ready)
-│   │   │       └── schedulers/          # 🚧 Automation (structure ready)
-│   │   ├── 📈 analytics/       # 🚧 Market Intelligence (structure ready)
-│   │   │   ├── analytics_service.py     # 🚧 Trend analysis (structure ready)
-│   │   │   ├── trend_analyzer.py        # 🚧 Historical insights (structure ready)
-│   │   │   └── charts/                  # 🚧 Data visualization (structure ready)
-│   │   ├── 🔗 webhooks/        # 🚧 Bot Integration (structure ready)
-│   │   │   ├── discord_webhook.py       # 🚧 Discord integration (structure ready)
-│   │   │   └── telegram_webhook.py      # 🚧 Telegram integration (structure ready)
-│   │   ├── 🛠️ scripts/         # ✅ Maintenance Tools (IMPLEMENTED)
-│   │   │   ├── fix_tags.py              # ✅ Data cleaning
-│   │   │   └── db_report.py             # ✅ Database insights
-│   │   ├── config.py           # ✅ Optimized for Neon PostgreSQL + Email
-│   │   └── main.py             # Application entry with notifications
+│   │   ├── models/             # SQLAlchemy models (Job, User, Cache)
+│   │   ├── routers/            # API endpoints
+│   │   ├── services/           # RemoteOK, Adzuna, JSearch integrations
+│   │   ├── features/
+│   │   │   ├── summaries/      # Analytics & filtering engine
+│   │   │   └── notifications/  # Email service + templates
+│   │   ├── analytics/          # Trend analysis (planned)
+│   │   ├── webhooks/           # Discord/Telegram (planned)
+│   │   └── tests/              # Pytest test suite
 │   ├── alembic/                # Database migrations
-│   └── run.py                  # Application launcher
-└── 📚 Documentation
-    ├── README.md               # Project overview
-    └── LICENSE                 # MIT license
+│   └── Dockerfile
+│
+├── .github/workflows/           # CI/CD pipelines
+│   ├── ci.yml                  # Tests + lint
+│   ├── azure-deploy.yml        # Backend deploy
+│   └── azure-frontend-deploy.yml # Frontend deploy
+│
+├── docs/                        # Documentation
+└── docker-compose.yml           # Local development
 ```
-
-## 🌟 Star the Project
-
-If you find OrionJobs AI useful, please ⭐ star the repository to show your support!
-
-## 🏆 Acknowledgments
-
-- **FastAPI** community for excellent framework
-- **Microsoft Azure** for robust cloud infrastructure
-- **Neon** for cost-effective serverless PostgreSQL
-- **Docker** for containerization technology
-- **PostgreSQL** for reliable database solutions
-- **GitHub Actions** for seamless CI/CD
-- **Jinja2** for powerful template engine
-- **Open Source** community for inspiration
 
 ---
 
-**Made with ❤️ for the developer community**
+## ☁️ Deployment
 
-*Phase 6 IN PROGRESS 🌐 - Modern React Frontend + Backend Optimization + Professional UX* 🚀  
-*Phase 5 COMPLETED ✅ - Smart Analytics + Automated Email Notifications + Cost Optimized with Neon PostgreSQL*
+### CI/CD Pipeline (GitHub Actions)
 
-**🌐 Try the analytics: [https://orionjobs-api.azurewebsites.net/api/v1/summary/daily](https://orionjobs-api.azurewebsites.net/api/v1/summary/daily)**
+| Workflow | Trigger | Action |
+|---|---|---|
+| `ci.yml` | Push / PR | Run tests + lint |
+| `azure-deploy.yml` | Push to `main` | Build Docker → Deploy backend |
+| `azure-frontend-deploy.yml` | Push to `main` (frontend/) | Build Vite → Deploy to Azure SWA |
 
-**📧 Test email service: [https://orionjobs-api.azurewebsites.net/api/v1/notifications/email-config](https://orionjobs-api.azurewebsites.net/api/v1/notifications/email-config)**
+### Infrastructure Costs
 
-**📅 Daily automated summaries delivered at 9 AM UTC via email**
+| Service | Cost | Tier |
+|---|---|---|
+| Azure App Service | ~$15/mo | B1 |
+| Azure Static Web Apps | $0 | Free (100GB CDN) |
+| Neon PostgreSQL | $0 | Free (auto-scaling) |
+| GitHub Actions | $0 | Free (2000 min/mo) |
+| **Total** | **~$15/mo** | |
+
+> 💡 **66% cost reduction** from initial ~$35/mo by migrating to Neon PostgreSQL (from $20/mo to $0).
+
+---
+
+## 🗺️ Roadmap
+
+- [x] Multi-source job aggregation (RemoteOK, Adzuna, JSearch)
+- [x] REST API with FastAPI + PostgreSQL
+- [x] Docker containerization + Azure deployment
+- [x] Analytics engine with advanced filtering
+- [x] Email notifications with automated scheduling
+- [x] React 19 frontend with TypeScript
+- [x] Glassmorphism UI with dark/light theme
+- [x] Interactive dashboard with charts
+- [x] CI/CD pipelines (3 workflows)
+- [ ] Unit tests with Vitest + Pytest (target: 70%+ coverage)
+- [ ] E2E tests with Playwright
+- [ ] PWA support (offline mode, install prompt)
+- [ ] Internationalization (PT-BR / EN)
+- [ ] Job matching score with AI
+- [ ] Discord / Telegram webhook alerts
+
+---
+
+## 📄 License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+<p align="center">
+  <strong>Built with ☕ and 💙 by <a href="https://github.com/GuiDev-01">@GuiDev-01</a></strong>
+  <br />
+  <sub>Full-stack developer • Python • React • TypeScript • Azure</sub>
+</p>

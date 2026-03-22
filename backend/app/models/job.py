@@ -11,6 +11,8 @@ class Job(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String)
     company: Mapped[str] = mapped_column(String)
+    location: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     work_modality: Mapped[str] = mapped_column(String, nullable=False)
     tags: Mapped[Optional[List[str]]] = mapped_column(ARRAY(Text), nullable=True)  # Fixed: List[str] type
     url: Mapped[str] = mapped_column(String, nullable=False)

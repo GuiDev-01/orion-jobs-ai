@@ -44,3 +44,9 @@ export interface DailySummary {
   top_companies: string[];
   work_modalities: string[];
 }
+export interface AIAnalysisResponse {
+  summary: string;
+  pros: string[];
+  cons: string[];
+  interview_questions: string[];
+}

@@ -34,6 +34,7 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { motion } from 'framer-motion';
 import { jobsApi } from '../services/api';
 import type { Job } from '../types/job';
+import { AIAssistant } from '../components/AIAssistant';
 
 export default function JobDetails() {
   const { id } = useParams<{ id: string }>();
@@ -281,6 +282,10 @@ export default function JobDetails() {
               <Typography variant="h6" gutterBottom>
                 Job Description
               </Typography>
+
+              {/* Botão do Assistente de IA */}
+              <AIAssistant jobId={job.id} />
+
               <Typography
                 variant="body1"
                 color="text.secondary"

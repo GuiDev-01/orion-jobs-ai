@@ -121,7 +121,7 @@ def normalize_adzuna_jobs(raw_jobs: List[Dict]) -> List[Dict]:
                 "work_modality": "Remote",
                 "tags": tags_list,
                 "location": (job.get("location") or {}).get("display_name") or "Unknown",
-                "description": (job.get("description")[:200].strip() + "...") if job.get("description") else "No description available",
+                "description": job.get("description") or "No description available",
                 "url": (job.get("redirect_url") or job.get("url") or "").split("?")[0],
                 "created_at": created_at_str,
             }

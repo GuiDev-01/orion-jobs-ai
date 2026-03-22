@@ -61,3 +61,4 @@ CACHE_TTL = int(os.getenv("CACHE_TTL", "86400"))  # 24 hours default
 
 # Azure specific configurations
 AZURE_INSIGHTS_CONNECTION_STRING = os.getenv("AZURE_INSIGHTS_CONNECTION_STRING")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")

@@ -121,6 +121,7 @@ def normalize_jsearch_jobs(raw_jobs: List[Dict]) -> List[Dict]:
             "title": job.get("job_title", "N/A"),
             "company": job.get("employer_name", "N/A"),
             "location": job.get("job_location", "N/A"),
+            "description": job.get("job_description", "No description available"),
             "work_modality": "Remote" if job.get("job_is_remote") else "On-site",
             "tags": tags_list_clean,
             "url": truncated_url,

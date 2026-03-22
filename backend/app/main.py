@@ -14,6 +14,7 @@ from app.middleware import rate_limit_middleware
 from sqlalchemy import text
 from app.database import get_db
 from app.routers.summary_router import router as summary_router
+from app.routers.ai_router import router as ai_router
 import logging
 
 logger = logging.getLogger(__name__)
@@ -84,7 +85,7 @@ app.middleware("http")(rate_limit_middleware)
 
 # Cors
 import os
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173").split(",")
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173,http://127.0.0.1:5173,http://localhost:8000,http://127.0.0.1:8000").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
@@ -97,6 +98,7 @@ app.add_middleware(
 app.include_router(jobs_router.router, prefix="/api/v1", tags=["jobs"])
 app.include_router(summary_router)
 app.include_router(notifications_router)
+app.include_router(ai_router, prefix="/api/v1", tags=["ai"])
 
 @app.get("/")
 async def root():

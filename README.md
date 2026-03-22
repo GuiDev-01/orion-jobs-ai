@@ -110,6 +110,7 @@ This is a **production application** — not a tutorial project — with CI/CD p
 | Alembic | Latest | Database migrations |
 | Pydantic | v2 | Data validation & serialization |
 | APScheduler | Latest | Task scheduling (daily collection + emails) |
+| Google GenAI | 0.3 | AI insights using Gemini API |
 | Pytest | Latest | Test suite |
 
 ### Infrastructure
@@ -142,11 +143,11 @@ Premium browsing experience with advanced filtering:
 - **Server-Side Pagination** — 12/page with debounced search
 - **Empty States** — Illustrated feedback with retry actions
 
-### 📄 Job Details
+### 📄 Job Details & AI Assistant
 Complete job information with smart recommendations:
+- **AI Career Consultant** — Gemini-powered insights (Overview, Pros, Red Flags, Interview Questions)
 - **Full Details** — Description, salary, location, company, contract type
 - **Similar Jobs** — Tag-based recommendation engine
-- **Breadcrumb Navigation** — Dashboard → Jobs → Job Title
 - **Apply CTA** — Direct link to original posting
 
 ### 🎨 Design System
@@ -202,6 +203,7 @@ cd frontend && npm run dev
 ```bash
 # Backend (.env)
 DATABASE_URL=postgresql://user:pass@host/db  # Neon PostgreSQL
+GEMINI_API_KEY=your-gemini-api-key           # Google GenAI
 ADZUNA_APP_ID=your-id                        # Adzuna API
 ADZUNA_API_KEY=your-key
 JSEARCH_API_KEY=your-rapidapi-key            # JSearch API
@@ -223,6 +225,7 @@ VITE_API_URL=https://orionjobs-api.azurewebsites.net
 | `GET` | `/api/v1/jobs` | Paginated job listings with search & filters |
 | `GET` | `/api/v1/jobs/{id}` | Single job details |
 | `POST` | `/api/v1/jobs/collect` | Trigger manual job collection |
+| `GET` | `/api/v1/ai/analyze-job/{id}` | AI-powered job insights using Gemini |
 | `GET` | `/api/v1/summary/daily` | Dashboard analytics & insights |
 | `GET` | `/api/v1/notifications/email-config` | Email service status |
 | `POST` | `/api/v1/notifications/send-daily-summary` | Send job digest email |
@@ -311,11 +314,12 @@ orionjobs-ai/
 - [x] Glassmorphism UI with dark/light theme
 - [x] Interactive dashboard with charts
 - [x] CI/CD pipelines (3 workflows)
+- [x] AI Career Consultant (Gemini API)
 - [ ] Unit tests with Vitest + Pytest (target: 70%+ coverage)
 - [ ] E2E tests with Playwright
 - [ ] PWA support (offline mode, install prompt)
 - [ ] Internationalization (PT-BR / EN)
-- [ ] Job matching score with AI
+- [ ] Authentication with JWT & OAuth 2.0
 - [ ] Discord / Telegram webhook alerts
 
 ---

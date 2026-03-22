@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { JobsResponse, DailySummaryResponse, Job } from '../types/job';
+import type { JobsResponse, DailySummaryResponse, Job, AIAnalysisResponse } from '../types/job';
 
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
 
@@ -26,6 +26,11 @@ export const jobsApi = {
 
     getJobById: async (id: number): Promise<Job> => {
         const { data } = await api.get(`/jobs/${id}`);
+        return data;
+    },
+
+    analyzeJob: async (id: number): Promise<AIAnalysisResponse> => {
+        const { data } = await api.get(`/ai/analyze-job/${id}`);
         return data;
     },
 

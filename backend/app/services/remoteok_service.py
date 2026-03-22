@@ -69,6 +69,8 @@ def normalize_remote_jobs(raw_jobs: List[Dict]) -> List[Dict]:
             "title": job.get("position", ""),
             "company": job.get("company", ""),
             "work_modality": job.get("work_modality") or "Remote",
+            "location": job.get("location") or "Remote",
+            "description": job.get("description") or "No description available",
             "tags": tags_list,  # Properly formatted tags list
             "url": job.get("url", ""),
             "created_at": job.get("date") or datetime.utcnow().isoformat()
@@ -107,6 +109,8 @@ def save_jobs_to_db(jobs: List[Dict], db: Session) -> None:
             title=job.get("title") or "",
             company=job.get("company") or "",
             work_modality=job.get("work_modality") or "",
+            location=job.get("location") or "Remote",
+            description=job.get("description") or "No description available",
             tags=tags_val if tags_val is not None else [],  # Use empty array if None
             url=job.get("url") or "",
             created_at=datetime.utcnow() 

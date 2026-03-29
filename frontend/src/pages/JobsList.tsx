@@ -15,6 +15,7 @@ import {
   Checkbox,
   Skeleton,
   useTheme,
+  useMediaQuery,
   Tooltip,
   Divider,
   IconButton,
@@ -51,6 +52,8 @@ import { formatDistanceToNow } from 'date-fns';
 export default function JobsList() {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   
   const [data, setData] = useState<JobsResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -416,15 +419,16 @@ export default function JobsList() {
           },
           gap: { xs: 2, md: 3 },
           '& > *': {
-            animation: 'fadeInUp 0.6s ease-out',
+            animation: !isMobile && !prefersReducedMotion ? 'fadeInUp 0.4s ease-out' : 'none',
             animationFillMode: 'both',
+            willChange: !isMobile && !prefersReducedMotion ? 'transform, opacity' : 'auto',
           },
-          '& > *:nth-of-type(1)': { animationDelay: '0.05s' },
-          '& > *:nth-of-type(2)': { animationDelay: '0.1s' },
-          '& > *:nth-of-type(3)': { animationDelay: '0.15s' },
-          '& > *:nth-of-type(4)': { animationDelay: '0.2s' },
-          '& > *:nth-of-type(5)': { animationDelay: '0.25s' },
-          '& > *:nth-of-type(6)': { animationDelay: '0.3s' },
+          '& > *:nth-of-type(1)': { animationDelay: !isMobile && !prefersReducedMotion ? '0.03s' : '0s' },
+          '& > *:nth-of-type(2)': { animationDelay: !isMobile && !prefersReducedMotion ? '0.06s' : '0s' },
+          '& > *:nth-of-type(3)': { animationDelay: !isMobile && !prefersReducedMotion ? '0.09s' : '0s' },
+          '& > *:nth-of-type(4)': { animationDelay: !isMobile && !prefersReducedMotion ? '0.12s' : '0s' },
+          '& > *:nth-of-type(5)': { animationDelay: !isMobile && !prefersReducedMotion ? '0.15s' : '0s' },
+          '& > *:nth-of-type(6)': { animationDelay: !isMobile && !prefersReducedMotion ? '0.18s' : '0s' },
           '@keyframes fadeInUp': {
             from: {
               opacity: 0,
@@ -654,6 +658,8 @@ function JobCard({ job, showToast }: JobCardProps) {
   const navigate = useNavigate();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const [isSaved, setIsSaved] = useState(false);
   
   const seniority = extractSeniority(job.title);
@@ -684,7 +690,7 @@ function JobCard({ job, showToast }: JobCardProps) {
         background: isDark 
           ? 'linear-gradient(135deg, rgba(19, 47, 76, 0.6) 0%, rgba(19, 47, 76, 0.3) 100%)' 
           : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%)',
-        backdropFilter: 'blur(20px)',
+        backdropFilter: isMobile ? 'blur(8px)' : 'blur(14px)',
         borderRadius: '20px',
         border: isDark
           ? '1px solid rgba(102, 126, 234, 0.2)'
@@ -698,7 +704,8 @@ function JobCard({ job, showToast }: JobCardProps) {
         overflow: 'hidden',
         
         // Smooth transitions
-        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: prefersReducedMotion ? 'none' : 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease',
+        willChange: !isMobile && !prefersReducedMotion ? 'transform' : 'auto',
         
         // Subtle gradient overlay on hover
         '&::before': {
@@ -714,27 +721,32 @@ function JobCard({ job, showToast }: JobCardProps) {
         },
         
         // Enhanced hover effects
-        '&:hover': {
-          transform: 'translateY(-12px) scale(1.01)',
-          boxShadow: isDark
-            ? '0 24px 80px rgba(102, 126, 234, 0.5), 0 0 60px rgba(124, 77, 255, 0.25), 0 0 0 2px rgba(102, 126, 234, 0.6)'
-            : '0 24px 80px rgba(102, 126, 234, 0.35), 0 0 60px rgba(255, 167, 38, 0.15), 0 0 0 2px rgba(102, 126, 234, 0.5)',
-          border: `1px solid ${isDark ? 'rgba(124, 77, 255, 0.7)' : 'rgba(102, 126, 234, 0.6)'}`,
-          
-          '&::before': {
-            opacity: 1,
+        '@media (hover: hover) and (pointer: fine)': {
+          '&:hover': {
+            transform: prefersReducedMotion ? 'none' : 'translateY(-6px)',
+            boxShadow: isDark
+              ? '0 14px 36px rgba(12, 22, 40, 0.5)'
+              : '0 14px 36px rgba(61, 90, 254, 0.2)',
+            border: `1px solid ${isDark ? 'rgba(124, 77, 255, 0.5)' : 'rgba(102, 126, 234, 0.45)'}`,
+            '&::before': {
+              opacity: 1,
+            },
+            '& .save-button': {
+              opacity: 1,
+              transform: 'translateX(0)',
+            },
+            '& .view-details-btn': {
+              background: 'linear-gradient(135deg, #651fff 0%, #5e35b1 100%)',
+              boxShadow: isDark
+                ? '0 8px 20px rgba(124, 77, 255, 0.4)'
+                : '0 8px 20px rgba(102, 126, 234, 0.3)',
+            },
           },
-          
+        },
+        '@media (hover: none), (pointer: coarse)': {
           '& .save-button': {
             opacity: 1,
             transform: 'translateX(0)',
-          },
-          
-          '& .view-details-btn': {
-            background: 'linear-gradient(135deg, #651fff 0%, #5e35b1 100%)',
-            boxShadow: isDark
-              ? '0 8px 24px rgba(124, 77, 255, 0.5)'
-              : '0 8px 24px rgba(102, 126, 234, 0.4)',
           },
         },
       }}

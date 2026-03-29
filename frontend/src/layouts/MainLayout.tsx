@@ -146,8 +146,21 @@ export default function MainLayout({ children }: LayoutProps) {
               aria-label="Toggle color theme"
               sx={{
                 ml: { xs: 0, md: 1 },
+                color: mode === 'dark' ? '#f8fafc' : theme.palette.primary.dark,
+                border: `1px solid ${mode === 'dark' ? alpha('#cbd5e1', 0.24) : alpha(theme.palette.primary.main, 0.32)}`,
+                backgroundColor: mode === 'dark'
+                  ? alpha('#f8fafc', 0.08)
+                  : alpha(theme.palette.primary.main, 0.12),
+                boxShadow: mode === 'dark'
+                  ? '0 2px 10px rgba(2, 8, 20, 0.28)'
+                  : '0 2px 10px rgba(61, 90, 254, 0.16)',
                 '&:hover': {
-                  backgroundColor: alpha(theme.palette.primary.main, mode === 'dark' ? 0.2 : 0.12),
+                  backgroundColor: alpha(theme.palette.primary.main, mode === 'dark' ? 0.3 : 0.2),
+                  borderColor: alpha(theme.palette.primary.main, mode === 'dark' ? 0.5 : 0.45),
+                },
+                '&:focus-visible': {
+                  outline: `2px solid ${alpha(theme.palette.primary.main, 0.7)}`,
+                  outlineOffset: 2,
                 },
               }}
             >

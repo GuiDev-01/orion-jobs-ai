@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import MainLayout from '@/layouts/MainLayout';
 import LoadingState from '@/components/common/LoadingState';
 
@@ -37,11 +37,12 @@ const pageVariants = {
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const shouldReduceMotion = useReducedMotion();
 
   // Scroll to top on route change
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [location.pathname]);
+    window.scrollTo({ top: 0, behavior: shouldReduceMotion ? 'auto' : 'smooth' });
+  }, [location.pathname, shouldReduceMotion]);
 
   return (
     <AnimatePresence mode="wait">
@@ -49,10 +50,10 @@ function AnimatedRoutes() {
         <Route path="/" element={
           <Suspense fallback={<LoadingState title="Loading dashboard" description="Preparing market intelligence view." />}>
             <motion.div
-              variants={pageVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
+              variants={shouldReduceMotion ? undefined : pageVariants}
+              initial={shouldReduceMotion ? false : 'initial'}
+              animate={shouldReduceMotion ? undefined : 'animate'}
+              exit={shouldReduceMotion ? undefined : 'exit'}
             >
               <Dashboard />
             </motion.div>
@@ -61,10 +62,10 @@ function AnimatedRoutes() {
         <Route path="/jobs" element={
           <Suspense fallback={<LoadingState title="Loading jobs" description="Fetching latest opportunities." />}>
             <motion.div
-              variants={pageVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
+              variants={shouldReduceMotion ? undefined : pageVariants}
+              initial={shouldReduceMotion ? false : 'initial'}
+              animate={shouldReduceMotion ? undefined : 'animate'}
+              exit={shouldReduceMotion ? undefined : 'exit'}
             >
               <JobsList />
             </motion.div>
@@ -73,10 +74,10 @@ function AnimatedRoutes() {
         <Route path="/jobs/:id" element={
           <Suspense fallback={<LoadingState title="Loading job details" description="Assembling role insights and AI analysis." />}>
             <motion.div
-              variants={pageVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
+              variants={shouldReduceMotion ? undefined : pageVariants}
+              initial={shouldReduceMotion ? false : 'initial'}
+              animate={shouldReduceMotion ? undefined : 'animate'}
+              exit={shouldReduceMotion ? undefined : 'exit'}
             >
               <JobDetails />
             </motion.div>

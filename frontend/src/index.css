@@ -2,11 +2,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  scroll-behavior: smooth;
 }
 
 html {
   scroll-padding-top: 80px;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -16,6 +16,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
   /* Let MUI theme control the background */
 }
 
@@ -55,4 +56,16 @@ body {
 ::-moz-selection {
   background: rgba(61, 90, 254, 0.28);
   color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

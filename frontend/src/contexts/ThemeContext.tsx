@@ -2,6 +2,17 @@ import { createContext, useContext, useState, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { alpha } from '@mui/material/styles';
+import {
+  brand,
+  fonts,
+  motion,
+  neutral,
+  radii,
+  semantic,
+  spacing,
+} from '@/theme/tokens';
+import { getGlassCardStyle, getPageBackground } from '@/theme/styles';
 
 interface ThemeContextType {
   mode: 'light' | 'dark';
@@ -13,6 +24,7 @@ const ThemeContext = createContext<ThemeContextType>({
   toggleTheme: () => {},
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useThemeMode = () => useContext(ThemeContext);
 
 interface ThemeProviderWrapperProps {
@@ -32,73 +44,104 @@ export function ThemeProviderWrapper({ children }: ThemeProviderWrapperProps) {
         palette: {
           mode,
           primary: {
-            main: '#304ffe', // Azul espacial vibrante
-            light: '#7c4dff', // Roxo nebulosa
-            dark: '#1a237e', // Azul noturno profundo
+            main: brand.primary,
+            light: brand.primaryLight,
+            dark: brand.primaryDark,
           },
           secondary: {
-            main: '#ffa726', // Dourado estelar
-            light: '#ffb74d', // Âmbar brilhante
-            dark: '#f57c00', // Laranja profundo
+            main: brand.secondary,
+            light: '#ffab40',
+            dark: brand.secondaryDark,
           },
           background: {
-            default: mode === 'dark' ? '#0a1929' : '#f5f5f5',
-            paper: mode === 'dark' ? '#132f4c' : '#ffffff',
+            default: mode === 'dark' ? neutral.dark.bg : neutral.light.bg,
+            paper: mode === 'dark' ? neutral.dark.surface : neutral.light.surface,
           },
           text: {
-            primary: mode === 'dark' ? '#ffffff' : '#1a237e',
-            secondary: mode === 'dark' ? '#b0bec5' : '#546e7a',
+            primary: mode === 'dark' ? neutral.dark.textPrimary : neutral.light.textPrimary,
+            secondary: mode === 'dark' ? neutral.dark.textSecondary : neutral.light.textSecondary,
           },
           success: {
-            main: '#66bb6a',
+            main: semantic.success,
+            light: '#34d399',
+            dark: '#059669',
+          },
+          warning: {
+            main: semantic.warning,
+            light: '#fbbf24',
+            dark: '#d97706',
+          },
+          error: {
+            main: semantic.error,
+            light: '#f87171',
+            dark: '#dc2626',
           },
           info: {
-            main: '#7c4dff',
+            main: semantic.info,
+            light: '#60a5fa',
+            dark: '#2563eb',
           },
+          divider: mode === 'dark' ? alpha(neutral.dark.border, 0.8) : neutral.light.border,
         },
         typography: {
-          fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+          fontFamily: fonts.body,
           h1: {
-            fontSize: '3rem',
-            fontWeight: 700,
-            background: 'linear-gradient(135deg, #ffa726 0%, #ffb74d 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+            fontSize: 'clamp(2rem, 3.5vw, 3rem)',
+            fontFamily: fonts.heading,
+            fontWeight: 800,
+            letterSpacing: '-0.02em',
           },
           h2: {
-            fontSize: '2.5rem',
-            fontWeight: 600,
-            color: '#304ffe',
+            fontSize: 'clamp(1.75rem, 3vw, 2.5rem)',
+            fontFamily: fonts.heading,
+            fontWeight: 700,
+            letterSpacing: '-0.015em',
+          },
+          h3: {
+            fontSize: 'clamp(1.5rem, 2.5vw, 2rem)',
+            fontFamily: fonts.heading,
+            fontWeight: 700,
+            letterSpacing: '-0.012em',
           },
           h4: {
-            fontSize: '2rem',
+            fontSize: 'clamp(1.25rem, 2.2vw, 1.6rem)',
+            fontFamily: fonts.heading,
             fontWeight: 700,
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
           },
           h6: {
-            fontSize: '1.25rem',
+            fontSize: '1.1rem',
+            fontFamily: fonts.heading,
             fontWeight: 600,
           },
           body1: {
-            fontSize: '1rem',
+            fontSize: '0.95rem',
+            lineHeight: 1.6,
+            letterSpacing: '-0.005em',
           },
           body2: {
             fontSize: '0.875rem',
+            lineHeight: 1.6,
+            letterSpacing: '-0.005em',
           },
         },
         shape: {
-          borderRadius: 16,
+          borderRadius: radii.lg,
         },
         components: {
+          MuiCssBaseline: {
+            styleOverrides: {
+              body: {
+                background: getPageBackground(mode),
+                minHeight: '100vh',
+              },
+              '#root': {
+                minHeight: '100vh',
+              },
+            },
+          },
           MuiCard: {
             styleOverrides: {
-              root: {
-                backgroundImage: 'none',
-                backgroundColor: mode === 'dark' ? 'rgba(19, 47, 76, 0.6)' : 'rgba(255, 255, 255, 0.9)',
-                backdropFilter: 'blur(10px)',
-              },
+              root: getGlassCardStyle(mode),
             },
           },
           MuiButton: {
@@ -106,7 +149,9 @@ export function ThemeProviderWrapper({ children }: ThemeProviderWrapperProps) {
               root: {
                 textTransform: 'none',
                 fontWeight: 600,
-                borderRadius: 12,
+                letterSpacing: '0.01em',
+                borderRadius: radii.md,
+                transition: `all ${motion.regular}`,
               },
             },
           },
@@ -114,6 +159,22 @@ export function ThemeProviderWrapper({ children }: ThemeProviderWrapperProps) {
             styleOverrides: {
               root: {
                 fontWeight: 500,
+                borderRadius: radii.sm,
+              },
+            },
+          },
+          MuiContainer: {
+            defaultProps: {
+              maxWidth: 'xl',
+            },
+          },
+          MuiCardContent: {
+            styleOverrides: {
+              root: {
+                padding: spacing.xl,
+                '&:last-child': {
+                  paddingBottom: spacing.xl,
+                },
               },
             },
           },

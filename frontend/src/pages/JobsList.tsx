@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Card,
@@ -43,6 +43,7 @@ import WorkOffIcon from '@mui/icons-material/WorkOff';
 import TuneIcon from '@mui/icons-material/Tune';
 import EmptyState from '@/components/common/EmptyState';
 import ErrorState from '@/components/common/ErrorState';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { jobsApi } from '../services/api';
 import type { Job, JobsResponse } from '../types/job';
 import { formatDistanceToNow } from 'date-fns';
@@ -56,6 +57,7 @@ export default function JobsList() {
   const [error, setError] = useState<string | null>(null);
   
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 400);
   const [remoteOnly, setRemoteOnly] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 12;
@@ -94,7 +96,7 @@ export default function JobsList() {
         const response = await jobsApi.getJobs({
           page: currentPage,
           page_size: pageSize,
-          search: searchTerm || undefined,
+          search: debouncedSearchTerm || undefined,
           remote: remoteOnly || undefined,
         });
         
@@ -107,17 +109,41 @@ export default function JobsList() {
       }
     }
 
-    const timeoutId = setTimeout(() => {
-      fetchJobs();
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm, remoteOnly, currentPage]);
+    fetchJobs();
+  }, [debouncedSearchTerm, remoteOnly, currentPage]);
 
   const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const totalPages = data ? Math.ceil(data.total / pageSize) : 0;
+  const hasAdvancedFilters =
+    selectedSkills.length > 0 ||
+    salaryRange[0] > 0 ||
+    salaryRange[1] < 300000 ||
+    selectedSeniority.length > 0;
+
+  const filteredJobs = useMemo(() => {
+    return (data?.jobs ?? []).filter((job) => {
+      const jobTags = (job.tags ?? []).map((tag) => tag.toLowerCase());
+      const hasAllSkills = selectedSkills.every((skill) => jobTags.includes(skill.toLowerCase()));
+
+      const detectedSeniority = extractSeniority(job.title);
+      const normalizedSeniority = detectedSeniority === 'Mid-Level' ? 'Mid' : detectedSeniority;
+      const matchesSeniority =
+        selectedSeniority.length === 0 ||
+        (normalizedSeniority ? selectedSeniority.includes(normalizedSeniority) : false);
+
+      const salaryFilterEnabled = salaryRange[0] > 0 || salaryRange[1] < 300000;
+      const jobMinSalary = job.salary_min ?? 0;
+      const jobMaxSalary = job.salary_max ?? jobMinSalary;
+      const overlapsSalary = jobMaxSalary >= salaryRange[0] && jobMinSalary <= salaryRange[1];
+      const matchesSalary = !salaryFilterEnabled || (job.salary_min || job.salary_max ? overlapsSalary : false);
+
+      return hasAllSkills && matchesSeniority && matchesSalary;
+    });
+  }, [data?.jobs, selectedSkills, selectedSeniority, salaryRange]);
 
   if (error) {
     return (
@@ -130,32 +156,6 @@ export default function JobsList() {
       />
     );
   }
-
-  const totalPages = data ? Math.ceil(data.total / pageSize) : 0;
-  const hasAdvancedFilters =
-    selectedSkills.length > 0 ||
-    salaryRange[0] > 0 ||
-    salaryRange[1] < 300000 ||
-    selectedSeniority.length > 0;
-
-  const filteredJobs = (data?.jobs ?? []).filter((job) => {
-    const jobTags = (job.tags ?? []).map((tag) => tag.toLowerCase());
-    const hasAllSkills = selectedSkills.every((skill) => jobTags.includes(skill.toLowerCase()));
-
-    const detectedSeniority = extractSeniority(job.title);
-    const normalizedSeniority = detectedSeniority === 'Mid-Level' ? 'Mid' : detectedSeniority;
-    const matchesSeniority =
-      selectedSeniority.length === 0 ||
-      (normalizedSeniority ? selectedSeniority.includes(normalizedSeniority) : false);
-
-    const salaryFilterEnabled = salaryRange[0] > 0 || salaryRange[1] < 300000;
-    const jobMinSalary = job.salary_min ?? 0;
-    const jobMaxSalary = job.salary_max ?? jobMinSalary;
-    const overlapsSalary = jobMaxSalary >= salaryRange[0] && jobMinSalary <= salaryRange[1];
-    const matchesSalary = !salaryFilterEnabled || (job.salary_min || job.salary_max ? overlapsSalary : false);
-
-    return hasAllSkills && matchesSeniority && matchesSalary;
-  });
 
   return (
     <Box>

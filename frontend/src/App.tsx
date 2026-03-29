@@ -1,10 +1,12 @@
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import MainLayout from '@/layouts/MainLayout';
-import Dashboard from './pages/Dashboard';
-import JobsList from './pages/JobsList';
-import JobDetails from './pages/JobDetails';
-import { useEffect } from 'react';
+import LoadingState from '@/components/common/LoadingState';
+
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const JobsList = lazy(() => import('./pages/JobsList'));
+const JobDetails = lazy(() => import('./pages/JobDetails'));
 
 // Page transition variants
 const pageVariants = {
@@ -45,34 +47,40 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={
-          <motion.div
-            variants={pageVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
-            <Dashboard />
-          </motion.div>
+          <Suspense fallback={<LoadingState title="Loading dashboard" description="Preparing market intelligence view." />}>
+            <motion.div
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <Dashboard />
+            </motion.div>
+          </Suspense>
         } />
         <Route path="/jobs" element={
-          <motion.div
-            variants={pageVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
-            <JobsList />
-          </motion.div>
+          <Suspense fallback={<LoadingState title="Loading jobs" description="Fetching latest opportunities." />}>
+            <motion.div
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <JobsList />
+            </motion.div>
+          </Suspense>
         } />
         <Route path="/jobs/:id" element={
-          <motion.div
-            variants={pageVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
-            <JobDetails />
-          </motion.div>
+          <Suspense fallback={<LoadingState title="Loading job details" description="Assembling role insights and AI analysis." />}>
+            <motion.div
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <JobDetails />
+            </motion.div>
+          </Suspense>
         } />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

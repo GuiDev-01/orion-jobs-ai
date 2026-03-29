@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import Layout from './components/Layout';
+import MainLayout from '@/layouts/MainLayout';
 import Dashboard from './pages/Dashboard';
 import JobsList from './pages/JobsList';
 import JobDetails from './pages/JobDetails';
@@ -83,9 +83,9 @@ function AnimatedRoutes() {
 function App() {
   return (
     <BrowserRouter>
-      <Layout>
+      <MainLayout>
         <AnimatedRoutes />
-      </Layout>
+      </MainLayout>
     </BrowserRouter>
   );
 }

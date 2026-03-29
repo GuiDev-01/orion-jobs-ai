@@ -1,6 +1,6 @@
 import { Box, Typography, useTheme } from '@mui/material';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import type { Job } from '../../types/job';
+import type { Job } from '@/types/job';
 
 interface ModalityChartProps {
   jobs: Job[];

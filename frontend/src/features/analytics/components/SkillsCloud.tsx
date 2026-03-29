@@ -1,6 +1,6 @@
 import { Box, Chip, Typography, useTheme, alpha } from '@mui/material';
 import { motion } from 'framer-motion';
-import type { Job } from '../../types/job';
+import type { Job } from '@/types/job';
 
 interface SkillsCloudProps {
   jobs: Job[];
@@ -16,7 +16,7 @@ export default function SkillsCloud({ jobs, maxSkills = 20 }: SkillsCloudProps) 
   
   jobs.forEach(job => {
     if (job.tags && Array.isArray(job.tags)) {
-      job.tags.forEach(tag => {
+      job.tags.forEach((tag: string) => {
         const normalizedTag = tag.trim().toLowerCase();
         if (normalizedTag && normalizedTag.length > 1) {
           skillCounts[normalizedTag] = (skillCounts[normalizedTag] || 0) + 1;

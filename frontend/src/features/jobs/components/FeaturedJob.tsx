@@ -5,7 +5,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import BusinessIcon from '@mui/icons-material/Business';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import StarIcon from '@mui/icons-material/Star';
-import type { Job } from '../types/job';
+import type { Job } from '@/types/job';
 
 interface FeaturedJobProps {
   job: Job;
@@ -108,7 +108,7 @@ export default function FeaturedJob({ job }: FeaturedJobProps) {
         {/* Skills */}
         {job.tags && job.tags.length > 0 && (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
-            {job.tags.slice(0, 5).map((tag, index) => (
+            {job.tags.slice(0, 5).map((tag: string, index: number) => (
               <Chip
                 key={index}
                 label={tag}

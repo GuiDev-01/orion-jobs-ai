@@ -12,8 +12,8 @@ import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { jobsApi } from '../services/api';
 import type { DailySummaryResponse } from '../types/job';
-import TrendChart from '../components/charts/TrendChart';
-import TopCompaniesChart from '../components/charts/TopCompaniesChart';
+import TrendChart from '@/features/analytics/components/TrendChart';
+import TopCompaniesChart from '@/features/analytics/components/TopCompaniesChart';
 
 // Smooth animation variants
 const containerVariants: Variants = {

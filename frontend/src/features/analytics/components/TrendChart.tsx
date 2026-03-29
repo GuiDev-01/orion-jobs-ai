@@ -9,7 +9,7 @@ import {
   Legend
 } from 'recharts';
 import { Card, CardContent, Typography } from '@mui/material';
-import type { Job } from '../../types/job';
+import type { Job } from '@/types/job';
 
 interface TrendChartProps {
   jobs: Job[];

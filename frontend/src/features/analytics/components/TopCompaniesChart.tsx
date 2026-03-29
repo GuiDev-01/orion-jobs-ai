@@ -1,5 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import type { Job } from '../../types/job';
+import type { Job } from '@/types/job';
 
 interface TopCompaniesChartProps {
   jobs: Job[];
@@ -13,7 +13,7 @@ export default function TopCompaniesChart({ jobs }: TopCompaniesChartProps) {
   }, {} as Record<string, number>);
 
   // Get top 10 companies
-  const data = Object.entries(companyCounts)
+  const data = (Object.entries(companyCounts) as [string, number][])
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10)
     .map(([company, count]) => ({

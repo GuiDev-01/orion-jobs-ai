@@ -41,6 +41,8 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import WorkOffIcon from '@mui/icons-material/WorkOff';
 import TuneIcon from '@mui/icons-material/Tune';
+import EmptyState from '@/components/common/EmptyState';
+import ErrorState from '@/components/common/ErrorState';
 import { jobsApi } from '../services/api';
 import type { Job, JobsResponse } from '../types/job';
 import { formatDistanceToNow } from 'date-fns';
@@ -119,47 +121,41 @@ export default function JobsList() {
 
   if (error) {
     return (
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          minHeight: '60vh',
-          textAlign: 'center',
-          gap: 3,
-        }}
-      >
-        <WorkOffIcon 
-          sx={{ 
-            fontSize: 120, 
-            color: 'error.main',
-            opacity: 0.5,
-            filter: 'drop-shadow(0 8px 16px rgba(239, 68, 68, 0.3))',
-          }} 
-        />
-        <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary' }}>
-          Connection Error
-        </Typography>
-        <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: 500 }}>
-          {error}
-        </Typography>
-        <Button 
-          variant="contained" 
-          onClick={() => window.location.reload()}
-          sx={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            px: 4,
-            py: 1.5,
-          }}
-        >
-          Retry Connection
-        </Button>
-      </Box>
+      <ErrorState
+        title="Connection error"
+        message={error}
+        onRetry={() => window.location.reload()}
+        retryLabel="Retry connection"
+        minHeight="60vh"
+      />
     );
   }
 
   const totalPages = data ? Math.ceil(data.total / pageSize) : 0;
+  const hasAdvancedFilters =
+    selectedSkills.length > 0 ||
+    salaryRange[0] > 0 ||
+    salaryRange[1] < 300000 ||
+    selectedSeniority.length > 0;
+
+  const filteredJobs = (data?.jobs ?? []).filter((job) => {
+    const jobTags = (job.tags ?? []).map((tag) => tag.toLowerCase());
+    const hasAllSkills = selectedSkills.every((skill) => jobTags.includes(skill.toLowerCase()));
+
+    const detectedSeniority = extractSeniority(job.title);
+    const normalizedSeniority = detectedSeniority === 'Mid-Level' ? 'Mid' : detectedSeniority;
+    const matchesSeniority =
+      selectedSeniority.length === 0 ||
+      (normalizedSeniority ? selectedSeniority.includes(normalizedSeniority) : false);
+
+    const salaryFilterEnabled = salaryRange[0] > 0 || salaryRange[1] < 300000;
+    const jobMinSalary = job.salary_min ?? 0;
+    const jobMaxSalary = job.salary_max ?? jobMinSalary;
+    const overlapsSalary = jobMaxSalary >= salaryRange[0] && jobMinSalary <= salaryRange[1];
+    const matchesSalary = !salaryFilterEnabled || (job.salary_min || job.salary_max ? overlapsSalary : false);
+
+    return hasAllSkills && matchesSeniority && matchesSalary;
+  });
 
   return (
     <Box>
@@ -220,6 +216,7 @@ export default function JobsList() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 disabled={loading}
+                inputProps={{ 'aria-label': 'Search jobs by title, company, or keyword' }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -243,6 +240,7 @@ export default function JobsList() {
                     onChange={(e) => setRemoteOnly(e.target.checked)}
                     color="primary"
                     disabled={loading}
+                    inputProps={{ 'aria-label': 'Filter remote jobs only' }}
                   />
                 }
                 label="Remote only"
@@ -258,6 +256,7 @@ export default function JobsList() {
               variant="outlined"
               startIcon={<TuneIcon />}
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              aria-label="Toggle advanced filters"
               sx={{
                 borderRadius: 2,
                 whiteSpace: 'nowrap',
@@ -281,6 +280,7 @@ export default function JobsList() {
                   multiple
                   value={selectedSkills}
                   onChange={(e) => setSelectedSkills(e.target.value as string[])}
+                  inputProps={{ 'aria-label': 'Filter by skills' }}
                   input={<OutlinedInput label="Skills" />}
                   renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -307,6 +307,7 @@ export default function JobsList() {
                 <Slider
                   value={salaryRange}
                   onChange={(_e, newValue) => setSalaryRange(newValue as number[])}
+                  aria-label="Filter by salary range"
                   valueLabelDisplay="auto"
                   min={0}
                   max={300000}
@@ -323,6 +324,7 @@ export default function JobsList() {
                   multiple
                   value={selectedSeniority}
                   onChange={(e) => setSelectedSeniority(e.target.value as string[])}
+                  inputProps={{ 'aria-label': 'Filter by seniority level' }}
                   input={<OutlinedInput label="Seniority Level" />}
                   renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -354,10 +356,16 @@ export default function JobsList() {
                   Clear Advanced Filters
                 </Button>
               )}
+
+              {hasAdvancedFilters && (
+                <Typography variant="caption" color="text.secondary">
+                  Advanced filters are currently applied client-side to the loaded page results.
+                </Typography>
+              )}
             </Box>
           </Collapse>
 
-          {(searchTerm || remoteOnly) && (
+          {(searchTerm || remoteOnly || hasAdvancedFilters) && (
             <Box sx={{ mt: 2 }}>
               <Typography variant="body2" color="text.secondary">
                 Active filters:
@@ -376,6 +384,19 @@ export default function JobsList() {
                     onDelete={() => setRemoteOnly(false)}
                     size="small"
                     color="primary"
+                  />
+                )}
+                {selectedSkills.map((skill) => (
+                  <Chip key={`skill-${skill}`} label={`Skill: ${skill}`} onDelete={() => setSelectedSkills((prev) => prev.filter((item) => item !== skill))} size="small" />
+                ))}
+                {selectedSeniority.map((level) => (
+                  <Chip key={`seniority-${level}`} label={`Level: ${level}`} onDelete={() => setSelectedSeniority((prev) => prev.filter((item) => item !== level))} size="small" color="secondary" />
+                ))}
+                {hasAdvancedFilters && (salaryRange[0] > 0 || salaryRange[1] < 300000) && (
+                  <Chip
+                    label={`Salary: $${salaryRange[0].toLocaleString()}-$${salaryRange[1].toLocaleString()}`}
+                    onDelete={() => setSalaryRange([0, 300000])}
+                    size="small"
                   />
                 )}
               </Stack>
@@ -421,112 +442,37 @@ export default function JobsList() {
           Array.from(new Array(pageSize)).map((_, index) => (
             <JobCardSkeleton key={index} />
           ))
-        ) : data && data.jobs.length > 0 ? (
+        ) : filteredJobs.length > 0 ? (
           // Actual job cards
-          data.jobs.map((job) => (
+          filteredJobs.map((job) => (
             <JobCard key={job.id} job={job} showToast={showToast} />
           ))
         ) : (
           // Empty State
-          <Box 
-            sx={{ 
-              gridColumn: '1 / -1',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              minHeight: '50vh',
-              gap: 3,
-              py: 8,
-            }}
-          >
-            <Box
-              sx={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              {searchTerm || remoteOnly ? (
-                <SearchOffIcon 
-                  sx={{ 
-                    fontSize: 120, 
-                    color: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
-                    filter: isDark 
-                      ? 'drop-shadow(0 8px 24px rgba(102, 126, 234, 0.3))'
-                      : 'drop-shadow(0 8px 24px rgba(102, 126, 234, 0.2))',
-                  }} 
-                />
-              ) : (
-                <WorkOffIcon 
-                  sx={{ 
-                    fontSize: 120, 
-                    color: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
-                    filter: isDark 
-                      ? 'drop-shadow(0 8px 24px rgba(102, 126, 234, 0.3))'
-                      : 'drop-shadow(0 8px 24px rgba(102, 126, 234, 0.2))',
-                  }} 
-                />
-              )}
-            </Box>
-
-            <Box sx={{ textAlign: 'center', maxWidth: 500 }}>
-              <Typography 
-                variant="h4" 
-                sx={{ 
-                  fontWeight: 700,
-                  mb: 1.5,
-                  background: isDark 
-                    ? 'linear-gradient(135deg, #ffffff 0%, #b0bec5 100%)'
-                    : 'linear-gradient(135deg, #1a237e 0%, #304ffe 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                {searchTerm || remoteOnly ? 'No Results Found' : 'No Jobs Available'}
-              </Typography>
-              
-              <Typography 
-                variant="body1" 
-                sx={{ 
-                  color: 'text.secondary',
-                  mb: 3,
-                  lineHeight: 1.6,
-                }}
-              >
-                {searchTerm || remoteOnly 
-                  ? `We couldn't find any jobs matching your criteria. Try adjusting your filters or search terms.`
-                  : 'There are currently no job listings available. Please check back later.'}
-              </Typography>
-
-              {(searchTerm || remoteOnly) && (
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    setSearchTerm('');
-                    setRemoteOnly(false);
-                    setCurrentPage(1);
-                  }}
-                  sx={{
-                    borderColor: isDark ? 'rgba(102, 126, 234, 0.5)' : 'rgba(102, 126, 234, 0.7)',
-                    color: isDark ? '#a5b4fc' : '#667eea',
-                    fontWeight: 600,
-                    px: 4,
-                    py: 1.5,
-                    borderRadius: 2,
-                    textTransform: 'none',
-                    '&:hover': {
-                      borderColor: '#667eea',
-                      backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                    },
-                  }}
-                >
-                  Clear All Filters
-                </Button>
-              )}
-            </Box>
+          <Box sx={{ gridColumn: '1 / -1' }}>
+            <EmptyState
+              title={searchTerm || remoteOnly || hasAdvancedFilters ? 'No results found' : 'No jobs available'}
+              description={
+                searchTerm || remoteOnly || hasAdvancedFilters
+                  ? 'No jobs match your current filters. Try broadening the criteria.'
+                  : 'There are currently no jobs available. Please check back later.'
+              }
+              icon={searchTerm || remoteOnly || hasAdvancedFilters ? <SearchOffIcon sx={{ fontSize: 72 }} /> : <WorkOffIcon sx={{ fontSize: 72 }} />}
+              actionLabel={searchTerm || remoteOnly || hasAdvancedFilters ? 'Clear all filters' : undefined}
+              onAction={
+                searchTerm || remoteOnly || hasAdvancedFilters
+                  ? () => {
+                      setSearchTerm('');
+                      setRemoteOnly(false);
+                      setSelectedSkills([]);
+                      setSalaryRange([0, 300000]);
+                      setSelectedSeniority([]);
+                      setCurrentPage(1);
+                    }
+                  : undefined
+              }
+              minHeight="50vh"
+            />
           </Box>
         )}
       </Box>

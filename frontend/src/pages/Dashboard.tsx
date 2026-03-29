@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Grid, Card, CardContent, Typography, Chip, Box, CircularProgress, useTheme, alpha, Tooltip, LinearProgress } from '@mui/material';
+import { useState, useEffect, useCallback } from 'react';
+import { Grid, Card, CardContent, Typography, Chip, Box, useTheme, alpha, Tooltip, LinearProgress } from '@mui/material';
 import WorkIcon from '@mui/icons-material/Work';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
@@ -12,6 +12,11 @@ import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { jobsApi } from '../services/api';
 import type { DailySummaryResponse } from '../types/job';
+import EmptyState from '@/components/common/EmptyState';
+import ErrorState from '@/components/common/ErrorState';
+import LoadingState from '@/components/common/LoadingState';
+import LocationChart from '@/features/analytics/components/LocationChart';
+import StatsBar from '@/features/analytics/components/StatsBar';
 import TrendChart from '@/features/analytics/components/TrendChart';
 import TopCompaniesChart from '@/features/analytics/components/TopCompaniesChart';
 
@@ -87,39 +92,56 @@ export default function Dashboard() {
   const textPrimary = theme.palette.text.primary;
   const textSecondary = theme.palette.text.secondary;
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const summary = await jobsApi.getDailySummary({ days: 30 });
-        setData(summary);
-      } catch (err) {
-        setError('Failed to load data. Please check if the API is running.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const summary = await jobsApi.getDailySummary({ days: 30 });
+      setData(summary);
+    } catch (err) {
+      setError('Failed to load dashboard data. Check API connectivity and try again.');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-
-    fetchData();
   }, []);
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
-        <CircularProgress />
-      </div>
-    );
+    return <LoadingState title="Loading dashboard" description="Crunching market data from your latest jobs snapshot." />;
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <ErrorState title="Dashboard unavailable" message={error} onRetry={fetchData} retryLabel="Reload dashboard" />;
   }
 
   if (!data) {
-    return <div>No data available</div>;
+    return (
+      <EmptyState
+        title="No dashboard data yet"
+        description="We could not find summary data for the selected period. Try reloading in a few moments."
+        actionLabel="Reload"
+        onAction={fetchData}
+      />
+    );
   }
 
   const totalJobs = data.jobs.length;
+
+  if (totalJobs === 0) {
+    return (
+      <EmptyState
+        title="No jobs found"
+        description="There are no jobs available in the current summary window."
+        actionLabel="Refresh data"
+        onAction={fetchData}
+      />
+    );
+  }
+
   const latestJobs = data.jobs.slice(0, 50);
 
   // Calculate metrics with insights
@@ -201,6 +223,12 @@ export default function Dashboard() {
             <AutoGraphIcon sx={{ fontSize: { xs: 16, md: 20 }, color: 'secondary.main' }} />
             Real-time overview of the developer job market
           </Typography>
+        </Box>
+      </motion.div>
+
+      <motion.div variants={itemVariants}>
+        <Box sx={{ mb: { xs: 3, md: 4 } }}>
+          <StatsBar jobs={data.jobs} />
         </Box>
       </motion.div>
 
@@ -599,6 +627,46 @@ export default function Dashboard() {
                   </Tooltip>
                 </Box>
                 <TopCompaniesChart jobs={data.jobs} />
+              </CardContent>
+            </Card>
+          </motion.div>
+        </Grid>
+
+        {/* Locations Chart */}
+        <Grid size={{ xs: 12 }}>
+          <motion.div variants={itemVariants}>
+            <Card
+              sx={{
+                ...glassCardSx,
+                height: '100%',
+              }}
+            >
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+                  <Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <LocationOnIcon sx={{ color: 'secondary.main', fontSize: 20 }} />
+                      <Typography variant="h6" sx={{ fontWeight: 600, color: textPrimary }}>
+                        Top Hiring Locations
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" sx={{ color: textSecondary }}>
+                      Cities and regions with the highest job concentration
+                    </Typography>
+                  </Box>
+                  <Tooltip title="Top 8 locations in the current dataset" arrow>
+                    <Chip
+                      label="Top 8"
+                      size="small"
+                      sx={{
+                        backgroundColor: alpha(theme.palette.secondary.main, 0.15),
+                        color: 'secondary.main',
+                        fontWeight: 600,
+                      }}
+                    />
+                  </Tooltip>
+                </Box>
+                <LocationChart jobs={data.jobs} />
               </CardContent>
             </Card>
           </motion.div>

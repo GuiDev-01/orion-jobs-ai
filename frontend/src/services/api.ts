@@ -1,7 +1,17 @@
 import axios from 'axios';
 import type { JobsResponse, DailySummaryResponse, Job, AIAnalysisResponse } from '../types/job';
 
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+const normalizeBaseUrl = (url: string): string => {
+    const trimmed = url.replace(/\/$/, '');
+    return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
+};
+
+const rawApiUrl = import.meta.env.VITE_API_URL;
+const baseURL = rawApiUrl
+    ? normalizeBaseUrl(rawApiUrl)
+    : import.meta.env.DEV
+        ? '/api/v1'
+        : 'https://orionjobs-api.azurewebsites.net/api/v1';
 
 console.log('🔧 API Base URL:', baseURL);
 

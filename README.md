@@ -13,7 +13,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=flat-square&logo=docker&logoColor=white)](https://docker.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
-> **Full-stack AI-powered job search platform for developers.** Aggregates thousands of positions from multiple APIs, delivers real-time market analytics, and provides intelligent insights — all through a modern React UI deployed on Azure cloud.
+> **Full-stack AI-powered job search platform for developers.** Aggregates positions from multiple APIs, delivers real-time market analytics, and provides intelligent insights through a modern React UI deployed on Azure cloud.
 
 <p align="center">
   <a href="https://gray-water-0be9a250f.2.azurestaticapps.net" target="_blank"><strong>🔥 Live Application →</strong></a>
@@ -100,6 +100,7 @@ This is a **production application** — not a tutorial project — with CI/CD p
 | React Router | 7.x | Client-side routing |
 | Recharts | 3.6 | SVG data visualizations |
 | TanStack Query | 5.x | Server state, caching |
+| Vitest + Testing Library | 4.x / 16.x | Frontend unit/component tests |
 
 ### Backend
 | Technology | Version | Purpose |
@@ -150,6 +151,11 @@ Complete job information with smart recommendations:
 - **Similar Jobs** — Tag-based recommendation engine
 - **Apply CTA** — Direct link to original posting
 
+### ✅ Quality & Reliability
+- **Frontend Tests** — Vitest + Testing Library (core components, hooks and page smoke tests)
+- **Backend Tests** — Pytest suite for service normalization and models
+- **CI Workflows** — Automated backend CI, security scan, and Azure deployments
+
 ### 🎨 Design System
 - **Dark / Light Theme** — One-click toggle with localStorage persistence
 - **Responsive** — Mobile-first with hamburger menu and adaptive grids
@@ -188,7 +194,6 @@ npm run dev          # → http://localhost:5173
 ```bash
 cd backend
 pip install -r requirements.txt
-cp .env.example .env # Configure environment variables
 python run.py        # → http://localhost:8000
 ```
 
@@ -205,12 +210,15 @@ cd frontend && npm run dev
 DATABASE_URL=postgresql://user:pass@host/db  # Neon PostgreSQL
 GEMINI_API_KEY=your-gemini-api-key           # Google GenAI
 ADZUNA_APP_ID=your-id                        # Adzuna API
-ADZUNA_API_KEY=your-key
+ADZUNA_APP_KEY=your-key
 JSEARCH_API_KEY=your-rapidapi-key            # JSearch API
 SMTP_HOST=smtp.sendgrid.net                  # Email (SendGrid)
 SMTP_PORT=587
 SMTP_USERNAME=apikey
 SMTP_PASSWORD=your-sendgrid-key
+EMAIL_FROM_NAME=OrionJobs AI
+EMAIL_FROM_ADDRESS=notifications@orionjobs.me
+DEFAULT_EMAIL_RECIPIENTS=you@example.com
 
 # Frontend (.env)
 VITE_API_URL=https://orionjobs-api.azurewebsites.net
@@ -285,9 +293,9 @@ orionjobs-ai/
 
 | Workflow | Trigger | Action |
 |---|---|---|
-| `ci.yml` | Push / PR | Run tests + lint |
+| `ci.yml` | Push / PR (backend changes) | Backend tests + lint checks + security scan |
 | `azure-deploy.yml` | Push to `main` | Build Docker → Deploy backend |
-| `azure-frontend-deploy.yml` | Push to `main` (frontend/) | Build Vite → Deploy to Azure SWA |
+| `azure-frontend-deploy.yml` | Push/PR (`frontend/**`) | Build frontend → Deploy to Azure SWA |
 
 ### Infrastructure Costs
 
@@ -315,7 +323,9 @@ orionjobs-ai/
 - [x] Interactive dashboard with charts
 - [x] CI/CD pipelines (3 workflows)
 - [x] AI Career Consultant (Gemini API)
-- [ ] Unit tests with Vitest + Pytest (target: 70%+ coverage)
+- [x] Test foundation with Vitest + Pytest
+- [ ] Expand test coverage to 70%+
+- [ ] Data quality sprint: better salary/location coverage + more job sources
 - [ ] E2E tests with Playwright
 - [ ] PWA support (offline mode, install prompt)
 - [ ] Internationalization (PT-BR / EN)

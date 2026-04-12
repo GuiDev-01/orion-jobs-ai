@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Card,
@@ -49,6 +49,75 @@ export default function JobDetails() {
   const [isSaved, setIsSaved] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+
+  const descriptionBlocks = useMemo(() => {
+    const raw = job?.description?.trim();
+    if (!raw) {
+      return [];
+    }
+
+    return raw
+      .split(/\n{2,}/)
+      .map((block) =>
+        block
+          .split('\n')
+          .map((line) => line.trim())
+          .filter(Boolean)
+      )
+      .filter((block) => block.length > 0);
+  }, [job?.description]);
+
+  const topRequiredSkills = useMemo(() => {
+    if (!job?.tags?.length) {
+      return [];
+    }
+
+    const priorityKeywords = [
+      'python',
+      'typescript',
+      'javascript',
+      'react',
+      'node',
+      'aws',
+      'docker',
+      'kubernetes',
+      'sql',
+      'postgres',
+      'mongodb',
+      'fastapi',
+      'django',
+      'java',
+      'c#',
+      'go',
+      'git',
+      'rest',
+      'api',
+    ];
+
+    const normalized = Array.from(
+      new Set(
+        job.tags
+          .map((tag) => String(tag).trim())
+          .filter(Boolean)
+          .map((tag) => tag.replace(/\s+/g, ' '))
+      )
+    );
+
+    const scored = normalized
+      .map((tag) => {
+        const lower = tag.toLowerCase();
+        const hasPriority = priorityKeywords.some((keyword) => lower.includes(keyword));
+        const isLikelySentence = tag.length > 28 || tag.split(' ').length > 3;
+        const score = (hasPriority ? 2 : 0) + (isLikelySentence ? 0 : 1);
+        return { tag, score };
+      })
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score || a.tag.length - b.tag.length)
+      .slice(0, 8)
+      .map((item) => item.tag);
+
+    return scored.length > 0 ? scored : normalized.slice(0, 8);
+  }, [job?.tags]);
 
   useEffect(() => {
     async function fetchJobDetails() {
@@ -286,27 +355,72 @@ export default function JobDetails() {
               {/* Botão do Assistente de IA */}
               <AIAssistant jobId={job.id} />
 
-              <Typography
-                variant="body1"
-                color="text.secondary"
-                sx={{
-                  whiteSpace: 'pre-wrap',
-                  lineHeight: 1.8,
-                  mb: 3,
-                }}
-              >
-                {job.description || 'No description available.'}
-              </Typography>
+              <Box sx={{ mb: 3 }}>
+                {descriptionBlocks.length > 0 ? (
+                  <Stack spacing={2}>
+                    {descriptionBlocks.map((block, blockIndex) => {
+                      const listPattern = /^([-*•]|\d+[.)])\s+/;
+                      const isList = block.length > 0 && block.every((line) => listPattern.test(line));
+                      const blockKey = `desc-block-${block.join('|').slice(0, 80)}-${blockIndex}`;
+
+                      if (isList) {
+                        return (
+                          <Box
+                            key={blockKey}
+                            component="ul"
+                            sx={{
+                              m: 0,
+                              pl: 3,
+                              color: 'text.secondary',
+                              '& li': { mb: 0.75, lineHeight: 1.75 },
+                            }}
+                          >
+                            {block.map((line, lineIndex) => {
+                              const cleanLine = line.replace(listPattern, '');
+                              return (
+                                <Box component="li" key={`${blockKey}-line-${lineIndex}-${cleanLine.slice(0, 40)}`}>
+                                  <Typography variant="body1" component="span" color="text.secondary">
+                                    {cleanLine}
+                                  </Typography>
+                                </Box>
+                              );
+                            })}
+                          </Box>
+                        );
+                      }
+
+                      return (
+                        <Stack key={blockKey} spacing={1}>
+                          {block.map((line, lineIndex) => (
+                            <Typography
+                              key={`${blockKey}-p-${lineIndex}-${line.slice(0, 40)}`}
+                              variant="body1"
+                              color="text.secondary"
+                              sx={{ lineHeight: 1.85 }}
+                            >
+                              {line}
+                            </Typography>
+                          ))}
+                        </Stack>
+                      );
+                    })}
+                  </Stack>
+                ) : (
+                  <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.85 }}>
+                    No description available.
+                  </Typography>
+                )}
+              </Box>
 
               {/* Tags/Skills */}
-              {job.tags && job.tags.length > 0 && (
+              {topRequiredSkills.length > 0 && (
                 <>
                   <Divider sx={{ my: 3 }} />
                   <Typography variant="h6" gutterBottom>
                     Required Skills
                   </Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                    {job.tags.map((tag) => (
+                    {topRequiredSkills.map((tag) => (
                       <Chip key={tag} label={tag} variant="outlined" />
                     ))}
                   </Box>

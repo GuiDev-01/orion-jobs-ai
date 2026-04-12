@@ -29,10 +29,39 @@ ADZUNA_APP_ID = os.getenv("ADZUNA_APP_ID")
 ADZUNA_APP_KEY = os.getenv("ADZUNA_APP_KEY")
 JSEARCH_API_KEY = os.getenv("JSEARCH_API_KEY")
 
+
+def _parse_csv_env(value: Optional[str], default: list[str]) -> list[str]:
+    if not value:
+        return default
+    parsed = [item.strip() for item in value.split(",") if item.strip()]
+    return parsed or default
+
 # Collection settings
 COLLECT_MAX_PAGES = int(os.getenv("COLLECT_MAX_PAGES", "3"))
 COLLECT_SLEEP_SECONDS = float(os.getenv("COLLECT_SLEEP_SECONDS", "1.5"))
 COLLECT_ADZUNA_MAX_REQUESTS = int(os.getenv("COLLECT_ADZUNA_MAX_REQUESTS", "30"))
+COLLECT_ADZUNA_RESULTS_PER_PAGE = int(os.getenv("COLLECT_ADZUNA_RESULTS_PER_PAGE", "50"))
+COLLECT_ADZUNA_COUNTRIES = _parse_csv_env(
+    os.getenv("COLLECT_ADZUNA_COUNTRIES"),
+    ["gb", "us", "de"],
+)
+COLLECT_ADZUNA_QUERIES = _parse_csv_env(
+    os.getenv("COLLECT_ADZUNA_QUERIES"),
+    [
+        "python developer",
+        "backend engineer",
+        "full stack developer",
+        "devops engineer",
+    ],
+)
+COLLECT_JSEARCH_ENABLED = os.getenv("COLLECT_JSEARCH_ENABLED", "true").lower() == "true"
+COLLECT_JSEARCH_MAX_REQUESTS = int(os.getenv("COLLECT_JSEARCH_MAX_REQUESTS", "6"))
+COLLECT_JSEARCH_QUERIES = _parse_csv_env(
+    os.getenv("COLLECT_JSEARCH_QUERIES"),
+    ["python developer", "backend engineer", "devops engineer"],
+)
+COLLECT_JSEARCH_COUNTRY = os.getenv("COLLECT_JSEARCH_COUNTRY", "us")
+COLLECT_JSEARCH_LOCATION = os.getenv("COLLECT_JSEARCH_LOCATION", "remote")
 
 # Email configuration
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")

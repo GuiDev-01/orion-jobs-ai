@@ -16,4 +16,5 @@ class Job(Base):
     work_modality: Mapped[str] = mapped_column(String, nullable=False)
     tags: Mapped[Optional[List[str]]] = mapped_column(ARRAY(Text), nullable=True)  # Fixed: List[str] type
     url: Mapped[str] = mapped_column(String, nullable=False)
+    source: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)

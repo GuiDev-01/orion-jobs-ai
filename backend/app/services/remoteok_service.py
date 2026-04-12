@@ -1,11 +1,13 @@
 from typing import List, Dict
 import requests
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.models.job import Job
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
+import hashlib
+from app.services.text_cleaner import clean_job_description
+from urllib.parse import urlsplit, urlunsplit
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -70,27 +72,97 @@ def normalize_remote_jobs(raw_jobs: List[Dict]) -> List[Dict]:
             "company": job.get("company", ""),
             "work_modality": job.get("work_modality") or "Remote",
             "location": job.get("location") or "Remote",
-            "description": job.get("description") or "No description available",
+            "description": clean_job_description(job.get("description")),
             "tags": tags_list,  # Properly formatted tags list
             "url": job.get("url", ""),
+            "source": "remoteok",
             "created_at": job.get("date") or datetime.utcnow().isoformat()
         })
     
     logger.info(f"Normalized {len(normalized_jobs)} RemoteOK jobs")
     return normalized_jobs
 
-from sqlalchemy.orm import Session
-from app.models.job import Job
-
 def save_jobs_to_db(jobs: List[Dict], db: Session) -> None:
     """
     Saves a list of jobs to the database.
     """
     logger.info("Saving jobs to database...")
+
+    def normalize_url(url: str) -> str:
+        if not url:
+            return ""
+        raw = url.strip()
+        try:
+            parsed = urlsplit(raw)
+            scheme = parsed.scheme.lower()
+            netloc = parsed.netloc.lower()
+            path = parsed.path.rstrip("/")
+            return urlunsplit((scheme, netloc, path, "", ""))
+        except Exception:
+            # Fallback when URL is malformed
+            return raw.split("?")[0].rstrip("/")
+
+    def to_int_id(raw_id) -> int:
+        if isinstance(raw_id, int):
+            return raw_id
+        if isinstance(raw_id, str) and raw_id.isdigit():
+            return int(raw_id)
+        text_id = str(raw_id or "")
+        digest = hashlib.md5(text_id.encode()).hexdigest()[:8]
+        return int(digest, 16) % 2147483647
+    
+    def parse_created_at(raw_value) -> datetime:
+        if isinstance(raw_value, datetime):
+            if raw_value.tzinfo is not None:
+                return raw_value.astimezone(timezone.utc).replace(tzinfo=None)
+            return raw_value
+        
+        if isinstance(raw_value, str):
+            value = raw_value.strip()
+            if value:
+                try:
+                    dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+                    if dt.tzinfo is not None:
+                        return dt.astimezone(timezone.utc).replace(tzinfo=None)
+                    return dt
+                except Exception:
+                    try:
+                        return datetime.utcfromtimestamp(int(value))
+                    except Exception: 
+                        pass
+        
+        return datetime.utcnow()
+
     for job in jobs:
+        job_id = to_int_id(job.get("id"))
+
         # Check if the job already exists in the database by ID
-        existing_job = db.query(Job).filter(Job.id == job["id"]).first()
+        existing_job = db.query(Job).filter(Job.id == job_id).first()
         if existing_job:
+            continue
+
+        # Fallback dedup when IDs differ across providers for the same listing.
+        normalized_url = normalize_url(job.get("url") or "")
+        title = (job.get("title") or "").strip()
+        company = (job.get("company") or "").strip()
+
+        fallback_duplicate = None
+        if job.get("source"):
+            if normalized_url:
+                fallback_duplicate = (
+                    db.query(Job)
+                    .filter(Job.url == normalized_url)
+                    .first()
+                )
+            if fallback_duplicate is None and title and company:
+                fallback_duplicate = (
+                    db.query(Job)
+                    .filter(func.lower(Job.title) == title.lower())
+                    .filter(func.lower(Job.company) == company.lower())
+                    .first()
+                )
+
+        if fallback_duplicate:
             continue
 
         # Normalize tags: accept list or CSV -> produce Python list or None
@@ -105,15 +177,16 @@ def save_jobs_to_db(jobs: List[Dict], db: Session) -> None:
                 tags_val = cleaned if cleaned else None
 
         new_job = Job(
-            id=job["id"],
+            id=job_id,
             title=job.get("title") or "",
             company=job.get("company") or "",
             work_modality=job.get("work_modality") or "",
             location=job.get("location") or "Remote",
             description=job.get("description") or "No description available",
             tags=tags_val if tags_val is not None else [],  # Use empty array if None
-            url=job.get("url") or "",
-            created_at=datetime.utcnow() 
+            url=normalized_url or (job.get("url") or ""),
+            source=job.get("source"),
+            created_at=parse_created_at(job.get("created_at"))
         )
 
         # Insert job with per-job commit to avoid whole-batch failure

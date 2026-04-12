@@ -8,6 +8,7 @@ from datetime import datetime
 from app.config import ADZUNA_APP_ID, ADZUNA_APP_KEY
 from app.services.cache_service import get_cached_response, save_response_to_cache
 from app.database import SessionLocal
+from app.services.text_cleaner import clean_job_description
 
 # Load environment variables from .env file
 load_dotenv()
@@ -35,10 +36,11 @@ def fetch_adzuna_jobs(
 
     with SessionLocal() as db:
         try:
-            cached_response = get_cached_response(query, country, db)
+            cache_query = f"{query}::p{page}::r{results_per_page}"
+            cached_response = get_cached_response(cache_query, country, db)
             if cached_response:
                 logger.info(
-                    f"Using cached response for query '{query}' in country '{country}' (loaded from database)"
+                    f"Using cached response for query '{query}' (page {page}) in country '{country}' (loaded from database)"
                 )
                 return cached_response.response
 
@@ -70,8 +72,8 @@ def fetch_adzuna_jobs(
             jobs = response.json().get("results", [])
 
             # Save to cache (upsert handled by cache_service)
-            save_response_to_cache(query, country, jobs, db)
-            logger.info(f"Saved response to cache for query '{query}' in country '{country}'")
+            save_response_to_cache(cache_query, country, jobs, db)
+            logger.info(f"Saved response to cache for query '{query}' (page {page}) in country '{country}'")
             return jobs
 
         except requests.exceptions.RequestException as e:
@@ -121,8 +123,9 @@ def normalize_adzuna_jobs(raw_jobs: List[Dict]) -> List[Dict]:
                 "work_modality": "Remote",
                 "tags": tags_list,
                 "location": (job.get("location") or {}).get("display_name") or "Unknown",
-                "description": job.get("description") or "No description available",
+                "description": clean_job_description(job.get("description")),
                 "url": (job.get("redirect_url") or job.get("url") or "").split("?")[0],
+                "source": "adzuna",
                 "created_at": created_at_str,
             }
         )

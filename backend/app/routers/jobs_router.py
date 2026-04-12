@@ -1,11 +1,14 @@
+import logging
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func, or_
+from sqlalchemy import or_
 from app.database import get_db
 from app.models.job import Job
+from job_schedule import collect_remote_jobs
 from typing import Optional
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 @router.get("/jobs")
 def get_jobs(
@@ -63,13 +66,9 @@ def get_jobs(
                 "company": job.company,
                 "location": getattr(job, 'location', None),
                 "work_modality": job.work_modality,
-                "salary_min": getattr(job, 'salary_min', None),
-                "salary_max": getattr(job, 'salary_max', None),
                 "description": getattr(job, 'description', None),
                 "tags": formatted_tags,
                 "url": job.url,
-                "remote": getattr(job, 'remote', None),
-                "contract_type": getattr(job, 'contract_type', None),
                 "created_at": str(job.created_at),
                 "source": getattr(job, 'source', None)
             })
@@ -82,7 +81,7 @@ def get_jobs(
         }
         
     except Exception as e:
-        print(f"Error in get_jobs: {str(e)}")  # Debug log
+        logger.exception(f"Error in get_jobs: {str(e)}")  # Debug log
         return {
             "jobs": [],
             "total": 0,
@@ -118,13 +117,9 @@ def get_job_by_id(job_id: int, db: Session = Depends(get_db)):
             "company": job.company,
             "location": getattr(job, 'location', None),
             "work_modality": job.work_modality,
-            "salary_min": getattr(job, 'salary_min', None),
-            "salary_max": getattr(job, 'salary_max', None),
             "description": getattr(job, 'description', None),
             "tags": formatted_tags,
             "url": job.url,
-            "remote": getattr(job, 'remote', None),
-            "contract_type": getattr(job, 'contract_type', None),
             "created_at": str(job.created_at),
             "source": getattr(job, 'source', None)
         }
@@ -139,29 +134,13 @@ def get_job_by_id(job_id: int, db: Session = Depends(get_db)):
 
 @router.post("/jobs/collect")
 def collect_jobs_manual():
-    """Manually trigger job collection for testing"""
+    """Manually trigger real job collection and return execution summary."""
     try:
-        sample_jobs = [
-            {
-                "id": 1,
-                "title": "Python Developer",
-                "company": "TechCorp",
-                "work_modality": "Remote",
-                "url": "https://example.com/job1"
-            },
-            {
-                "id": 2,
-                "title": "Full Stack Developer",
-                "company": "StartupX",
-                "work_modality": "Hybrid",
-                "url": "https://example.com/job2"
-            }
-        ]
-        
+        summary = collect_remote_jobs()
+
         return {
             "message": "Jobs collected successfully!",
-            "jobs": sample_jobs,
-            "total": len(sample_jobs),
+            "summary": summary,
             "status": "success"
         }
     except Exception as e:

@@ -12,8 +12,10 @@ from app.config import (
     COLLECT_ADZUNA_QUERIES,
     COLLECT_ADZUNA_RESULTS_PER_PAGE,
     COLLECT_JSEARCH_COUNTRY,
+    COLLECT_JSEARCH_DATE_POSTED,
     COLLECT_JSEARCH_ENABLED,
-    COLLECT_JSEARCH_LOCATION,
+    COLLECT_JSEARCH_LOCATIONS,
+    COLLECT_JSEARCH_MAX_PAGES,
     COLLECT_JSEARCH_MAX_REQUESTS,
     COLLECT_JSEARCH_QUERIES,
     COLLECT_MAX_PAGES,
@@ -84,29 +86,40 @@ def collect_remote_jobs() -> dict:
 
         # JSearch jobs (optional, capped)
         if COLLECT_JSEARCH_ENABLED:
-            logger.info("Collecting JSearch jobs with guardrails...")
+            logger.info("Collecting JSearch jobs with pagination and guardrails...")
             jsearch_requests = 0
+
             for query in COLLECT_JSEARCH_QUERIES:
                 if jsearch_requests >= COLLECT_JSEARCH_MAX_REQUESTS:
                     logger.warning("Reached COLLECT_JSEARCH_MAX_REQUESTS cap, stopping JSearch collection")
                     break
 
-                raw_jsearch_jobs = fetch_jsearch_jobs(
-                    query=query,
-                    location=COLLECT_JSEARCH_LOCATION,
-                    page=1,
-                    country=COLLECT_JSEARCH_COUNTRY,
-                )
-                jsearch_requests += 1
-                summary["jsearch_requests"] = jsearch_requests
+                for location in COLLECT_JSEARCH_LOCATIONS:
+                    if jsearch_requests >= COLLECT_JSEARCH_MAX_REQUESTS:
+                        break
 
-                if not raw_jsearch_jobs:
-                    continue
+                    for page in range(1, COLLECT_JSEARCH_MAX_PAGES + 1):
+                        if jsearch_requests >= COLLECT_JSEARCH_MAX_REQUESTS:
+                            break
 
-                normalized_jsearch_jobs = normalize_jsearch_jobs(raw_jsearch_jobs)
-                summary["jsearch"] += len(normalized_jsearch_jobs)
-                save_jobs_to_db(normalized_jsearch_jobs, db)
-                time.sleep(COLLECT_SLEEP_SECONDS)
+                        raw_jsearch_jobs = fetch_jsearch_jobs(
+                            query=query,
+                            location=location,
+                            page=page,
+                            country=COLLECT_JSEARCH_COUNTRY,
+                            date_posted=COLLECT_JSEARCH_DATE_POSTED,
+                        )
+                        jsearch_requests += 1
+                        summary["jsearch_requests"] = jsearch_requests
+
+                        if not raw_jsearch_jobs:
+                            # If this page is empty, stop paginating this query/location pair.
+                            break
+
+                        normalized_jsearch_jobs = normalize_jsearch_jobs(raw_jsearch_jobs)
+                        summary["jsearch"] += len(normalized_jsearch_jobs)
+                        save_jobs_to_db(normalized_jsearch_jobs, db)
+                        time.sleep(COLLECT_SLEEP_SECONDS)
         
         logger.info("Scheduled job collection completed successfully")
         logger.info(f"Collection summary: {summary}")

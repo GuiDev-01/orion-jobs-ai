@@ -1,6 +1,6 @@
 import { Box, Typography, useTheme, alpha } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import SearchIcon from '@mui/icons-material/Search';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -36,6 +36,7 @@ const steps = [
 export default function HowItWorks() {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
+  const reduceMotion = useReducedMotion();
 
   return (
     <Box sx={{ py: 4 }}>
@@ -65,9 +66,10 @@ export default function HowItWorks() {
         {steps.map((step, index) => (
           <Grid size={{ xs: 12, sm: 6, md: 3 }} key={step.title}>
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.15, duration: 0.5 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 26 }}
+              whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={reduceMotion ? undefined : { once: true, amount: 0.35 }}
+              transition={reduceMotion ? undefined : { delay: index * 0.08, duration: 0.45 }}
             >
               <Box
                 sx={{

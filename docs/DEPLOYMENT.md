@@ -1,138 +1,92 @@
-# OrionJobs AI - Guia de Deploy Azure
+# Azure Deployment Guide
 
-## Pré-requisitos
-- Conta Azure com $100 em créditos
-- Azure CLI instalado
-- Docker Desktop
+This document describes a secure Azure deployment workflow without exposing secrets in the repository.
 
-## Custos Estimados (mensal)
-- Azure Container Registry (Basic): ~$5
-- Azure Database for PostgreSQL (Basic): ~$15-20  
-- Azure App Service (B1): ~$15
-- **Total: ~$35-40/mês**
+## Prerequisites
 
-## Passo 1: Criar recursos na Azure
+- Azure CLI installed and authenticated (`az login`)
+- Docker installed
+- GitHub Actions configured in the repository
+
+## Recommended local shell variables
 
 ```bash
-# Login na Azure
-az login
+export RESOURCE_GROUP="<resource-group>"
+export LOCATION="<location>"
+export ACR_NAME="<acr-name>"
+export APP_PLAN="<app-plan-name>"
+export WEBAPP_NAME="<webapp-name>"
+export IMAGE_NAME="<image-name>"
+```
 
-# Criar grupo de recursos
-az group create --name orionjobs-rg --location eastus
+## 1) Create base resources
 
-# Criar Azure Container Registry
+```bash
+az group create --name "$RESOURCE_GROUP" --location "$LOCATION"
+
 az acr create \
-  --resource-group orionjobs-rg \
-  --name orionjobsacr \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$ACR_NAME" \
   --sku Basic \
   --admin-enabled true
 
-# Obter credenciais do ACR
-az acr credential show --name orionjobsacr --resource-group orionjobs-rg
-```
-
-## Passo 2: Banco PostgreSQL
-
-```bash
-# Criar servidor PostgreSQL
-az postgres server create \
-  --resource-group orionjobs-rg \
-  --name orionjobs-db-server \
-  --location eastus \
-  --admin-user orionadmin \
-  --admin-password "OrionJobs2024!" \
-  --sku-name B_Gen5_1 \
-  --version 13
-
-# Configurar firewall para Azure services
-az postgres server firewall-rule create \
-  --resource-group orionjobs-rg \
-  --server orionjobs-db-server \
-  --name AllowAzureServices \
-  --start-ip-address 0.0.0.0 \
-  --end-ip-address 0.0.0.0
-
-# Criar database
-az postgres db create \
-  --resource-group orionjobs-rg \
-  --server-name orionjobs-db-server \
-  --name orionjobs
-```
-
-## Passo 3: App Service
-
-```bash
-# Criar App Service Plan
 az appservice plan create \
-  --name orionjobs-plan \
-  --resource-group orionjobs-rg \
+  --name "$APP_PLAN" \
+  --resource-group "$RESOURCE_GROUP" \
   --sku B1 \
   --is-linux
 
-# Criar Web App
 az webapp create \
-  --resource-group orionjobs-rg \
-  --plan orionjobs-plan \
-  --name orionjobs-api \
-  --deployment-container-image-name orionjobsacr.azurecr.io/orionjobs:latest
+  --resource-group "$RESOURCE_GROUP" \
+  --plan "$APP_PLAN" \
+  --name "$WEBAPP_NAME" \
+  --deployment-container-image-name "$ACR_NAME.azurecr.io/$IMAGE_NAME:latest"
 ```
 
-## Passo 4: Configurar secrets no GitHub
-
-No seu repositório GitHub, adicione estes secrets:
-- `ACR_NAME`: orionjobsacr
-- `ACR_USERNAME`: (obtido do comando acr credential show)
-- `ACR_PASSWORD`: (obtido do comando acr credential show)
-- `WEBAPP_NAME`: orionjobs-api
-- `AZURE_CREDENTIALS`: (JSON das credenciais de service principal)
-
-## Passo 5: Deploy inicial
+## 2) Build and push the image
 
 ```bash
-# Navegar para o diretório backend
 cd backend
-
-# Build e push da imagem
-docker build -t orionjobsacr.azurecr.io/orionjobs:latest .
-az acr login --name orionjobsacr
-docker push orionjobsacr.azurecr.io/orionjobs:latest
-
-# Configurar variáveis de ambiente do App Service
-az webapp config appsettings set \
-  --resource-group orionjobs-rg \
-  --name orionjobs-api \
-  --settings \
-  DATABASE_URL="postgresql://orionadmin:OrionJobs2024!@orionjobs-db-server.postgres.database.azure.com:5432/orionjobs" \
-  ENVIRONMENT="production" \
-  COLLECT_MAX_PAGES="2" \
-  ADZUNA_APP_ID="your_adzuna_id" \
-  ADZUNA_APP_KEY="your_adzuna_key" \
-  WEBSITES_PORT="8000"
-
-# Reiniciar o Web App para aplicar as mudanças
-az webapp restart --name orionjobs-api --resource-group orionjobs-rg
+docker build -t "$ACR_NAME.azurecr.io/$IMAGE_NAME:latest" .
+az acr login --name "$ACR_NAME"
+docker push "$ACR_NAME.azurecr.io/$IMAGE_NAME:latest"
 ```
 
-## Troubleshooting
+## 3) Configure App Settings
 
-### API não responde
-1. Verifique os logs do container:
-   ```bash
-   az webapp log tail --name orionjobs-api --resource-group orionjobs-rg
-   ```
+```bash
+az webapp config appsettings set \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$WEBAPP_NAME" \
+  --settings \
+  DATABASE_URL="<database-url>" \
+  ENVIRONMENT="production" \
+  WEBSITES_PORT="8000" \
+  ALLOWED_ORIGINS="<frontend-domain>" \
+  ADZUNA_APP_ID="<adzuna-app-id>" \
+  ADZUNA_APP_KEY="<adzuna-app-key>"
+```
 
-2. Certifique-se que a variável `WEBSITES_PORT` está configurada corretamente
+## 4) Configure GitHub secrets
 
-3. Verifique se o container está rodando:
-   ```bash
-   az webapp show --name orionjobs-api --resource-group orionjobs-rg --query state
-   ```
+In the repository, configure:
 
-### Erro de banco de dados
-1. Verifique as regras de firewall do PostgreSQL
-2. Teste a conexão com o banco localmente
-3. Verifique se a string de conexão está correta
+- `ACR_NAME`
+- `ACR_USERNAME`
+- `ACR_PASSWORD`
+- `WEBAPP_NAME`
+- `AZURE_CREDENTIALS`
 
-## Monitoramento
+## 5) Deploy and validation
 
-Acesse: `https://orionjobs-api.azurewebsites.net/health`
+```bash
+az webapp restart --name "$WEBAPP_NAME" --resource-group "$RESOURCE_GROUP"
+az webapp log tail --name "$WEBAPP_NAME" --resource-group "$RESOURCE_GROUP"
+curl "https://<webapp-domain>/health"
+```
+
+## Quick troubleshooting
+
+- API unavailable: check App Service logs and Web App status.
+- DB error: review `DATABASE_URL`, firewall, and connectivity.
+- CORS error: validate `ALLOWED_ORIGINS` with the real frontend domain.

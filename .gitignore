@@ -129,3 +129,10 @@ docs/_build/
 # ============================================
 .env.development.local
 .env.production.local
+
+# ============================================
+# Private planning docs
+# ============================================
+docs/SAAS_PREMIUM_ROADMAP.md
+docs/*_ROADMAP*.md
+docs/*PLANNING*.md

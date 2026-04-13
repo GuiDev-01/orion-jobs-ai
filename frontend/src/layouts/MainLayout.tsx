@@ -21,6 +21,7 @@ import {
 import { alpha } from '@mui/material/styles';
 import { useNavigate, useLocation } from 'react-router-dom';
 import WorkIcon from '@mui/icons-material/Work';
+import HomeIcon from '@mui/icons-material/Home';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -48,7 +49,8 @@ export default function MainLayout({ children }: LayoutProps) {
   };
 
   const navItems = [
-    { label: 'Dashboard', path: '/', icon: <DashboardIcon /> },
+    { label: 'Home', path: '/', icon: <HomeIcon /> },
+    { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
     { label: 'Jobs', path: '/jobs', icon: <ListAltIcon /> },
   ];
 
@@ -111,7 +113,11 @@ export default function MainLayout({ children }: LayoutProps) {
           {!isMobile && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {navItems.map((item) => {
-                const selected = location.pathname === item.path;
+                const selected = item.path === '/'
+                  ? location.pathname === '/'
+                  : item.path === '/jobs'
+                    ? location.pathname.startsWith('/jobs')
+                    : location.pathname === item.path;
                 return (
                   <Button
                     key={item.path}
@@ -194,7 +200,11 @@ export default function MainLayout({ children }: LayoutProps) {
         <Divider />
         <List>
           {navItems.map((item) => {
-            const selected = location.pathname === item.path;
+            const selected = item.path === '/'
+              ? location.pathname === '/'
+              : item.path === '/jobs'
+                ? location.pathname.startsWith('/jobs')
+                : location.pathname === item.path;
             return (
               <ListItem key={item.path} disablePadding>
                 <ListItemButton

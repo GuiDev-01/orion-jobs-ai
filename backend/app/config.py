@@ -55,13 +55,25 @@ COLLECT_ADZUNA_QUERIES = _parse_csv_env(
     ],
 )
 COLLECT_JSEARCH_ENABLED = os.getenv("COLLECT_JSEARCH_ENABLED", "true").lower() == "true"
-COLLECT_JSEARCH_MAX_REQUESTS = int(os.getenv("COLLECT_JSEARCH_MAX_REQUESTS", "6"))
+COLLECT_JSEARCH_MAX_REQUESTS = int(os.getenv("COLLECT_JSEARCH_MAX_REQUESTS", "18"))
+COLLECT_JSEARCH_MAX_PAGES = int(os.getenv("COLLECT_JSEARCH_MAX_PAGES", "3"))
 COLLECT_JSEARCH_QUERIES = _parse_csv_env(
     os.getenv("COLLECT_JSEARCH_QUERIES"),
-    ["python developer", "backend engineer", "devops engineer"],
+    [
+        "python developer",
+        "backend engineer",
+        "full stack developer",
+        "devops engineer",
+        "data engineer",
+        "software engineer",
+    ],
 )
 COLLECT_JSEARCH_COUNTRY = os.getenv("COLLECT_JSEARCH_COUNTRY", "us")
-COLLECT_JSEARCH_LOCATION = os.getenv("COLLECT_JSEARCH_LOCATION", "remote")
+COLLECT_JSEARCH_DATE_POSTED = os.getenv("COLLECT_JSEARCH_DATE_POSTED", "month")
+COLLECT_JSEARCH_LOCATIONS = _parse_csv_env(
+    os.getenv("COLLECT_JSEARCH_LOCATIONS") or os.getenv("COLLECT_JSEARCH_LOCATION"),
+    ["remote", "united states", "united kingdom"],
+)
 
 # Email configuration
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
@@ -69,7 +81,7 @@ SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USERNAME = os.getenv("SMTP_USERNAME", "")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 EMAIL_FROM_NAME = os.getenv("EMAIL_FROM_NAME", "OrionJobs AI")
-EMAIL_FROM_ADDRESS =os.getenv("EMAIL_FROM_ADDRESS", "notifications@orionjobs.me")
+EMAIL_FROM_ADDRESS = os.getenv("EMAIL_FROM_ADDRESS", "notifications@orionjobs.me")
 DEFAULT_EMAIL_RECIPIENTS = os.getenv("DEFAULT_EMAIL_RECIPIENTS", "")
 
 def get_email_recipients_list() -> list:

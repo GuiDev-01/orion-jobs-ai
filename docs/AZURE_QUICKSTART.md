@@ -1,93 +1,55 @@
-# 🚀 Deploy Rápido Azure - OrionJobs API
+# Quick Azure Deploy (No Secrets)
 
-## Problema Identificado ✅
+This guide was simplified for public usage on GitHub.
+Use placeholders and local environment variables to avoid exposing credentials.
 
-A API não funcionava no Azure porque:
-- O Azure App Service define a porta dinamicamente via variável `PORT`
-- O Dockerfile estava fixado na porta 8000
-- **Solução**: Criado script `startup.sh` que lê a variável `PORT` do Azure
-
-## Deploy Rápido
-
-### 1. Rebuild e Push da Imagem
+## 1) Build and push the image
 
 ```bash
 cd backend
-docker build -t orionjobsacr.azurecr.io/orionjobs:latest .
-az acr login --name orionjobsacr
-docker push orionjobsacr.azurecr.io/orionjobs:latest
+docker build -t <acr-name>.azurecr.io/<image-name>:latest .
+az acr login --name <acr-name>
+docker push <acr-name>.azurecr.io/<image-name>:latest
 ```
 
-### 2. Configurar WEBSITES_PORT no Azure
+## 2) Configure App Service
 
 ```bash
 az webapp config appsettings set \
-  --resource-group orionjobs-rg \
-  --name orionjobs-api \
-  --settings WEBSITES_PORT="8000"
+  --resource-group <resource-group> \
+  --name <webapp-name> \
+  --settings \
+  WEBSITES_PORT="8000" \
+  ENVIRONMENT="production" \
+  DATABASE_URL="<database-url>" \
+  ALLOWED_ORIGINS="<frontend-domain>"
 ```
 
-### 3. Reiniciar o App
+## 3) Restart and validate
 
 ```bash
-az webapp restart --name orionjobs-api --resource-group orionjobs-rg
+az webapp restart --name <webapp-name> --resource-group <resource-group>
+az webapp log tail --name <webapp-name> --resource-group <resource-group>
 ```
 
-### 4. Verificar Logs
+## 4) Smoke tests
 
 ```bash
-# Logs em tempo real
-az webapp log tail --name orionjobs-api --resource-group orionjobs-rg
-
-# Ou via portal Azure:
-# https://portal.azure.com -> App Service -> Log Stream
+curl https://<webapp-domain>/health
+curl https://<webapp-domain>/docs
 ```
 
-## Testes
+## Required variables
 
-```bash
-# Health check
-curl https://orionjobs-api.azurewebsites.net/health
+- `DATABASE_URL`
+- `ENVIRONMENT`
+- `WEBSITES_PORT`
+- `ALLOWED_ORIGINS`
 
-# Root endpoint
-curl https://orionjobs-api.azurewebsites.net/
+## Checklist
 
-# API docs
-# https://orionjobs-api.azurewebsites.net/docs
-```
-
-## Variáveis de Ambiente Necessárias
-
-- `DATABASE_URL` - String de conexão PostgreSQL
-- `ENVIRONMENT` - "production"
-- `WEBSITES_PORT` - "8000" (OBRIGATÓRIO para Azure)
-- `ALLOWED_ORIGINS` - URLs do frontend separadas por vírgula
-- `ADZUNA_APP_ID` e `ADZUNA_APP_KEY` - Credenciais API
-
-## Comandos Úteis
-
-```bash
-# Ver configurações do app
-az webapp config appsettings list \
-  --name orionjobs-api \
-  --resource-group orionjobs-rg
-
-# Ver status do app
-az webapp show \
-  --name orionjobs-api \
-  --resource-group orionjobs-rg \
-  --query state
-
-# SSH no container (se necessário)
-az webapp ssh --name orionjobs-api --resource-group orionjobs-rg
-```
-
-## Checklist Pós-Deploy ✓
-
-- [ ] Build e push da nova imagem
-- [ ] WEBSITES_PORT configurado
-- [ ] App reiniciado
-- [ ] Logs verificados (sem erros)
-- [ ] Health check retorna status "healthy"
-- [ ] CORS configurado com domínio do frontend
-- [ ] Variáveis de ambiente configuradas
+- [ ] New image pushed to ACR
+- [ ] App Settings updated in Azure
+- [ ] App restarted
+- [ ] Health check returning OK
+- [ ] Logs without critical errors

@@ -208,7 +208,7 @@ export default function JobDetails() {
           href="/"
           onClick={(e) => {
             e.preventDefault();
-            navigate('/');
+            navigate('/dashboard');
           }}
           sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
         >
@@ -352,7 +352,7 @@ export default function JobDetails() {
                 Job Description
               </Typography>
 
-              {/* Botão do Assistente de IA */}
+              {/* AI Assistant button */}
               <AIAssistant jobId={job.id} />
 
               <Box sx={{ mb: 3 }}>

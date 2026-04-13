@@ -7,6 +7,7 @@ import LoadingState from '@/components/common/LoadingState';
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const JobsList = lazy(() => import('./pages/JobsList'));
 const JobDetails = lazy(() => import('./pages/JobDetails'));
+const Landing = lazy(() => import('./pages/Landing'));
 
 // Page transition variants
 const pageVariants = {
@@ -48,6 +49,18 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={
+          <Suspense fallback={<LoadingState title="Loading OrionJobs AI" description="Preparing product showcase." />}>
+            <motion.div
+              variants={shouldReduceMotion ? undefined : pageVariants}
+              initial={shouldReduceMotion ? false : 'initial'}
+              animate={shouldReduceMotion ? undefined : 'animate'}
+              exit={shouldReduceMotion ? undefined : 'exit'}
+            >
+              <Landing />
+            </motion.div>
+          </Suspense>
+        } />
+        <Route path="/dashboard" element={
           <Suspense fallback={<LoadingState title="Loading dashboard" description="Preparing market intelligence view." />}>
             <motion.div
               variants={shouldReduceMotion ? undefined : pageVariants}

@@ -13,7 +13,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=flat-square&logo=docker&logoColor=white)](https://docker.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
-> **Full-stack AI-powered job search platform for developers.** Aggregates positions from multiple APIs, delivers real-time market analytics, and provides intelligent insights through a modern React UI deployed on Azure cloud.
+> **Full-stack AI-powered job search platform for developers.** Aggregates positions from multiple APIs, delivers real-time market analytics, and provides intelligent insights through a modern React UI and landing experience deployed on Azure cloud.
 
 <p align="center">
   <a href="https://gray-water-0be9a250f.2.azurestaticapps.net" target="_blank"><strong>🔥 Live Application →</strong></a>
@@ -36,6 +36,17 @@
 
 ---
 
+## ✅ Current Status (April 2026)
+
+- **Production deployment active** on Azure (frontend + backend)
+- **Landing page live** at `/` with product showcase and direct platform links
+- **Core app stable** on `/dashboard`, `/jobs`, and `/jobs/:id`
+- **AI analysis active** through Gemini at `/api/v1/ai/analyze-job/{id}`
+- **Schedulers running** for automated collection and daily email summaries
+- **Public docs sanitized** for GitHub-safe deployment instructions
+
+---
+
 ## 🎯 Why This Project?
 
 Most job boards are cluttered, slow, and have poor developer experience. **OrionJobs AI** solves this:
@@ -44,7 +55,7 @@ Most job boards are cluttered, slow, and have poor developer experience. **Orion
 |---|---|
 | Scattered listings across multiple sites | **Multi-source aggregation** (RemoteOK, Adzuna, JSearch) |
 | No real-time market visibility | **Analytics dashboard** with skills demand, salary transparency, trends |
-| Slow, outdated interfaces | **Modern React 19 UI** with glassmorphism, animations, dark/light theme |
+| Slow, outdated interfaces | **Modern React 19 UI** with landing page, transitions, and dark/light theme |
 | Manual daily searching | **Automated collection** + email summaries at 9 AM UTC |
 | No insights on what's trending | **Real-time analytics** — top skills, remote %, top companies |
 
@@ -106,23 +117,23 @@ This is a **production application** — not a tutorial project — with CI/CD p
 | Technology | Version | Purpose |
 |---|---|---|
 | Python | 3.12 | Core runtime |
-| FastAPI | Latest | Async REST API framework |
+| FastAPI | 0.121 | Async REST API framework |
 | SQLAlchemy | 2.0 | ORM with async support |
-| Alembic | Latest | Database migrations |
+| Alembic | 1.17 | Database migrations |
 | Pydantic | v2 | Data validation & serialization |
-| APScheduler | Latest | Task scheduling (daily collection + emails) |
+| APScheduler | 3.11 | Task scheduling (daily collection + emails) |
 | Google GenAI | 0.3 | AI insights using Gemini API |
-| Pytest | Latest | Test suite |
+| Pytest | 9.0 | Test suite |
 
 ### Infrastructure
 | Technology | Purpose |
 |---|---|
 | Azure App Service | Backend API hosting |
 | Azure Static Web Apps | Frontend hosting (global CDN, auto SSL) |
-| Neon PostgreSQL | Serverless database (auto-scaling, $0 cost) |
+| Neon PostgreSQL | Serverless database (auto-scaling) |
 | Docker + GHCR | Containerization & registry |
 | GitHub Actions | CI/CD automation (3 workflows) |
-| SendGrid | SMTP email delivery |
+| SMTP Provider (e.g. SendGrid) | Email delivery |
 
 ---
 
@@ -144,6 +155,13 @@ Premium browsing experience with advanced filtering:
 - **Server-Side Pagination** — 12/page with debounced search
 - **Empty States** — Illustrated feedback with retry actions
 
+### 🧭 Landing Experience
+Conversion-oriented product presentation at `/`:
+- **Hero + value proposition** with clear CTA paths to Dashboard and Jobs
+- **Live platform links** (GitHub, API docs, health, product docs)
+- **Persona-focused messaging** for developers and hiring teams
+- **Motion-enhanced storytelling** with reduced-motion accessibility support
+
 ### 📄 Job Details & AI Assistant
 Complete job information with smart recommendations:
 - **AI Career Consultant** — Gemini-powered insights (Overview, Pros, Red Flags, Interview Questions)
@@ -154,7 +172,7 @@ Complete job information with smart recommendations:
 ### ✅ Quality & Reliability
 - **Frontend Tests** — Vitest + Testing Library (core components, hooks and page smoke tests)
 - **Backend Tests** — Pytest suite for service normalization and models
-- **CI Workflows** — Automated backend CI, security scan, and Azure deployments
+- **CI Workflows** — Automated backend CI, Trivy security scan, and Azure deployments
 
 ### 🎨 Design System
 - **Dark / Light Theme** — One-click toggle with localStorage persistence
@@ -222,6 +240,9 @@ DEFAULT_EMAIL_RECIPIENTS=you@example.com
 
 # Frontend (.env)
 VITE_API_URL=https://orionjobs-api.azurewebsites.net
+
+# Also valid:
+# VITE_API_URL=https://orionjobs-api.azurewebsites.net/api/v1
 ```
 
 ---
@@ -235,9 +256,12 @@ VITE_API_URL=https://orionjobs-api.azurewebsites.net
 | `POST` | `/api/v1/jobs/collect` | Trigger manual job collection |
 | `GET` | `/api/v1/ai/analyze-job/{id}` | AI-powered job insights using Gemini |
 | `GET` | `/api/v1/summary/daily` | Dashboard analytics & insights |
+| `GET` | `/api/v1/summary/recent` | Recent jobs snapshot |
 | `GET` | `/api/v1/notifications/email-config` | Email service status |
+| `GET` | `/api/v1/notifications/smtp-debug` | SMTP config debug (safe preview) |
 | `POST` | `/api/v1/notifications/send-daily-summary` | Send job digest email |
 | `POST` | `/api/v1/notifications/test-email` | Test SMTP connectivity |
+| `POST` | `/api/v1/notifications/test-daily-summary` | Trigger scheduled summary flow manually |
 | `GET` | `/health` | API health check |
 | `GET` | `/docs` | Interactive Swagger UI |
 
@@ -254,7 +278,7 @@ curl "https://orionjobs-api.azurewebsites.net/api/v1/summary/daily?location=remo
 orionjobs-ai/
 ├── frontend/                    # React 19 + TypeScript SPA
 │   ├── src/
-│   │   ├── pages/              # Dashboard, JobsList, JobDetails
+│   │   ├── pages/              # Landing, Dashboard, JobsList, JobDetails
 │   │   ├── components/         # Layout, Charts, Cards
 │   │   ├── contexts/           # ThemeContext (dark/light)
 │   │   ├── services/           # Axios API client
@@ -270,8 +294,8 @@ orionjobs-ai/
 │   │   ├── features/
 │   │   │   ├── summaries/      # Analytics & filtering engine
 │   │   │   └── notifications/  # Email service + templates
-│   │   ├── analytics/          # Trend analysis (planned)
-│   │   ├── webhooks/           # Discord/Telegram (planned)
+│   │   ├── analytics/          # Trend analysis services
+│   │   ├── webhooks/           # Discord/Telegram integrations
 │   │   └── tests/              # Pytest test suite
 │   ├── alembic/                # Database migrations
 │   └── Dockerfile
@@ -294,8 +318,13 @@ orionjobs-ai/
 | Workflow | Trigger | Action |
 |---|---|---|
 | `ci.yml` | Push / PR (backend changes) | Backend tests + lint checks + security scan |
-| `azure-deploy.yml` | Push to `main` | Build Docker → Deploy backend |
+| `azure-deploy.yml` | Push to `main` (and `phase-4-azure-deployment`) | Build Docker → Deploy backend |
 | `azure-frontend-deploy.yml` | Push/PR (`frontend/**`) | Build frontend → Deploy to Azure SWA |
+
+### Deployment Docs
+
+- [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — Secure Azure deployment workflow
+- [docs/AZURE_QUICKSTART.md](docs/AZURE_QUICKSTART.md) — Fast deploy checklist with placeholders
 
 ### Infrastructure Costs
 

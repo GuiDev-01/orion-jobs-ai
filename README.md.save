@@ -1,6 +1,6 @@
 # 🚀 OrionJobs AI
 
-[![Live App](https://img.shields.io/badge/🔗_Live_App-OrionJobs_AI-667eea?style=for-the-badge&labelColor=1a1a2e)](https://orionjobs.me)
+[![Live App](https://img.shields.io/badge/🔗_Live_App-OrionJobs_AI-667eea?style=for-the-badge&labelColor=1a1a2e)]()
 [![API](https://img.shields.io/badge/API-Healthy-brightgreen?style=for-the-badge&logo=fastapi&logoColor=white)](https://orionjobs-api.azurewebsites.net/health)
 [![Build](https://img.shields.io/badge/Build-Passing-brightgreen?style=flat-square&logo=githubactions)](https://github.com/GuiDev-01/orion-jobs-ai/actions)
 
@@ -16,7 +16,7 @@
 > **Full-stack AI-powered job search platform for developers.** Aggregates positions from multiple APIs, delivers real-time market analytics, and provides intelligent insights through a modern React UI and landing experience deployed on Azure cloud.
 
 <p align="center">
-  <a href="https://orionjobs.me" target="_blank"><strong>🔥 Live Application →</strong></a>
+  <a href="https://gray-water-0be9a250f.2.azurestaticapps.net" target="_blank"><strong>🔥 Live Application →</strong></a>
   &nbsp;&nbsp;|&nbsp;&nbsp;
   <a href="https://orionjobs-api.azurewebsites.net/docs"><strong>📖 API Docs →</strong></a>
   &nbsp;&nbsp;|&nbsp;&nbsp;
@@ -29,7 +29,7 @@
 
 | Service | URL | Status |
 |---|---|---|
-| **Frontend** | [https://orionjobs.me](https://orionjobs.me) | ✅ Live |
+| **Frontend** | [gray-water-0be9a250f.2.azurestaticapps.net](https://gray-water-0be9a250f.2.azurestaticapps.net) | ✅ Live |
 | **Backend API** | [orionjobs-api.azurewebsites.net](https://orionjobs-api.azurewebsites.net/docs) | ✅ Healthy |
 | **Swagger Docs** | [/docs](https://orionjobs-api.azurewebsites.net/docs) | ✅ Interactive |
 | **Health Check** | [/health](https://orionjobs-api.azurewebsites.net/health) | ✅ Operational |

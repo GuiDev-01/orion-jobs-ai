@@ -5,6 +5,7 @@ from ..features.notifications.email_service import EmailService
 from ..features.summaries.summary_service import SummaryService
 from .. import config
 from ..database import get_db
+from ..security import require_admin_api_key
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
@@ -23,7 +24,10 @@ def get_email_service():
     )
 
 @router.post("/test-email")
-async def test_email_service(recipients: Optional[List[str]] = None):
+async def test_email_service(
+    recipients: Optional[List[str]] = None,
+    _: None = Depends(require_admin_api_key),
+):
     """Test email service configuration."""
     try:
         email_service = get_email_service()
@@ -71,7 +75,8 @@ async def send_daily_summary_email(
     recipients: Optional[List[str]] = Query(None),
     period_days: int = Query(default=1),
     limit: int = Query(default=50),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _: None = Depends(require_admin_api_key),
 ):
     """Send daily summary email."""
     try:
@@ -194,7 +199,7 @@ async def get_email_config():
     }
 
 @router.get("/smtp-debug")
-async def smtp_debug():
+async def smtp_debug(_: None = Depends(require_admin_api_key)):
     """Debug SMTP configuration for deployment."""
     return {
         "smtp_host": config.SMTP_HOST,
@@ -207,7 +212,7 @@ async def smtp_debug():
     }
 
 @router.post("/test-daily-summary")
-async def test_daily_summary_manually():
+async def test_daily_summary_manually(_: None = Depends(require_admin_api_key)):
     """
     Manually trigger daily summary email (for testing).
     This endpoint allows you to test the email system without waiting for the scheduled time.

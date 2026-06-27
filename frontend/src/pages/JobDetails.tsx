@@ -198,6 +198,7 @@ export default function JobDetails() {
     month: 'long',
     day: 'numeric',
   });
+  const hasValidApplyUrl = /^https?:\/\//i.test(job.url || '');
 
   return (
     <Box>
@@ -517,10 +518,13 @@ export default function JobDetails() {
               variant="contained"
               size="large"
               fullWidth
-              endIcon={<OpenInNewIcon />}
-              href={job.url}
-              target="_blank"
-              rel="noopener noreferrer"
+              endIcon={hasValidApplyUrl ? <OpenInNewIcon /> : undefined}
+              onClick={() => {
+                if (hasValidApplyUrl) {
+                  window.open(job.url, '_blank', 'noopener,noreferrer');
+                }
+              }}
+              disabled={!hasValidApplyUrl}
               sx={{ 
                 mt: 4,
                 background: 'linear-gradient(135deg, #ffa726 0%, #ff7043 100%)',
@@ -535,11 +539,17 @@ export default function JobDetails() {
                 },
               }}
             >
-              Apply Now
+              {hasValidApplyUrl ? 'Apply Now' : 'Apply link unavailable'}
             </Button>
 
+            {!hasValidApplyUrl && (
+              <Alert severity="info" sx={{ mt: 2, fontSize: '0.75rem' }}>
+                The original source did not provide a usable application link for this listing.
+              </Alert>
+            )}
+
             {/* Warning for Adzuna */}
-            {job.source === 'adzuna' && (
+            {job.source === 'adzuna' && hasValidApplyUrl && (
               <Alert severity="warning" sx={{ mt: 2, fontSize: '0.75rem' }}>
                 This job is from Adzuna. The link may redirect multiple times.
               </Alert>

@@ -1,6 +1,8 @@
 services:
   api:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: orionjobs-api
     ports:
       - "8000:8000"
@@ -10,8 +12,9 @@ services:
       - COLLECT_MAX_PAGES=1
       - COLLECT_SLEEP_SECONDS=1
       - COLLECT_ADZUNA_MAX_REQUESTS=5
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-}
     volumes:
-      - .:/app
+      - ./backend:/app
     restart: unless-stopped
     command: >
       sh -c "

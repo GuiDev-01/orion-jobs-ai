@@ -664,6 +664,7 @@ function JobCard({ job, showToast }: JobCardProps) {
   
   const seniority = extractSeniority(job.title);
   const timeAgo = job.created_at ? formatDistanceToNow(new Date(job.created_at), { addSuffix: true }) : null;
+  const hasValidApplyUrl = /^https?:\/\//i.test(job.url || '');
 
   const handleSaveClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -1002,10 +1003,14 @@ function JobCard({ job, showToast }: JobCardProps) {
           className="view-details-btn"
           variant="contained"
           fullWidth
-          endIcon={<OpenInNewIcon sx={{ transition: 'transform 0.3s ease' }} />}
+          endIcon={hasValidApplyUrl ? <OpenInNewIcon sx={{ transition: 'transform 0.3s ease' }} /> : undefined}
           onClick={(e) => {
             e.stopPropagation();
-            window.open(job.url, '_blank');
+            if (hasValidApplyUrl) {
+              window.open(job.url, '_blank', 'noopener,noreferrer');
+            } else {
+              navigate(`/jobs/${job.id}`);
+            }
           }}
           sx={{
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -1030,7 +1035,7 @@ function JobCard({ job, showToast }: JobCardProps) {
             },
           }}
         >
-          View Details
+          {hasValidApplyUrl ? 'Apply Now' : 'View Details'}
         </Button>
       </CardContent>
     </Card>

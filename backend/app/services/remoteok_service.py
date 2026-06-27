@@ -97,10 +97,10 @@ def save_jobs_to_db(jobs: List[Dict], db: Session) -> None:
             scheme = parsed.scheme.lower()
             netloc = parsed.netloc.lower()
             path = parsed.path.rstrip("/")
-            return urlunsplit((scheme, netloc, path, "", ""))
+            return urlunsplit((scheme, netloc, path, parsed.query, ""))
         except Exception:
             # Fallback when URL is malformed
-            return raw.split("?")[0].rstrip("/")
+            return raw.split("#")[0].rstrip("/")
 
     def to_int_id(raw_id) -> int:
         if isinstance(raw_id, int):

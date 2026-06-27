@@ -61,7 +61,7 @@ class TestAdzunaService(unittest.TestCase):
         self.assertEqual(normalized[0]["title"], "Python Developer")
         self.assertEqual(normalized[0]["company"], "Test Company")
         self.assertEqual(normalized[0]["work_modality"], "Remote")
-        self.assertEqual(normalized[0]["url"], "https://example.com/job/12345")
+        self.assertEqual(normalized[0]["url"], "https://example.com/job/12345?source=api")
         self.assertEqual(normalized[0]["created_at"], "2025-09-18T10:00:00Z")
         
 if __name__ == '__main__':

@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from app.database import get_db
 from app.models.job import Job
+from app.security import require_admin_api_key
 from job_schedule import collect_remote_jobs
 from typing import Optional
 
@@ -133,7 +134,7 @@ def get_job_by_id(job_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/jobs/collect")
-def collect_jobs_manual():
+def collect_jobs_manual(_: None = Depends(require_admin_api_key)):
     """Manually trigger real job collection and return execution summary."""
     try:
         summary = collect_remote_jobs()

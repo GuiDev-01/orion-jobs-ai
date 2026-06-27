@@ -28,6 +28,7 @@ if "neon.tech" in DATABASE_URL:
 ADZUNA_APP_ID = os.getenv("ADZUNA_APP_ID")
 ADZUNA_APP_KEY = os.getenv("ADZUNA_APP_KEY")
 JSEARCH_API_KEY = os.getenv("JSEARCH_API_KEY")
+ADMIN_API_KEY = os.getenv("ADMIN_API_KEY", "")
 
 
 def _parse_csv_env(value: Optional[str], default: list[str]) -> list[str]:
@@ -76,7 +77,7 @@ COLLECT_JSEARCH_LOCATIONS = _parse_csv_env(
 )
 
 # Email configuration
-SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
+SMTP_HOST = os.getenv("SMTP_HOST") or os.getenv("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USERNAME = os.getenv("SMTP_USERNAME", "")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")

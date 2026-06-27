@@ -124,7 +124,7 @@ def normalize_adzuna_jobs(raw_jobs: List[Dict]) -> List[Dict]:
                 "tags": tags_list,
                 "location": (job.get("location") or {}).get("display_name") or "Unknown",
                 "description": clean_job_description(job.get("description")),
-                "url": (job.get("redirect_url") or job.get("url") or "").split("?")[0],
+                "url": (job.get("redirect_url") or job.get("url") or "").split("#")[0],
                 "source": "adzuna",
                 "created_at": created_at_str,
             }

@@ -36,13 +36,15 @@
 
 ---
 
-## ✅ Current Status (April 2026)
+## ✅ Current Status (June 2026)
 
 - **Production deployment active** on Azure (frontend + backend)
 - **Landing page live** at `/` with product showcase and direct platform links
 - **Core app stable** on `/dashboard`, `/jobs`, and `/jobs/:id`
 - **AI analysis active** through Gemini at `/api/v1/ai/analyze-job/{id}`
-- **Schedulers running** for automated collection and daily email summaries
+- **Cost-optimized maintenance** through GitHub Actions scheduled jobs
+- **Operational endpoints protected** with optional `ADMIN_API_KEY`
+- **Apply links improved** with preserved provider redirect parameters and invalid-link safeguards
 - **Public docs sanitized** for GitHub-safe deployment instructions
 
 ---
@@ -56,10 +58,10 @@ Most job boards are cluttered, slow, and have poor developer experience. **Orion
 | Scattered listings across multiple sites | **Multi-source aggregation** (RemoteOK, Adzuna, JSearch) |
 | No real-time market visibility | **Analytics dashboard** with skills demand, salary transparency, trends |
 | Slow, outdated interfaces | **Modern React 19 UI** with landing page, transitions, and dark/light theme |
-| Manual daily searching | **Automated collection** + email summaries at 9 AM UTC |
+| Manual daily searching | **GitHub Actions scheduled collection** + email summaries at 9 AM UTC |
 | No insights on what's trending | **Real-time analytics** — top skills, remote %, top companies |
 
-This is a **production application** — not a tutorial project — with CI/CD pipelines, cloud infrastructure, automated scheduling, and real data from multiple APIs.
+This is a **production application** — not a tutorial project — with CI/CD pipelines, cloud infrastructure, scheduled maintenance workflows, and real data from multiple APIs.
 
 ---
 
@@ -86,7 +88,7 @@ This is a **production application** — not a tutorial project — with CI/CD p
 │                                                                 │
 │  ┌──────────────────────┐    ┌─────────────────────────────┐   │
 │  │  GitHub Actions       │    │   External APIs              │   │
-│  │  (CI/CD Pipeline)    │    │   RemoteOK · Adzuna · JSearch│   │
+│  │  (CI/CD + Cron Jobs) │    │   RemoteOK · Adzuna · JSearch│   │
 │  └──────────────────────┘    └─────────────────────────────┘   │
 │                                                                 │
 │  ┌──────────────────────┐    ┌─────────────────────────────┐   │
@@ -121,7 +123,7 @@ This is a **production application** — not a tutorial project — with CI/CD p
 | SQLAlchemy | 2.0 | ORM with async support |
 | Alembic | 1.17 | Database migrations |
 | Pydantic | v2 | Data validation & serialization |
-| APScheduler | 3.11 | Task scheduling (daily collection + emails) |
+| APScheduler | 3.11 | Optional local/dev scheduling for collection + emails |
 | Google GenAI | 0.3 | AI insights using Gemini API |
 | Pytest | 9.0 | Test suite |
 
@@ -132,7 +134,7 @@ This is a **production application** — not a tutorial project — with CI/CD p
 | Azure Static Web Apps | Frontend hosting (global CDN, auto SSL) |
 | Neon PostgreSQL | Serverless database (auto-scaling) |
 | Docker + GHCR | Containerization & registry |
-| GitHub Actions | CI/CD automation (3 workflows) |
+| GitHub Actions | CI/CD automation + scheduled maintenance workflows |
 | SMTP Provider (e.g. SendGrid) | Email delivery |
 
 ---
@@ -181,7 +183,7 @@ Complete job information with smart recommendations:
 - **Custom Scrollbar** — Themed webkit scrollbar
 
 ### 📧 Email Notifications
-- **Automated Daily Digest** — Job summaries sent at 9 AM UTC
+- **Automated Daily Digest** — Job summaries triggered by scheduled maintenance workflow
 - **Professional Templates** — Jinja2 HTML + text templates
 - **Multi-Recipient** — Send to multiple addresses simultaneously
 - **Retry Logic** — Exponential backoff with error handling
@@ -189,9 +191,10 @@ Complete job information with smart recommendations:
 ### 🔌 Multi-Source Aggregation
 - **RemoteOK** — Remote-first developer positions
 - **Adzuna** — Global job market with quota management
-- **JSearch (RapidAPI)** — Comprehensive tech job listings
+- **JSearch (RapidAPI)** — Optional comprehensive tech job listings
 - **Smart Deduplication** — Deterministic IDs prevent duplicates
 - **Intelligent Caching** — Optimized API calls
+- **Apply Link Safeguards** — Provider redirect parameters are preserved and invalid URLs are handled gracefully
 
 ---
 
@@ -230,6 +233,7 @@ GEMINI_API_KEY=your-gemini-api-key           # Google GenAI
 ADZUNA_APP_ID=your-id                        # Adzuna API
 ADZUNA_APP_KEY=your-key
 JSEARCH_API_KEY=your-rapidapi-key            # JSearch API
+ADMIN_API_KEY=your-admin-api-key             # Protects operational endpoints
 SMTP_HOST=smtp.sendgrid.net                  # Email (SendGrid)
 SMTP_PORT=587
 SMTP_USERNAME=apikey
@@ -237,6 +241,11 @@ SMTP_PASSWORD=your-sendgrid-key
 EMAIL_FROM_NAME=OrionJobs AI
 EMAIL_FROM_ADDRESS=notifications@orionjobs.me
 DEFAULT_EMAIL_RECIPIENTS=you@example.com
+COLLECT_MAX_PAGES=1                          # Keep production collection lightweight
+COLLECT_ADZUNA_MAX_REQUESTS=8                # Quota guardrail
+COLLECT_JSEARCH_ENABLED=false                # Optional high-volume source
+ENABLE_JOB_SCHEDULER=false                   # Use GitHub Actions in production
+ENABLE_EMAIL_SCHEDULER=false                 # Use GitHub Actions in production
 
 # Frontend (.env)
 VITE_API_URL=https://orionjobs-api.azurewebsites.net
@@ -253,15 +262,15 @@ VITE_API_URL=https://orionjobs-api.azurewebsites.net
 |---|---|---|
 | `GET` | `/api/v1/jobs` | Paginated job listings with search & filters |
 | `GET` | `/api/v1/jobs/{id}` | Single job details |
-| `POST` | `/api/v1/jobs/collect` | Trigger manual job collection |
+| `POST` | `/api/v1/jobs/collect` | Trigger manual job collection (`X-Admin-API-Key` when configured) |
 | `GET` | `/api/v1/ai/analyze-job/{id}` | AI-powered job insights using Gemini |
 | `GET` | `/api/v1/summary/daily` | Dashboard analytics & insights |
 | `GET` | `/api/v1/summary/recent` | Recent jobs snapshot |
 | `GET` | `/api/v1/notifications/email-config` | Email service status |
-| `GET` | `/api/v1/notifications/smtp-debug` | SMTP config debug (safe preview) |
-| `POST` | `/api/v1/notifications/send-daily-summary` | Send job digest email |
-| `POST` | `/api/v1/notifications/test-email` | Test SMTP connectivity |
-| `POST` | `/api/v1/notifications/test-daily-summary` | Trigger scheduled summary flow manually |
+| `GET` | `/api/v1/notifications/smtp-debug` | SMTP config debug (`X-Admin-API-Key` when configured) |
+| `POST` | `/api/v1/notifications/send-daily-summary` | Send job digest email (`X-Admin-API-Key` when configured) |
+| `POST` | `/api/v1/notifications/test-email` | Test SMTP connectivity (`X-Admin-API-Key` when configured) |
+| `POST` | `/api/v1/notifications/test-daily-summary` | Trigger scheduled summary flow manually (`X-Admin-API-Key` when configured) |
 | `GET` | `/health` | API health check |
 | `GET` | `/docs` | Interactive Swagger UI |
 
@@ -303,7 +312,8 @@ orionjobs-ai/
 ├── .github/workflows/           # CI/CD pipelines
 │   ├── ci.yml                  # Tests + lint
 │   ├── azure-deploy.yml        # Backend deploy
-│   └── azure-frontend-deploy.yml # Frontend deploy
+│   ├── azure-frontend-deploy.yml # Frontend deploy
+│   └── scheduled-maintenance.yml # Daily collection + email trigger
 │
 ├── docs/                        # Documentation
 └── docker-compose.yml           # Local development
@@ -320,6 +330,7 @@ orionjobs-ai/
 | `ci.yml` | Push / PR (backend changes) | Backend tests + lint checks + security scan |
 | `azure-deploy.yml` | Push to `main` (and `phase-4-azure-deployment`) | Build Docker → Deploy backend |
 | `azure-frontend-deploy.yml` | Push/PR (`frontend/**`) | Build frontend → Deploy to Azure SWA |
+| `scheduled-maintenance.yml` | Daily cron / manual dispatch | Trigger collection and daily email via API |
 
 ### Deployment Docs
 
@@ -337,6 +348,7 @@ orionjobs-ai/
 | **Total** | **~$15/mo** | |
 
 > 💡 **66% cost reduction** from initial ~$35/mo by migrating to Neon PostgreSQL (from $20/mo to $0).
+> Additional production guardrails keep external API usage low: schedulers are disabled inside App Service, daily maintenance runs through GitHub Actions, Adzuna requests are capped, and JSearch is optional.
 
 ---
 
@@ -350,12 +362,17 @@ orionjobs-ai/
 - [x] React 19 frontend with TypeScript
 - [x] Glassmorphism UI with dark/light theme
 - [x] Interactive dashboard with charts
-- [x] CI/CD pipelines (3 workflows)
+- [x] CI/CD and maintenance pipelines (4 workflows)
 - [x] AI Career Consultant (Gemini API)
 - [x] Test foundation with Vitest + Pytest
+- [x] Admin-key protection for operational endpoints
+- [x] Cost-optimized scheduled maintenance via GitHub Actions
+- [x] Apply-link handling improvements for provider redirects
 - [ ] Expand test coverage to 70%+
 - [ ] Data quality sprint: better salary/location coverage + more job sources
 - [ ] E2E tests with Playwright
+- [ ] Add link health checks and expired-job hiding
+- [ ] Cache AI analyses and dashboard summaries
 - [ ] PWA support (offline mode, install prompt)
 - [ ] Internationalization (PT-BR / EN)
 - [ ] Authentication with JWT & OAuth 2.0

@@ -1,0 +1,30 @@
+name: Scheduled Maintenance
+
+on:
+  schedule:
+    - cron: "5 9 * * *"
+  workflow_dispatch:
+
+jobs:
+  collect-and-notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      API_BASE_URL: https://orionjobs-api.azurewebsites.net/api/v1
+      ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
+
+    steps:
+      - name: Trigger job collection
+        run: |
+          curl --fail --show-error --silent \
+            --request POST "$API_BASE_URL/jobs/collect" \
+            --header "X-Admin-API-Key: $ADMIN_API_KEY"
+
+      - name: Send daily summary email
+        continue-on-error: true
+        run: |
+          curl --fail --show-error --silent \
+            --request POST "$API_BASE_URL/notifications/send-daily-summary" \
+            --header "Content-Type: application/json" \
+            --header "X-Admin-API-Key: $ADMIN_API_KEY" \
+            --data '{"period_days":1,"limit":50}'

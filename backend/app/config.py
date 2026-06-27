@@ -31,6 +31,13 @@ JSEARCH_API_KEY = os.getenv("JSEARCH_API_KEY")
 ADMIN_API_KEY = os.getenv("ADMIN_API_KEY", "")
 
 
+def _parse_bool_env(name: str, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 def _parse_csv_env(value: Optional[str], default: list[str]) -> list[str]:
     if not value:
         return default
@@ -75,6 +82,10 @@ COLLECT_JSEARCH_LOCATIONS = _parse_csv_env(
     os.getenv("COLLECT_JSEARCH_LOCATIONS") or os.getenv("COLLECT_JSEARCH_LOCATION"),
     ["remote", "united states", "united kingdom"],
 )
+
+# Runtime task settings
+ENABLE_JOB_SCHEDULER = _parse_bool_env("ENABLE_JOB_SCHEDULER", True)
+ENABLE_EMAIL_SCHEDULER = _parse_bool_env("ENABLE_EMAIL_SCHEDULER", True)
 
 # Email configuration
 SMTP_HOST = os.getenv("SMTP_HOST") or os.getenv("SMTP_SERVER", "smtp.gmail.com")

@@ -15,6 +15,7 @@ from sqlalchemy import text
 from app.database import get_db
 from app.routers.summary_router import router as summary_router
 from app.routers.ai_router import router as ai_router
+from app import config
 import logging
 
 logger = logging.getLogger(__name__)
@@ -31,22 +32,26 @@ async def lifespan(app: FastAPI):
     job_scheduler = None
     email_scheduler = None
     
-    # Try to start scheduler, but don't fail if it doesn't work
-    try:
-        from job_schedule import start_scheduler
-        job_scheduler = start_scheduler()
-        logger.info("✅ Job collection scheduler initialized successfully")
-    except Exception as e:
-        logger.error(f"⚠️ Scheduler failed to start: {e}")
-        logger.info("✅ Application will continue without scheduler")
+    if config.ENABLE_JOB_SCHEDULER:
+        try:
+            from job_schedule import start_scheduler
+            job_scheduler = start_scheduler()
+            logger.info("✅ Job collection scheduler initialized successfully")
+        except Exception as e:
+            logger.error(f"⚠️ Scheduler failed to start: {e}")
+            logger.info("✅ Application will continue without scheduler")
+    else:
+        logger.info("Job collection scheduler disabled by ENABLE_JOB_SCHEDULER")
     
-    # Start email notification scheduler
-    try:
-        from app.features.notifications.schedulers.daily_scheduler import start_scheduler as start_email_scheduler
-        email_scheduler = start_email_scheduler()
-        logger.info("✅ Email notification scheduler initialized")
-    except Exception as e:
-        logger.error(f"⚠️ Email scheduler failed: {e}")
+    if config.ENABLE_EMAIL_SCHEDULER:
+        try:
+            from app.features.notifications.schedulers.daily_scheduler import start_scheduler as start_email_scheduler
+            email_scheduler = start_email_scheduler()
+            logger.info("✅ Email notification scheduler initialized")
+        except Exception as e:
+            logger.error(f"⚠️ Email scheduler failed: {e}")
+    else:
+        logger.info("Email scheduler disabled by ENABLE_EMAIL_SCHEDULER")
     
     yield # Application is running
     

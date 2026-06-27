@@ -61,9 +61,12 @@ jobs:
           --settings \
           DATABASE_URL="${{ secrets.DATABASE_URL }}" \
           ENVIRONMENT="production" \
-          COLLECT_MAX_PAGES="2" \
+          COLLECT_MAX_PAGES="1" \
           COLLECT_SLEEP_SECONDS="1.5" \
-          COLLECT_ADZUNA_MAX_REQUESTS="30" \
+          COLLECT_ADZUNA_MAX_REQUESTS="8" \
+          COLLECT_JSEARCH_ENABLED="false" \
+          ENABLE_JOB_SCHEDULER="false" \
+          ENABLE_EMAIL_SCHEDULER="false" \
           ADZUNA_APP_ID="${{ secrets.ADZUNA_APP_ID }}" \
           ADZUNA_APP_KEY="${{ secrets.ADZUNA_APP_KEY }}" \
           JSEARCH_API_KEY="${{ secrets.JSEARCH_API_KEY }}" \

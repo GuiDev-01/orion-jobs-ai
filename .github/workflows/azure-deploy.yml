@@ -75,7 +75,7 @@ jobs:
           DEFAULT_EMAIL_RECIPIENTS="${{ secrets.DEFAULT_EMAIL_RECIPIENTS }}" \
           ADMIN_API_KEY="${{ secrets.ADMIN_API_KEY }}" \
           WEBSITES_PORT="8000" \
-          ALLOWED_ORIGINS="http://localhost:3000,http://localhost:5173,https://gray-water-0be9a250f.2.azurestaticapps.net, https://orionjobs.me,https://www.orionjobs.me"
+          ALLOWED_ORIGINS="http://localhost:3000,http://localhost:5173,https://gray-water-0be9a250f.2.azurestaticapps.net,https://orionjobs.me,https://www.orionjobs.me"
     
     - name: Restart App Service
       run: |
